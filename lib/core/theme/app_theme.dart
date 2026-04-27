@@ -7,26 +7,32 @@ class AppTheme {
 
   static ThemeData light() {
     final baseTextTheme = const TextTheme(
+      displaySmall: TextStyle(
+        fontSize: 42,
+        fontWeight: FontWeight.w600,
+        height: 1.0,
+        color: AppColors.textPrimary,
+      ),
       headlineLarge: TextStyle(
-        fontSize: 34,
+        fontSize: 36,
         fontWeight: FontWeight.w600,
         height: 1.1,
         color: AppColors.textPrimary,
       ),
       headlineMedium: TextStyle(
-        fontSize: 28,
+        fontSize: 30,
         fontWeight: FontWeight.w600,
         height: 1.15,
         color: AppColors.textPrimary,
       ),
       titleLarge: TextStyle(
-        fontSize: 20,
+        fontSize: 22,
         fontWeight: FontWeight.w600,
         height: 1.2,
         color: AppColors.textPrimary,
       ),
       titleMedium: TextStyle(
-        fontSize: 16,
+        fontSize: 17,
         fontWeight: FontWeight.w600,
         height: 1.2,
         color: AppColors.textPrimary,
@@ -43,10 +49,22 @@ class AppTheme {
         height: 1.4,
         color: AppColors.textSecondary,
       ),
+      bodySmall: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w400,
+        height: 1.35,
+        color: AppColors.textTertiary,
+      ),
       labelLarge: TextStyle(
         fontSize: 15,
         fontWeight: FontWeight.w600,
         height: 1.2,
+      ),
+      labelMedium: TextStyle(
+        fontSize: 13,
+        fontWeight: FontWeight.w600,
+        height: 1.2,
+        color: AppColors.textSecondary,
       ),
     );
 
@@ -63,7 +81,7 @@ class AppTheme {
     );
 
     final outlineBorder = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(24),
       borderSide: const BorderSide(color: AppColors.border),
     );
 
@@ -78,10 +96,13 @@ class AppTheme {
         elevation: 0,
         foregroundColor: AppColors.textPrimary,
         surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: AppColors.surface,
+        backgroundColor: Colors.transparent,
         indicatorColor: AppColors.surfaceMuted,
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+        height: 76,
         iconTheme: WidgetStateProperty.resolveWith(
           (states) => IconThemeData(
             color:
@@ -106,11 +127,11 @@ class AppTheme {
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          backgroundColor: AppColors.textPrimary,
+          backgroundColor: AppColors.accentStrong,
           foregroundColor: Colors.white,
           minimumSize: const Size.fromHeight(54),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(22),
           ),
           textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
         ),
@@ -119,19 +140,19 @@ class AppTheme {
         backgroundColor: AppColors.surface,
         selectedColor: AppColors.surfaceMuted,
         side: const BorderSide(color: AppColors.border),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         labelStyle: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
         secondaryLabelStyle: const TextStyle(
           color: AppColors.textPrimary,
           fontSize: 14,
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.surface,
         labelStyle: const TextStyle(color: AppColors.textSecondary),
-        hintStyle: const TextStyle(color: AppColors.textSecondary),
+        hintStyle: const TextStyle(color: AppColors.textTertiary),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 18,
           vertical: 18,
@@ -147,8 +168,18 @@ class AppTheme {
           borderSide: const BorderSide(color: Colors.redAccent),
         ),
       ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: AppColors.textPrimary,
+          side: const BorderSide(color: AppColors.borderStrong),
+          minimumSize: const Size.fromHeight(52),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(22),
+          ),
+        ),
+      ),
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: AppColors.textPrimary,
+        backgroundColor: AppColors.accentStrong,
         contentTextStyle: const TextStyle(color: Colors.white),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         behavior: SnackBarBehavior.floating,

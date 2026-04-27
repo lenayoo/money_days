@@ -52,6 +52,12 @@ void main() {
     await tester.pump();
 
     expect(find.text('Money Days'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text(savedExpense.memo!),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pump();
     expect(find.text(savedExpense.memo!), findsOneWidget);
     expect(find.text(formattedAmount), findsWidgets);
 

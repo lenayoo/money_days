@@ -6,7 +6,10 @@ import 'package:money_days/core/localization/generated/app_localizations.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/app_formatters.dart';
+import '../../../core/widgets/app_page.dart';
+import '../../../core/widgets/page_intro.dart';
 import '../../../core/widgets/soft_section_card.dart';
+import '../../../core/widgets/tone_pill.dart';
 import '../../settings/controllers/settings_controller.dart';
 import '../models/app_currency.dart';
 import '../controllers/expenses_controller.dart';
@@ -102,20 +105,40 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
 
     return Scaffold(
       appBar: AppBar(),
-      body: SafeArea(
+      body: AppPage(
+        topSafeArea: false,
+        bottomSafeArea: true,
         child: Form(
           key: _formKey,
           child: ListView(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
             children: [
-              Text(l10n.addExpenseTitle, style: theme.textTheme.headlineMedium),
-              const SizedBox(height: 8),
-              Text(l10n.addExpenseSubtitle, style: theme.textTheme.bodyLarge),
+              PageIntro(
+                eyebrow: AppFormatters.formatLongDate(_selectedDate, locale),
+                title: l10n.addExpenseTitle,
+                subtitle: l10n.addExpenseSubtitle,
+              ),
+              const SizedBox(height: 16),
+              Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: [
+                  TonePill(
+                    icon: Icons.calendar_today_rounded,
+                    label: AppFormatters.formatLongDate(_selectedDate, locale),
+                  ),
+                  TonePill(icon: Icons.payments_outlined, label: currency.code),
+                ],
+              ),
               const SizedBox(height: 24),
               SoftSectionCard(
+                color: AppColors.surfaceRaised,
+                accentColor: AppColors.accentMuted,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Text(l10n.amountLabel, style: theme.textTheme.bodyMedium),
+                    const SizedBox(height: 10),
                     TextFormField(
                       controller: _amountController,
                       autofocus: true,
@@ -125,10 +148,21 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
                       ],
+                      style: theme.textTheme.displaySmall?.copyWith(
+                        color: AppColors.textPrimary,
+                        fontSize: 40,
+                      ),
                       decoration: InputDecoration(
-                        labelText: l10n.amountLabel,
+                        filled: false,
+                        border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        focusedErrorBorder: InputBorder.none,
+                        hintText: '0',
                         prefixText: '${currency.symbol} ',
                         suffixText: currency.code,
+                        contentPadding: EdgeInsets.zero,
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
@@ -143,12 +177,16 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: 20),
-                    Text(
-                      l10n.categoryLabel,
-                      style: theme.textTheme.titleMedium,
-                    ),
-                    const SizedBox(height: 12),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              SoftSectionCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(l10n.categoryLabel, style: theme.textTheme.titleLarge),
+                    const SizedBox(height: 16),
                     Wrap(
                       spacing: 10,
                       runSpacing: 10,
@@ -157,7 +195,11 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
                           ChoiceChip(
                             selected: category == _selectedCategory,
                             label: Text(category.label(l10n)),
-                            avatar: Icon(category.icon, size: 18),
+                            avatar: Icon(
+                              category.icon,
+                              size: 18,
+                              color: category.color,
+                            ),
                             onSelected: (_) {
                               setState(() {
                                 _selectedCategory = category;
@@ -165,16 +207,6 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
                             },
                           ),
                       ],
-                    ),
-                    const SizedBox(height: 20),
-                    TextFormField(
-                      controller: _memoController,
-                      decoration: InputDecoration(
-                        labelText: l10n.memoLabel,
-                        hintText: l10n.memoHint,
-                      ),
-                      maxLength: 60,
-                      maxLines: 2,
                     ),
                   ],
                 ),
@@ -185,14 +217,14 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
                 child: Row(
                   children: [
                     Container(
-                      width: 44,
-                      height: 44,
+                      width: 46,
+                      height: 46,
                       decoration: BoxDecoration(
-                        color: AppColors.surfaceMuted,
+                        color: AppColors.surfaceRaised,
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: const Icon(
-                        Icons.calendar_today_rounded,
+                        Icons.event_available_rounded,
                         color: AppColors.textPrimary,
                       ),
                     ),
@@ -205,7 +237,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
                             l10n.dateLabel,
                             style: theme.textTheme.titleMedium,
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 6),
                           Text(
                             AppFormatters.formatLongDate(_selectedDate, locale),
                             style: theme.textTheme.bodyLarge,
@@ -213,8 +245,23 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
                         ],
                       ),
                     ),
-                    Text(l10n.pickDate, style: theme.textTheme.bodyMedium),
+                    const Icon(
+                      Icons.chevron_right_rounded,
+                      color: AppColors.textSecondary,
+                    ),
                   ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              SoftSectionCard(
+                child: TextFormField(
+                  controller: _memoController,
+                  decoration: InputDecoration(
+                    labelText: l10n.memoLabel,
+                    hintText: l10n.memoHint,
+                  ),
+                  maxLength: 60,
+                  maxLines: 2,
                 ),
               ),
               const SizedBox(height: 24),

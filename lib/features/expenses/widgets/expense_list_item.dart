@@ -17,56 +17,60 @@ class ExpenseListItem extends StatelessWidget {
     final locale = Localizations.localeOf(context);
     final theme = Theme.of(context);
     final memo = expense.memo;
+    final category = expense.category;
+    final amountText = AppFormatters.formatCurrency(
+      expense.amount,
+      expense.currency,
+      locale,
+    );
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          width: 44,
-          height: 44,
+          width: 48,
+          height: 48,
           decoration: BoxDecoration(
-            color: AppColors.surfaceMuted,
-            borderRadius: BorderRadius.circular(16),
+            color: category.surfaceColor,
+            borderRadius: BorderRadius.circular(18),
           ),
-          child: Icon(expense.category.icon, color: AppColors.textPrimary),
+          child: Icon(category.icon, color: category.color),
         ),
         const SizedBox(width: 14),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                expense.category.label(l10n),
-                style: theme.textTheme.titleMedium,
-              ),
-              const SizedBox(height: 4),
+              Text(category.label(l10n), style: theme.textTheme.titleMedium),
+              const SizedBox(height: 6),
               Text(
                 memo ?? AppFormatters.formatLongDate(expense.date, locale),
                 style: theme.textTheme.bodyMedium,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
+              const SizedBox(height: 6),
+              Text(
+                AppFormatters.formatShortDate(expense.date, locale),
+                style: theme.textTheme.bodySmall,
+              ),
             ],
           ),
         ),
         const SizedBox(width: 12),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              AppFormatters.formatCurrency(
-                expense.amount,
-                expense.currency,
-                locale,
-              ),
-              style: theme.textTheme.titleMedium,
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            color: AppColors.surfaceRaised,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Text(
+            amountText,
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w600,
             ),
-            const SizedBox(height: 4),
-            Text(
-              AppFormatters.formatShortDate(expense.date, locale),
-              style: theme.textTheme.bodyMedium,
-            ),
-          ],
+          ),
         ),
       ],
     );

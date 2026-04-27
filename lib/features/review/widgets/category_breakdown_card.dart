@@ -23,53 +23,65 @@ class CategoryBreakdownCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final locale = Localizations.localeOf(context);
     final theme = Theme.of(context);
+    final category = spending.category;
 
     return SoftSectionCard(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(20),
+      accentColor: category.color,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Container(
-                width: 40,
-                height: 40,
+                width: 44,
+                height: 44,
                 decoration: BoxDecoration(
-                  color: AppColors.surfaceMuted,
-                  borderRadius: BorderRadius.circular(14),
+                  color: category.surfaceColor,
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                child: Icon(
-                  spending.category.icon,
-                  color: AppColors.textPrimary,
-                ),
+                child: Icon(category.icon, color: category.color),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  spending.category.label(l10n),
+                  category.label(l10n),
                   style: theme.textTheme.titleMedium,
                 ),
               ),
-              Text(
-                AppFormatters.formatCurrency(spending.total, currency, locale),
-                style: theme.textTheme.titleMedium,
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceRaised,
+                  borderRadius: BorderRadius.circular(999),
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: Text(
+                  '${(spending.share * 100).round()}%',
+                  style: theme.textTheme.labelMedium?.copyWith(
+                    color: AppColors.textPrimary,
+                  ),
+                ),
               ),
             ],
+          ),
+          const SizedBox(height: 18),
+          Text(
+            AppFormatters.formatCurrency(spending.total, currency, locale),
+            style: theme.textTheme.titleLarge,
           ),
           const SizedBox(height: 14),
           ClipRRect(
             borderRadius: BorderRadius.circular(999),
             child: LinearProgressIndicator(
               value: spending.share,
-              minHeight: 10,
-              backgroundColor: AppColors.surfaceMuted,
-              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.accent),
+              minHeight: 12,
+              backgroundColor: category.surfaceColor,
+              valueColor: AlwaysStoppedAnimation<Color>(category.color),
             ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            '${(spending.share * 100).round()}%',
-            style: theme.textTheme.bodyMedium,
           ),
         ],
       ),
