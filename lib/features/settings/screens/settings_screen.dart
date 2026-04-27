@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_days/core/localization/generated/app_localizations.dart';
 import 'package:money_days/core/theme/app_colors.dart';
-import 'package:money_days/core/widgets/app_brand_logo.dart';
 
 import '../../../core/localization/app_language.dart';
 import '../../../core/widgets/app_page.dart';
@@ -30,8 +29,6 @@ class SettingsScreen extends ConsumerWidget {
             subtitle: l10n.settingsSubtitle,
           ),
           const SizedBox(height: 24),
-          const _BrandPanel(),
-          const SizedBox(height: 16),
           _SettingsPanel(
             icon: Icons.translate_rounded,
             title: l10n.languageSetting,
@@ -118,19 +115,6 @@ class SettingsScreen extends ConsumerWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _BrandPanel extends StatelessWidget {
-  const _BrandPanel();
-
-  @override
-  Widget build(BuildContext context) {
-    return SoftSectionCard(
-      color: AppColors.surfaceRaised,
-      accentColor: AppColors.accentMuted,
-      child: const Center(child: AppBrandLogo(width: 248)),
     );
   }
 }
