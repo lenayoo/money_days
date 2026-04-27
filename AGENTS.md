@@ -340,36 +340,52 @@ Recommended approach:
 - Use one internal base currency if needed.
 - Convert only at display/calculation layer.
 
-## App Icon and Logo Rule
+## App Icon and Logo Generation (MANDATORY)
 
-Money Days must always generate its logo based on the existing app icon.
+Money Days must always generate a logo asset from the app icon.
 
 Source:
 - assets/imgs/appIcon.png
 
-Rules:
-- Always use `assets/imgs/appIcon.png` as the base reference for any logo creation.
-- The logo must visually match the app icon style (colors, character, shape, mood).
-- Do not create a completely different visual identity.
-- Maintain consistency between:
-  - App icon
-  - Splash screen
-  - App header branding
-  - Marketing assets
+### Task (must execute)
+When building or updating the app, you MUST:
 
-Logo generation guidelines:
-- Center the main icon (e.g., piggy bank) from appIcon.png
-- Use clean, minimal typography for "Money Days"
-- Optional subtitle:
-  - "Daily Budget Tracker"
-- Keep spacing generous and clean
-- Avoid heavy decoration or complex gradients
-- Maintain a calm, soft, Verydays-style aesthetic
+1. Load the image:
+   assets/imgs/appIcon.png
 
-Export requirements:
-- Square format (1:1)
-- Minimum 1024x1024 for store usage
-- Also generate smaller versions (e.g., 500x500)
+2. Generate a logo image that includes:
+   - The app icon (centered or top)
+   - The text: "Money Days"
+   - Optional subtitle: "Daily Budget Tracker"
 
-Important:
-The logo should feel like a natural extension of the app icon, not a separate design.
+3. Export logo files to:
+   - assets/imgs/logo_1024.png
+   - assets/imgs/logo_500.png
+
+### Design Rules
+- Keep the exact same visual style as appIcon.png
+- Do NOT redesign the character (e.g., piggy bank)
+- Do NOT change colors or illustration style
+- Use minimal, clean typography
+- Keep large spacing and soft layout
+- White or very light background preferred
+
+### Layout Example
+- Top: icon (appIcon.png)
+- Middle: "Money Days"
+- Bottom (optional): "Daily Budget Tracker"
+
+### Technical Rules
+- Output must be square (1:1)
+- Background must not be transparent unless specified
+- Ensure text is centered and readable
+- Avoid small text (must be visible on mobile)
+
+### Important
+This is NOT optional.
+
+The logo MUST be generated automatically using appIcon.png.
+Do not skip this step.
+Do not leave logo missing.
+
+If logo files do not exist, create them before completing the task.
