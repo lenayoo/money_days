@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:money_days/core/localization/generated/app_localizations.dart';
+import 'package:money_days/core/utils/app_date_utils.dart';
 import 'package:money_days/core/utils/app_formatters.dart';
+import 'package:money_days/features/budgets/models/monthly_budget.dart';
+import 'package:money_days/features/budgets/repositories/monthly_budgets_repository.dart';
 import 'package:money_days/features/expenses/models/app_currency.dart';
 import 'package:money_days/features/expenses/models/expense.dart';
 import 'package:money_days/features/expenses/models/expense_category.dart';
@@ -11,15 +14,20 @@ import 'package:money_days/features/expenses/screens/home_screen.dart';
 import 'package:money_days/features/review/screens/monthly_review_screen.dart';
 import 'package:money_days/features/settings/models/app_settings.dart';
 import 'package:money_days/features/settings/repositories/settings_repository.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() {
-  testWidgets('renders saved expenses on Home and Monthly Review', (
+  setUpAll(() async {
+    await initializeDateFormatting('en');
+  });
+
+  testWidgets('renders converted totals, monthly budget, and month selection', (
     tester,
   ) async {
     final today = DateTime.now();
-    final savedExpense = Expense(
-      id: 'expense_saved',
-      amount: 1200,
+    final currentMonthExpense = Expense(
+      id: 'expense_current',
+      amount: 1500,
       category: ExpenseCategory.food,
       memo: 'Lunch',
       date: DateTime(today.year, today.month, today.day),
@@ -27,63 +35,134 @@ void main() {
       createdAt: today,
       updatedAt: today,
     );
-
-    final expensesRepository = InMemoryExpensesRepository();
-    final settingsRepository = InMemorySettingsRepository();
-
-    await expensesRepository.saveExpenses([savedExpense]);
-    await settingsRepository.saveSettings(
-      const AppSettings(currency: AppCurrency.jpy),
+    final previousMonthDate = DateTime(today.year, today.month - 1, 12);
+    final previousMonthExpense = Expense(
+      id: 'expense_previous',
+      amount: 3000,
+      category: ExpenseCategory.transport,
+      memo: 'Train pass',
+      date: previousMonthDate,
+      currency: AppCurrency.jpy,
+      createdAt: previousMonthDate,
+      updatedAt: previousMonthDate,
     );
 
-    final formattedAmount = AppFormatters.formatCurrency(
-      savedExpense.amount,
-      savedExpense.currency,
+    final expensesRepository = InMemoryExpensesRepository();
+    final monthlyBudgetsRepository = InMemoryMonthlyBudgetsRepository();
+    final settingsRepository = InMemorySettingsRepository();
+
+    await expensesRepository.saveExpenses([
+      currentMonthExpense,
+      previousMonthExpense,
+    ]);
+    await monthlyBudgetsRepository.saveBudgets({
+      AppDateUtils.monthKey(today): MonthlyBudget(
+        monthKey: AppDateUtils.monthKey(today),
+        amountInBaseCurrency: 30000,
+        createdAt: today,
+        updatedAt: today,
+      ),
+      AppDateUtils.monthKey(previousMonthDate): MonthlyBudget(
+        monthKey: AppDateUtils.monthKey(previousMonthDate),
+        amountInBaseCurrency: 45000,
+        createdAt: previousMonthDate,
+        updatedAt: previousMonthDate,
+      ),
+    });
+    await settingsRepository.saveSettings(
+      const AppSettings(currency: AppCurrency.usd),
+    );
+
+    final currentExpenseAmount = AppFormatters.formatCurrency(
+      currentMonthExpense.amountForCurrency(AppCurrency.usd),
+      AppCurrency.usd,
+      const Locale('en'),
+    );
+    final currentBudgetAmount = AppFormatters.formatCurrency(
+      AppCurrency.usd.fromBaseAmount(30000),
+      AppCurrency.usd,
+      const Locale('en'),
+    );
+    final previousBudgetAmount = AppFormatters.formatCurrency(
+      AppCurrency.usd.fromBaseAmount(45000),
+      AppCurrency.usd,
+      const Locale('en'),
+    );
+    final previousMonthLabel = AppFormatters.formatMonthLabel(
+      previousMonthDate,
       const Locale('en'),
     );
 
     await tester.pumpWidget(
       _buildTestApp(
         expensesRepository: expensesRepository,
+        monthlyBudgetsRepository: monthlyBudgetsRepository,
         settingsRepository: settingsRepository,
         child: HomeScreen(onAddExpense: () {}),
       ),
     );
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     expect(find.text('Money Days'), findsOneWidget);
+    expect(find.text('This week'), findsOneWidget);
     await tester.scrollUntilVisible(
-      find.text(savedExpense.memo!),
+      find.text(currentBudgetAmount),
       200,
       scrollable: find.byType(Scrollable).first,
     );
     await tester.pump();
-    expect(find.text(savedExpense.memo!), findsOneWidget);
-    expect(find.text(formattedAmount), findsWidgets);
+    expect(find.text(currentBudgetAmount), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text(currentMonthExpense.memo!),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pump();
+    expect(find.text(currentMonthExpense.memo!), findsOneWidget);
+    expect(find.text(currentExpenseAmount), findsWidgets);
 
     await tester.pumpWidget(
       _buildTestApp(
         expensesRepository: expensesRepository,
+        monthlyBudgetsRepository: monthlyBudgetsRepository,
         settingsRepository: settingsRepository,
         child: const MonthlyReviewScreen(),
       ),
     );
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     expect(find.text('Monthly review'), findsOneWidget);
-    expect(find.text('Food'), findsWidgets);
-    expect(find.text(formattedAmount), findsWidgets);
+    expect(find.text(currentBudgetAmount), findsOneWidget);
+
+    await tester.tap(find.text('Select month'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(previousMonthLabel).last);
+    await tester.pumpAndSettle();
+
+    expect(find.text(previousBudgetAmount), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('Train pass'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pump();
+    expect(find.text('Train pass'), findsOneWidget);
+    expect(find.text('Lunch'), findsNothing);
   });
 }
 
 Widget _buildTestApp({
   required ExpensesRepository expensesRepository,
+  required MonthlyBudgetsRepository monthlyBudgetsRepository,
   required SettingsRepository settingsRepository,
   required Widget child,
 }) {
   return ProviderScope(
     overrides: [
       expensesRepositoryProvider.overrideWithValue(expensesRepository),
+      monthlyBudgetsRepositoryProvider.overrideWithValue(
+        monthlyBudgetsRepository,
+      ),
       settingsRepositoryProvider.overrideWithValue(settingsRepository),
     ],
     child: MaterialApp(

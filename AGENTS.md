@@ -28,14 +28,63 @@ Small apps for reflection, emotional check-ins, and everyday habits.
 
 ## Languages
 The app must support:
-- English
-- Korean
+- English (default)
 - Japanese
+- Korean
 
-Structure the app so Korean can be added later, but do not implement Korean in the first version unless requested.
+Requirements:
+- All user-facing text must be localized.
+- Do not hardcode strings directly in UI components.
+- Use a centralized localization system (e.g., Flutter intl).
 
-Use Flutter localization-friendly structure.
-All user-facing strings must be separated from UI code.
+Language behavior:
+- Default language follows the device language.
+- If the device language is not supported, fall back to English.
+
+Settings screen:
+- User must be able to manually select:
+  - English
+  - 日本語
+  - 한국어
+
+## Localization Guidelines
+
+Tone:
+- Calm
+- Short
+- Gentle
+- Non-judgmental
+
+Do not use:
+- Harsh wording
+- Financial pressure tone
+- Complex expressions
+
+Example translations:
+
+English:
+- Today
+- This week
+- This month so far
+- Monthly budget
+- Add today’s spending
+
+Japanese:
+- 今日
+- 今週
+- 今月の合計
+- 今月の予算
+- 今日の支出を追加
+
+Korean:
+- 오늘
+- 이번 주
+- 이번 달 누적
+- 월 예산
+- 오늘 지출 추가
+
+Important:
+All new features must include translations for all supported languages before completion.
 
 ## Design
 Use a clean Verydays-like design.
@@ -235,5 +284,92 @@ Create a working MVP with:
 - English and Japanese localization
 - Local expense storage
 - Clean Verydays-style theme
+- English, Japanese, and Korean localization
 
 The app should be App Store / Google Play ready after basic polish.
+
+
+## Additional Money Days Features
+
+### Weekly Total
+The Home screen should show this week’s total spending below today’s total.
+
+Suggested order:
+- Today
+- This week
+- This month so far
+
+### Monthly Budget
+Money Days should support a monthly budget.
+
+Rules:
+- Budget is stored per month.
+- A new month can have a new budget.
+- Past month budgets should remain unchanged.
+- If the current month has no budget, show a calm prompt to set one.
+
+Monthly budget should appear near “This month so far” on the Home screen.
+
+### Review Month Selection
+The Review screen should include month selection.
+
+When a month is selected, show:
+- Total spending for selected month
+- Monthly budget for selected month
+- Spending by category
+- Expense list for selected month
+
+### Fixed Currency Conversion
+Money Days uses a fixed MVP conversion rule:
+
+1 USD = 150 JPY = 1500 KRW
+
+This is not live exchange rate conversion.
+
+Supported display currencies:
+- USD
+- JPY
+- KRW
+
+Changing currency should update displayed values only.
+Original expense data must not be corrupted.
+Avoid double conversion bugs.
+
+Recommended approach:
+- Store original values safely.
+- Use one internal base currency if needed.
+- Convert only at display/calculation layer.
+
+## App Icon and Logo Rule
+
+Money Days must always generate its logo based on the existing app icon.
+
+Source:
+- assets/imgs/appIcon.png
+
+Rules:
+- Always use `assets/imgs/appIcon.png` as the base reference for any logo creation.
+- The logo must visually match the app icon style (colors, character, shape, mood).
+- Do not create a completely different visual identity.
+- Maintain consistency between:
+  - App icon
+  - Splash screen
+  - App header branding
+  - Marketing assets
+
+Logo generation guidelines:
+- Center the main icon (e.g., piggy bank) from appIcon.png
+- Use clean, minimal typography for "Money Days"
+- Optional subtitle:
+  - "Daily Budget Tracker"
+- Keep spacing generous and clean
+- Avoid heavy decoration or complex gradients
+- Maintain a calm, soft, Verydays-style aesthetic
+
+Export requirements:
+- Square format (1:1)
+- Minimum 1024x1024 for store usage
+- Also generate smaller versions (e.g., 500x500)
+
+Important:
+The logo should feel like a natural extension of the app icon, not a separate design.

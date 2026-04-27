@@ -70,7 +70,11 @@ class CategoryBreakdownCard extends StatelessWidget {
           ),
           const SizedBox(height: 18),
           Text(
-            AppFormatters.formatCurrency(spending.total, currency, locale),
+            AppFormatters.formatCurrency(
+              spending.totalForCurrency(currency),
+              currency,
+              locale,
+            ),
             style: theme.textTheme.titleLarge,
           ),
           const SizedBox(height: 14),

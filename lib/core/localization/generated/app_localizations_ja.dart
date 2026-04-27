@@ -18,7 +18,25 @@ class AppLocalizationsJa extends AppLocalizations {
   String get todaySpending => '今日の合計';
 
   @override
+  String get weekSpending => '今週';
+
+  @override
   String get monthSpending => '今月ここまで';
+
+  @override
+  String get monthlyBudget => '今月の予算';
+
+  @override
+  String get setThisMonthBudget => '今月の予算を設定';
+
+  @override
+  String get startThisMonthWithBudget => '今月は、シンプルな予算から始めましょう。';
+
+  @override
+  String get editBudget => '予算を編集';
+
+  @override
+  String get budgetNotSet => 'まだ設定されていません';
 
   @override
   String get addExpenseSubtitle => '今日の小さな記録です。';
@@ -42,7 +60,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get monthlyTotal => '今月の合計';
 
   @override
+  String get selectMonth => '月を選択';
+
+  @override
   String get categoryBreakdown => 'カテゴリ別';
+
+  @override
+  String get expenseListTitle => '支出一覧';
 
   @override
   String get noReviewData => '今月の支出はまだありません。';
@@ -63,6 +87,9 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get currencySetting => '通貨';
+
+  @override
+  String get currencyConversionNote => '表示の換算には固定レートを使います: 1 USD = 150 JPY = 1500 KRW。';
 
   @override
   String get appInfo => 'アプリについて';

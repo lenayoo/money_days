@@ -18,7 +18,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get todaySpending => 'Today\'s total';
 
   @override
+  String get weekSpending => 'This week';
+
+  @override
   String get monthSpending => 'This month so far';
+
+  @override
+  String get monthlyBudget => 'Monthly budget';
+
+  @override
+  String get setThisMonthBudget => 'Set this month\'s budget';
+
+  @override
+  String get startThisMonthWithBudget => 'Start this month with a simple budget.';
+
+  @override
+  String get editBudget => 'Edit budget';
+
+  @override
+  String get budgetNotSet => 'Not set yet';
 
   @override
   String get addExpenseSubtitle => 'A small record for today.';
@@ -42,7 +60,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get monthlyTotal => 'Monthly total';
 
   @override
+  String get selectMonth => 'Select month';
+
+  @override
   String get categoryBreakdown => 'By category';
+
+  @override
+  String get expenseListTitle => 'Spending list';
 
   @override
   String get noReviewData => 'No spending recorded this month.';
@@ -63,6 +87,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get currencySetting => 'Currency';
+
+  @override
+  String get currencyConversionNote => 'Uses a fixed display rate: 1 USD = 150 JPY = 1500 KRW.';
 
   @override
   String get appInfo => 'App information';

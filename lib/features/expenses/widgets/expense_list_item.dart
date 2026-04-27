@@ -3,13 +3,19 @@ import 'package:money_days/core/localization/generated/app_localizations.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/app_formatters.dart';
+import '../models/app_currency.dart';
 import '../models/expense.dart';
 import '../models/expense_category.dart';
 
 class ExpenseListItem extends StatelessWidget {
-  const ExpenseListItem({super.key, required this.expense});
+  const ExpenseListItem({
+    super.key,
+    required this.expense,
+    required this.displayCurrency,
+  });
 
   final Expense expense;
+  final AppCurrency displayCurrency;
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +25,8 @@ class ExpenseListItem extends StatelessWidget {
     final memo = expense.memo;
     final category = expense.category;
     final amountText = AppFormatters.formatCurrency(
-      expense.amount,
-      expense.currency,
+      expense.amountForCurrency(displayCurrency),
+      displayCurrency,
       locale,
     );
 

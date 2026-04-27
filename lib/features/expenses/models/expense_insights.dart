@@ -1,17 +1,23 @@
 import '../../../core/constants/app_constants.dart';
+import '../../../core/utils/app_date_utils.dart';
+import 'app_currency.dart';
 import 'expense.dart';
 import 'expense_category.dart';
 
 class CategorySpending {
   const CategorySpending({
     required this.category,
-    required this.total,
+    required this.totalInBaseCurrency,
     required this.share,
   });
 
   final ExpenseCategory category;
-  final double total;
+  final double totalInBaseCurrency;
   final double share;
+
+  double totalForCurrency(AppCurrency currency) {
+    return currency.fromBaseAmount(totalInBaseCurrency);
+  }
 }
 
 class ExpenseInsights {
@@ -28,25 +34,77 @@ class ExpenseInsights {
     return sortedExpenses;
   }
 
-  static double totalForDay(List<Expense> expenses, DateTime date) {
-    return expenses
-        .where(
-          (expense) =>
-              expense.date.year == date.year &&
-              expense.date.month == date.month &&
-              expense.date.day == date.day,
-        )
-        .fold(0, (sum, expense) => sum + expense.amount);
+  static double totalInBaseForDay(List<Expense> expenses, DateTime date) {
+    return _sumBaseAmounts(
+      expenses.where((expense) => AppDateUtils.isSameDay(expense.date, date)),
+    );
   }
 
-  static double totalForMonth(List<Expense> expenses, DateTime date) {
-    return expenses
-        .where(
-          (expense) =>
-              expense.date.year == date.year &&
-              expense.date.month == date.month,
-        )
-        .fold(0, (sum, expense) => sum + expense.amount);
+  static double totalInBaseForWeek(List<Expense> expenses, DateTime date) {
+    final startOfWeek = AppDateUtils.startOfWeek(date);
+    final endExclusive = startOfWeek.add(const Duration(days: 7));
+
+    return _sumBaseAmounts(
+      expenses.where((expense) {
+        final expenseDate = AppDateUtils.dateOnly(expense.date);
+        return !expenseDate.isBefore(startOfWeek) &&
+            expenseDate.isBefore(endExclusive);
+      }),
+    );
+  }
+
+  static double totalInBaseForMonth(List<Expense> expenses, DateTime date) {
+    return _sumBaseAmounts(
+      expenses.where((expense) => AppDateUtils.isSameMonth(expense.date, date)),
+    );
+  }
+
+  static List<Expense> expensesForMonth(List<Expense> expenses, DateTime date) {
+    final monthlyExpenses = expenses
+        .where((expense) => AppDateUtils.isSameMonth(expense.date, date))
+        .toList(growable: false);
+
+    return sorted(monthlyExpenses);
+  }
+
+  static List<DateTime> availableMonths(
+    List<Expense> expenses, {
+    Iterable<DateTime> budgetMonths = const [],
+    DateTime? anchorMonth,
+  }) {
+    final normalizedMonths = <DateTime>[
+      AppDateUtils.startOfMonth(anchorMonth ?? DateTime.now()),
+      ...expenses.map((expense) => AppDateUtils.startOfMonth(expense.date)),
+      ...budgetMonths.map(AppDateUtils.startOfMonth),
+    ];
+
+    if (normalizedMonths.isEmpty) {
+      return const [];
+    }
+
+    DateTime earliestMonth = normalizedMonths.first;
+    DateTime latestMonth = normalizedMonths.first;
+
+    for (final month in normalizedMonths.skip(1)) {
+      if (month.isBefore(earliestMonth)) {
+        earliestMonth = month;
+      }
+      if (month.isAfter(latestMonth)) {
+        latestMonth = month;
+      }
+    }
+
+    return AppDateUtils.monthsInRange(
+      earliestMonth,
+      latestMonth,
+    ).reversed.toList(growable: false);
+  }
+
+  static double _sumBaseAmounts(Iterable<Expense> expenses) {
+    return expenses.fold(
+      0.0,
+      (sum, expense) => sum + expense.amountInBaseCurrency,
+    );
   }
 
   static List<Expense> recentExpenses(
@@ -61,16 +119,15 @@ class ExpenseInsights {
     DateTime date,
   ) {
     final monthlyExpenses = expenses.where(
-      (expense) =>
-          expense.date.year == date.year && expense.date.month == date.month,
+      (expense) => AppDateUtils.isSameMonth(expense.date, date),
     );
 
     final totals = <ExpenseCategory, double>{};
     for (final expense in monthlyExpenses) {
       totals.update(
         expense.category,
-        (value) => value + expense.amount,
-        ifAbsent: () => expense.amount,
+        (value) => value + expense.amountInBaseCurrency,
+        ifAbsent: () => expense.amountInBaseCurrency,
       );
     }
 
@@ -84,12 +141,15 @@ class ExpenseInsights {
             .map(
               (entry) => CategorySpending(
                 category: entry.key,
-                total: entry.value,
+                totalInBaseCurrency: entry.value,
                 share: entry.value / overallTotal,
               ),
             )
             .toList()
-          ..sort((left, right) => right.total.compareTo(left.total));
+          ..sort(
+            (left, right) =>
+                right.totalInBaseCurrency.compareTo(left.totalInBaseCurrency),
+          );
 
     return breakdown;
   }

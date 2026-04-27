@@ -22,4 +22,21 @@ void main() {
 
     expect(restoredExpense.toMap(), expense.toMap());
   });
+
+  test('Expense converts through the fixed base currency without mutation', () {
+    final expense = Expense(
+      id: 'expense_usd',
+      amount: 12.5,
+      category: ExpenseCategory.cafe,
+      memo: 'Coffee beans',
+      date: DateTime(2026, 4, 27),
+      currency: AppCurrency.usd,
+      createdAt: DateTime(2026, 4, 27, 9, 30),
+      updatedAt: DateTime(2026, 4, 27, 9, 30),
+    );
+
+    expect(expense.amountInBaseCurrency, closeTo(1875, 0.0001));
+    expect(expense.amountForCurrency(AppCurrency.jpy), closeTo(1875, 0.0001));
+    expect(expense.amountForCurrency(AppCurrency.krw), closeTo(18750, 0.0001));
+  });
 }

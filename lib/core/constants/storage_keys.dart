@@ -3,5 +3,6 @@ class StorageKeys {
 
   static const String appBox = 'money_days_box';
   static const String expenses = 'expenses';
+  static const String monthlyBudgets = 'monthly_budgets';
   static const String settings = 'settings';
 }

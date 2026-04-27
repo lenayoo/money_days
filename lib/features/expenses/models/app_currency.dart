@@ -20,11 +20,25 @@ extension AppCurrencyX on AppCurrency {
     AppCurrency.jpy || AppCurrency.krw => 0,
   };
 
+  double get rateToBaseCurrency => switch (this) {
+    AppCurrency.jpy => 1,
+    AppCurrency.usd => 150,
+    AppCurrency.krw => 0.1,
+  };
+
   String label(AppLocalizations l10n) => switch (this) {
     AppCurrency.jpy => l10n.currencyJpy,
     AppCurrency.usd => l10n.currencyUsd,
     AppCurrency.krw => l10n.currencyKrw,
   };
+
+  double toBaseAmount(double amount) => amount * rateToBaseCurrency;
+
+  double fromBaseAmount(double amount) => amount / rateToBaseCurrency;
+
+  double convertAmount(double amount, AppCurrency targetCurrency) {
+    return targetCurrency.fromBaseAmount(toBaseAmount(amount));
+  }
 }
 
 AppCurrency appCurrencyFromStorage(String? value) {

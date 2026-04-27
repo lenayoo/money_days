@@ -7,7 +7,6 @@ import '../../../core/localization/app_language.dart';
 import '../../../core/widgets/app_page.dart';
 import '../../../core/widgets/page_intro.dart';
 import '../../../core/widgets/soft_section_card.dart';
-import '../../expenses/controllers/expenses_controller.dart';
 import '../../expenses/models/app_currency.dart';
 import '../controllers/settings_controller.dart';
 
@@ -57,6 +56,7 @@ class SettingsScreen extends ConsumerWidget {
           _SettingsPanel(
             icon: Icons.payments_outlined,
             title: l10n.currencySetting,
+            supportingText: l10n.currencyConversionNote,
             child: DropdownButtonFormField<AppCurrency>(
               value: settings.currency,
               decoration: const InputDecoration(),
@@ -72,9 +72,6 @@ class SettingsScreen extends ConsumerWidget {
                   return;
                 }
 
-                await ref
-                    .read(expensesControllerProvider.notifier)
-                    .updateCurrency(value);
                 await ref
                     .read(settingsControllerProvider.notifier)
                     .updateCurrency(value);
@@ -127,11 +124,13 @@ class _SettingsPanel extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.child,
+    this.supportingText,
   });
 
   final IconData icon;
   final String title;
   final Widget child;
+  final String? supportingText;
 
   @override
   Widget build(BuildContext context) {
@@ -156,6 +155,15 @@ class _SettingsPanel extends StatelessWidget {
           Text(title, style: theme.textTheme.titleLarge),
           const SizedBox(height: 16),
           child,
+          if (supportingText != null) ...[
+            const SizedBox(height: 12),
+            Text(
+              supportingText!,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ],
         ],
       ),
     );

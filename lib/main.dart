@@ -4,6 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import 'app/app.dart';
 import 'core/constants/storage_keys.dart';
+import 'features/budgets/repositories/monthly_budgets_repository.dart';
 import 'features/expenses/repositories/expenses_repository.dart';
 import 'features/settings/repositories/settings_repository.dart';
 
@@ -18,6 +19,9 @@ Future<void> main() async {
       overrides: [
         expensesRepositoryProvider.overrideWithValue(
           LocalExpensesRepository(appBox),
+        ),
+        monthlyBudgetsRepositoryProvider.overrideWithValue(
+          LocalMonthlyBudgetsRepository(appBox),
         ),
         settingsRepositoryProvider.overrideWithValue(
           LocalSettingsRepository(appBox),

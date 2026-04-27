@@ -36,15 +36,4 @@ class ExpensesController extends Notifier<List<Expense>> {
     state = updatedExpenses;
     await _repository.saveExpenses(updatedExpenses);
   }
-
-  Future<void> updateCurrency(AppCurrency currency) async {
-    final now = DateTime.now();
-    final updatedExpenses = ExpenseInsights.sorted([
-      for (final expense in state)
-        expense.copyWith(currency: currency, updatedAt: now),
-    ]);
-
-    state = updatedExpenses;
-    await _repository.saveExpenses(updatedExpenses);
-  }
 }

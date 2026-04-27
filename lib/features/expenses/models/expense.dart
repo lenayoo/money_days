@@ -60,6 +60,12 @@ class Expense {
   final DateTime createdAt;
   final DateTime updatedAt;
 
+  double get amountInBaseCurrency => currency.toBaseAmount(amount);
+
+  double amountForCurrency(AppCurrency displayCurrency) {
+    return displayCurrency.fromBaseAmount(amountInBaseCurrency);
+  }
+
   Expense copyWith({
     String? id,
     double? amount,

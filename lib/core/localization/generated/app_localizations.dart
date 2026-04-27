@@ -113,11 +113,47 @@ abstract class AppLocalizations {
   /// **'Today\'s total'**
   String get todaySpending;
 
+  /// No description provided for @weekSpending.
+  ///
+  /// In en, this message translates to:
+  /// **'This week'**
+  String get weekSpending;
+
   /// No description provided for @monthSpending.
   ///
   /// In en, this message translates to:
   /// **'This month so far'**
   String get monthSpending;
+
+  /// No description provided for @monthlyBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly budget'**
+  String get monthlyBudget;
+
+  /// No description provided for @setThisMonthBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Set this month\'s budget'**
+  String get setThisMonthBudget;
+
+  /// No description provided for @startThisMonthWithBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Start this month with a simple budget.'**
+  String get startThisMonthWithBudget;
+
+  /// No description provided for @editBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit budget'**
+  String get editBudget;
+
+  /// No description provided for @budgetNotSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not set yet'**
+  String get budgetNotSet;
 
   /// No description provided for @addExpenseSubtitle.
   ///
@@ -161,11 +197,23 @@ abstract class AppLocalizations {
   /// **'Monthly total'**
   String get monthlyTotal;
 
+  /// No description provided for @selectMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Select month'**
+  String get selectMonth;
+
   /// No description provided for @categoryBreakdown.
   ///
   /// In en, this message translates to:
   /// **'By category'**
   String get categoryBreakdown;
+
+  /// No description provided for @expenseListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending list'**
+  String get expenseListTitle;
 
   /// No description provided for @noReviewData.
   ///
@@ -202,6 +250,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Currency'**
   String get currencySetting;
+
+  /// No description provided for @currencyConversionNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Uses a fixed display rate: 1 USD = 150 JPY = 1500 KRW.'**
+  String get currencyConversionNote;
 
   /// No description provided for @appInfo.
   ///
