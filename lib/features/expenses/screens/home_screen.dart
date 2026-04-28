@@ -97,7 +97,6 @@ class HomeScreen extends ConsumerWidget {
           PageIntro(
             eyebrow: AppFormatters.formatMonthLabel(today, locale),
             title: l10n.appName,
-            subtitle: l10n.homeSubtitle,
           ),
           const SizedBox(height: 24),
           SummaryCard(
@@ -148,11 +147,6 @@ class HomeScreen extends ConsumerWidget {
                     Text(
                       l10n.addTodaySpending,
                       style: theme.textTheme.titleLarge,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      l10n.addExpenseSubtitle,
-                      style: theme.textTheme.bodyMedium,
                     ),
                   ],
                 );

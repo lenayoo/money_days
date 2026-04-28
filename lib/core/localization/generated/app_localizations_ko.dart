@@ -12,9 +12,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get appName => 'Money Days';
 
   @override
-  String get homeSubtitle => '돈의 흐름을 차분하게 돌아보세요.';
-
-  @override
   String get todaySpending => '오늘 합계';
 
   @override
@@ -54,9 +51,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get budgetNotSet => '아직 설정되지 않았어요';
 
   @override
-  String get addExpenseSubtitle => '오늘의 작은 기록 하나.';
-
-  @override
   String get addTodaySpending => '오늘 지출 추가';
 
   @override
@@ -67,9 +61,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get monthlyReviewTitle => '월간 돌아보기';
-
-  @override
-  String get monthlyReviewSubtitle => '이번 달 돈의 흐름을 부드럽게 살펴보세요.';
 
   @override
   String get monthlyTotal => '이번 달 합계';

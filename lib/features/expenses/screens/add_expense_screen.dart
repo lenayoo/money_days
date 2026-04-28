@@ -116,7 +116,6 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
               PageIntro(
                 eyebrow: AppFormatters.formatLongDate(_selectedDate, locale),
                 title: l10n.addExpenseTitle,
-                subtitle: l10n.addExpenseSubtitle,
               ),
               const SizedBox(height: 16),
               Wrap(

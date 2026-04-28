@@ -151,7 +151,6 @@ class _MonthlyReviewScreenState extends ConsumerState<MonthlyReviewScreen> {
           PageIntro(
             eyebrow: AppFormatters.formatMonthLabel(_selectedMonth, locale),
             title: l10n.monthlyReviewTitle,
-            subtitle: l10n.monthlyReviewSubtitle,
           ),
           const SizedBox(height: 16),
           _MonthSelectorCard(

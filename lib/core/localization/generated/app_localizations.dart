@@ -103,12 +103,6 @@ abstract class AppLocalizations {
   /// **'Money Days'**
   String get appName;
 
-  /// No description provided for @homeSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Review your money days calmly.'**
-  String get homeSubtitle;
-
   /// No description provided for @todaySpending.
   ///
   /// In en, this message translates to:
@@ -175,12 +169,6 @@ abstract class AppLocalizations {
   /// **'Not set yet'**
   String get budgetNotSet;
 
-  /// No description provided for @addExpenseSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'A small record for today.'**
-  String get addExpenseSubtitle;
-
   /// No description provided for @addTodaySpending.
   ///
   /// In en, this message translates to:
@@ -204,12 +192,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Monthly review'**
   String get monthlyReviewTitle;
-
-  /// No description provided for @monthlyReviewSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'See where your money went this month.'**
-  String get monthlyReviewSubtitle;
 
   /// No description provided for @monthlyTotal.
   ///

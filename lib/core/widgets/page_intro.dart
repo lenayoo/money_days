@@ -7,14 +7,14 @@ class PageIntro extends StatelessWidget {
   const PageIntro({
     super.key,
     required this.title,
-    required this.subtitle,
     this.eyebrow,
+    this.subtitle,
     this.trailing,
   });
 
   final String title;
-  final String subtitle;
   final String? eyebrow;
+  final String? subtitle;
   final Widget? trailing;
 
   @override
@@ -33,13 +33,15 @@ class PageIntro extends StatelessWidget {
                 const SizedBox(height: 16),
               ],
               Text(title, style: theme.textTheme.headlineLarge),
-              const SizedBox(height: 10),
-              Text(
-                subtitle,
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: AppColors.textSecondary,
+              if (subtitle != null) ...[
+                const SizedBox(height: 10),
+                Text(
+                  subtitle!,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
         ),

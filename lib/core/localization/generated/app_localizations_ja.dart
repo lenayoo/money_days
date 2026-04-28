@@ -12,9 +12,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get appName => 'Money Days';
 
   @override
-  String get homeSubtitle => 'お金のある毎日を、落ち着いて振り返りましょう。';
-
-  @override
   String get todaySpending => '今日の合計';
 
   @override
@@ -54,9 +51,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get budgetNotSet => 'まだ設定されていません';
 
   @override
-  String get addExpenseSubtitle => '今日の小さな記録です。';
-
-  @override
   String get addTodaySpending => '今日の支出を追加';
 
   @override
@@ -67,9 +61,6 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get monthlyReviewTitle => '月のふり返り';
-
-  @override
-  String get monthlyReviewSubtitle => '今月のお金の流れをやさしく見てみましょう。';
 
   @override
   String get monthlyTotal => '今月の合計';
