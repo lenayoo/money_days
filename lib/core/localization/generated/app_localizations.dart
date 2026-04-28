@@ -7,6 +7,7 @@ import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_en.dart';
 import 'app_localizations_ja.dart';
+import 'app_localizations_ko.dart';
 
 // ignore_for_file: type=lint
 
@@ -92,7 +93,8 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
-    Locale('ja')
+    Locale('ja'),
+    Locale('ko')
   ];
 
   /// No description provided for @appName.
@@ -113,12 +115,6 @@ abstract class AppLocalizations {
   /// **'Today\'s total'**
   String get todaySpending;
 
-  /// No description provided for @weekSpending.
-  ///
-  /// In en, this message translates to:
-  /// **'This week'**
-  String get weekSpending;
-
   /// No description provided for @monthSpending.
   ///
   /// In en, this message translates to:
@@ -130,6 +126,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Monthly budget'**
   String get monthlyBudget;
+
+  /// No description provided for @budgetProgressUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% of the budget used'**
+  String budgetProgressUsed(int percent);
+
+  /// No description provided for @budgetRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} left for this month'**
+  String budgetRemaining(String amount);
+
+  /// No description provided for @budgetExceeded.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} above the budget'**
+  String budgetExceeded(String amount);
+
+  /// No description provided for @budgetReached.
+  ///
+  /// In en, this message translates to:
+  /// **'This month\'s budget is fully used'**
+  String get budgetReached;
 
   /// No description provided for @setThisMonthBudget.
   ///
@@ -254,7 +274,7 @@ abstract class AppLocalizations {
   /// No description provided for @currencyConversionNote.
   ///
   /// In en, this message translates to:
-  /// **'Uses a fixed display rate: 1 USD = 150 JPY = 1500 KRW.'**
+  /// **'Uses fixed USD-based rates: 1 USD = 150 JPY, 1500 KRW, 1.35 SGD.'**
   String get currencyConversionNote;
 
   /// No description provided for @appInfo.
@@ -365,12 +385,6 @@ abstract class AppLocalizations {
   /// **'Settings'**
   String get navigationSettings;
 
-  /// No description provided for @languageSystem.
-  ///
-  /// In en, this message translates to:
-  /// **'System'**
-  String get languageSystem;
-
   /// No description provided for @languageEnglish.
   ///
   /// In en, this message translates to:
@@ -380,8 +394,14 @@ abstract class AppLocalizations {
   /// No description provided for @languageJapanese.
   ///
   /// In en, this message translates to:
-  /// **'Japanese'**
+  /// **'日本語'**
   String get languageJapanese;
+
+  /// No description provided for @languageKorean.
+  ///
+  /// In en, this message translates to:
+  /// **'한국어'**
+  String get languageKorean;
 
   /// No description provided for @currencyJpy.
   ///
@@ -400,6 +420,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'KRW'**
   String get currencyKrw;
+
+  /// No description provided for @currencySgd.
+  ///
+  /// In en, this message translates to:
+  /// **'SGD'**
+  String get currencySgd;
 
   /// No description provided for @categoryFood.
   ///
@@ -459,7 +485,7 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['en', 'ja'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['en', 'ja', 'ko'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -472,6 +498,7 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   switch (locale.languageCode) {
     case 'en': return AppLocalizationsEn();
     case 'ja': return AppLocalizationsJa();
+    case 'ko': return AppLocalizationsKo();
   }
 
   throw FlutterError(

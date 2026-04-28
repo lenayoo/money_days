@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:money_days/core/localization/generated/app_localizations.dart';
 
-import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/app_formatters.dart';
 import '../../../core/widgets/soft_section_card.dart';
 import '../../expenses/models/app_currency.dart';
@@ -24,9 +23,14 @@ class CategoryBreakdownCard extends StatelessWidget {
     final locale = Localizations.localeOf(context);
     final theme = Theme.of(context);
     final category = spending.category;
+    final amount = AppFormatters.formatCurrency(
+      spending.totalForCurrency(currency),
+      currency,
+      locale,
+    );
 
     return SoftSectionCard(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(18),
       accentColor: category.color,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,40 +53,26 @@ class CategoryBreakdownCard extends StatelessWidget {
                   style: theme.textTheme.titleMedium,
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.surfaceRaised,
-                  borderRadius: BorderRadius.circular(999),
-                  border: Border.all(color: AppColors.border),
-                ),
-                child: Text(
-                  '${(spending.share * 100).round()}%',
-                  style: theme.textTheme.labelMedium?.copyWith(
-                    color: AppColors.textPrimary,
+              const SizedBox(width: 12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(amount, style: theme.textTheme.titleMedium),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${(spending.share * 100).round()}%',
+                    style: theme.textTheme.bodySmall,
                   ),
-                ),
+                ],
               ),
             ],
           ),
-          const SizedBox(height: 18),
-          Text(
-            AppFormatters.formatCurrency(
-              spending.totalForCurrency(currency),
-              currency,
-              locale,
-            ),
-            style: theme.textTheme.titleLarge,
-          ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
           ClipRRect(
             borderRadius: BorderRadius.circular(999),
             child: LinearProgressIndicator(
               value: spending.share,
-              minHeight: 12,
+              minHeight: 10,
               backgroundColor: category.surfaceColor,
               valueColor: AlwaysStoppedAnimation<Color>(category.color),
             ),

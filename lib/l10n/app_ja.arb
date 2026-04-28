@@ -3,9 +3,33 @@
   "appName": "Money Days",
   "homeSubtitle": "お金のある毎日を、落ち着いて振り返りましょう。",
   "todaySpending": "今日の合計",
-  "weekSpending": "今週",
   "monthSpending": "今月ここまで",
   "monthlyBudget": "今月の予算",
+  "budgetProgressUsed": "予算の{percent}%を使っています",
+  "@budgetProgressUsed": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "budgetRemaining": "今月はあと{amount}使えます",
+  "@budgetRemaining": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetExceeded": "予算より{amount}多めです",
+  "@budgetExceeded": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetReached": "今月の予算をちょうど使いました",
   "setThisMonthBudget": "今月の予算を設定",
   "startThisMonthWithBudget": "今月は、シンプルな予算から始めましょう。",
   "editBudget": "予算を編集",
@@ -33,7 +57,7 @@
   "settingsSubtitle": "シンプルで、安心できるままに。",
   "languageSetting": "言語",
   "currencySetting": "通貨",
-  "currencyConversionNote": "表示の換算には固定レートを使います: 1 USD = 150 JPY = 1500 KRW。",
+  "currencyConversionNote": "表示の換算には USD 基準の固定レートを使います: 1 USD = 150 JPY、1500 KRW、1.35 SGD。",
   "appInfo": "アプリについて",
   "privacyNote": "プライバシー",
   "privacyMessage": "記録はこの端末に保存されます。",
@@ -52,12 +76,13 @@
   "navigationHome": "ホーム",
   "navigationReview": "ふり返り",
   "navigationSettings": "設定",
-  "languageSystem": "システム",
   "languageEnglish": "English",
   "languageJapanese": "日本語",
+  "languageKorean": "한국어",
   "currencyJpy": "JPY",
   "currencyUsd": "USD",
   "currencyKrw": "KRW",
+  "currencySgd": "SGD",
   "categoryFood": "食費",
   "categoryCafe": "カフェ",
   "categoryTransport": "交通",

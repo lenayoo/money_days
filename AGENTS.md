@@ -319,26 +319,35 @@ When a month is selected, show:
 - Spending by category
 - Expense list for selected month
 
-### Fixed Currency Conversion
-Money Days uses a fixed MVP conversion rule:
+## Currency Conversion System (UPDATED)
 
-1 USD = 150 JPY = 1500 KRW
+Money Days must use a single base currency for all conversions.
 
-This is not live exchange rate conversion.
+### Base Currency
+- USD is used as the internal base currency.
 
-Supported display currencies:
-- USD
-- JPY
-- KRW
+### Fixed Conversion Rates
+- USD = 1.0
+- JPY = 150
+- KRW = 1500
+- SGD = 1.35
 
-Changing currency should update displayed values only.
-Original expense data must not be corrupted.
-Avoid double conversion bugs.
+### Conversion Rule
+All currency conversions must follow:
 
-Recommended approach:
-- Store original values safely.
-- Use one internal base currency if needed.
-- Convert only at display/calculation layer.
+1. Convert from original currency → USD
+2. Convert from USD → target currency
+
+### Example
+JPY → SGD:
+- 1500 JPY → 10 USD
+- 10 USD → 13.5 SGD
+
+### Important Rules
+- Do NOT convert between non-USD currencies directly
+- Avoid double conversion
+- Store original values safely
+- Apply conversion only at display layer
 
 ## App Icon and Logo Generation (MANDATORY)
 
@@ -389,3 +398,20 @@ Do not skip this step.
 Do not leave logo missing.
 
 If logo files do not exist, create them before completing the task.
+
+## Currency Handling Rules
+
+- The app must support only a minimal set of currencies for simplicity and fast UX.
+- Default supported currencies are: JPY, USD, KRW.
+- Additional currencies should NOT be added unless there is a clear user need.
+
+### Exception
+- SGD (Singapore Dollar) is allowed as an additional currency for specific user needs.
+
+### Implementation Rules
+- Currency list must be easily extendable (e.g., using a config or enum structure).
+- Avoid hardcoding logic tied to specific currencies.
+- Keep UI simple and avoid long currency selection lists.
+
+### Principle
+Focus on speed and simplicity over completeness.

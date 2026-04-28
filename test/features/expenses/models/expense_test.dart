@@ -35,8 +35,9 @@ void main() {
       updatedAt: DateTime(2026, 4, 27, 9, 30),
     );
 
-    expect(expense.amountInBaseCurrency, closeTo(1875, 0.0001));
+    expect(expense.amountInBaseCurrency, closeTo(12.5, 0.0001));
     expect(expense.amountForCurrency(AppCurrency.jpy), closeTo(1875, 0.0001));
     expect(expense.amountForCurrency(AppCurrency.krw), closeTo(18750, 0.0001));
+    expect(expense.amountForCurrency(AppCurrency.sgd), closeTo(16.875, 0.0001));
   });
 }

@@ -11,14 +11,19 @@ import 'package:money_days/features/expenses/models/expense.dart';
 import 'package:money_days/features/expenses/models/expense_category.dart';
 import 'package:money_days/features/expenses/repositories/expenses_repository.dart';
 import 'package:money_days/features/expenses/screens/home_screen.dart';
+import 'package:money_days/features/expenses/widgets/summary_card.dart';
 import 'package:money_days/features/review/screens/monthly_review_screen.dart';
+import 'package:money_days/features/settings/models/app_language.dart';
 import 'package:money_days/features/settings/models/app_settings.dart';
 import 'package:money_days/features/settings/repositories/settings_repository.dart';
+import 'package:money_days/features/settings/screens/settings_screen.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 void main() {
   setUpAll(() async {
     await initializeDateFormatting('en');
+    await initializeDateFormatting('ja');
+    await initializeDateFormatting('ko');
   });
 
   testWidgets('renders converted totals, monthly budget, and month selection', (
@@ -58,13 +63,13 @@ void main() {
     await monthlyBudgetsRepository.saveBudgets({
       AppDateUtils.monthKey(today): MonthlyBudget(
         monthKey: AppDateUtils.monthKey(today),
-        amountInBaseCurrency: 30000,
+        amountInBaseCurrency: 200,
         createdAt: today,
         updatedAt: today,
       ),
       AppDateUtils.monthKey(previousMonthDate): MonthlyBudget(
         monthKey: AppDateUtils.monthKey(previousMonthDate),
-        amountInBaseCurrency: 45000,
+        amountInBaseCurrency: 300,
         createdAt: previousMonthDate,
         updatedAt: previousMonthDate,
       ),
@@ -79,12 +84,13 @@ void main() {
       const Locale('en'),
     );
     final currentBudgetAmount = AppFormatters.formatCurrency(
-      AppCurrency.usd.fromBaseAmount(30000),
+      AppCurrency.usd.fromBaseAmount(200),
       AppCurrency.usd,
       const Locale('en'),
     );
+    final currentBudgetProgress = '5% of the budget used';
     final previousBudgetAmount = AppFormatters.formatCurrency(
-      AppCurrency.usd.fromBaseAmount(45000),
+      AppCurrency.usd.fromBaseAmount(300),
       AppCurrency.usd,
       const Locale('en'),
     );
@@ -104,7 +110,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Money Days'), findsOneWidget);
-    expect(find.text('This week'), findsOneWidget);
+    expect(find.byType(SummaryCard), findsOneWidget);
     await tester.scrollUntilVisible(
       find.text(currentBudgetAmount),
       200,
@@ -112,6 +118,7 @@ void main() {
     );
     await tester.pump();
     expect(find.text(currentBudgetAmount), findsOneWidget);
+    expect(find.text(currentBudgetProgress), findsOneWidget);
     await tester.scrollUntilVisible(
       find.text(currentMonthExpense.memo!),
       200,
@@ -149,9 +156,62 @@ void main() {
     expect(find.text('Train pass'), findsOneWidget);
     expect(find.text('Lunch'), findsNothing);
   });
+
+  testWidgets('renders localized settings copy for Japanese and Korean', (
+    tester,
+  ) async {
+    final expensesRepository = InMemoryExpensesRepository();
+    final monthlyBudgetsRepository = InMemoryMonthlyBudgetsRepository();
+    final settingsRepository = InMemorySettingsRepository();
+
+    await settingsRepository.saveSettings(
+      const AppSettings(
+        currency: AppCurrency.jpy,
+        language: AppLanguage.japanese,
+      ),
+    );
+
+    await tester.pumpWidget(
+      _buildTestApp(
+        locale: const Locale('ja'),
+        expensesRepository: expensesRepository,
+        monthlyBudgetsRepository: monthlyBudgetsRepository,
+        settingsRepository: settingsRepository,
+        child: const SettingsScreen(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('設定'), findsOneWidget);
+    expect(find.text('言語'), findsOneWidget);
+    expect(find.text('日本語'), findsWidgets);
+
+    await settingsRepository.saveSettings(
+      const AppSettings(
+        currency: AppCurrency.krw,
+        language: AppLanguage.korean,
+      ),
+    );
+
+    await tester.pumpWidget(
+      _buildTestApp(
+        locale: const Locale('ko'),
+        expensesRepository: expensesRepository,
+        monthlyBudgetsRepository: monthlyBudgetsRepository,
+        settingsRepository: settingsRepository,
+        child: const SettingsScreen(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('설정'), findsOneWidget);
+    expect(find.text('언어'), findsOneWidget);
+    expect(find.text('통화'), findsOneWidget);
+  });
 }
 
 Widget _buildTestApp({
+  Locale locale = const Locale('en'),
   required ExpensesRepository expensesRepository,
   required MonthlyBudgetsRepository monthlyBudgetsRepository,
   required SettingsRepository settingsRepository,
@@ -166,7 +226,7 @@ Widget _buildTestApp({
       settingsRepositoryProvider.overrideWithValue(settingsRepository),
     ],
     child: MaterialApp(
-      locale: const Locale('en'),
+      locale: locale,
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       home: child,

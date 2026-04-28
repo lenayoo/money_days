@@ -1,0 +1,94 @@
+{
+  "@@locale": "ko",
+  "appName": "Money Days",
+  "homeSubtitle": "돈의 흐름을 차분하게 돌아보세요.",
+  "todaySpending": "오늘 합계",
+  "monthSpending": "이번 달 누적",
+  "monthlyBudget": "월 예산",
+  "budgetProgressUsed": "예산의 {percent}%를 사용했어요",
+  "@budgetProgressUsed": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "budgetRemaining": "이번 달 {amount} 남았어요",
+  "@budgetRemaining": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetExceeded": "예산보다 {amount} 더 썼어요",
+  "@budgetExceeded": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetReached": "이번 달 예산을 다 사용했어요",
+  "setThisMonthBudget": "이번 달 예산 설정",
+  "startThisMonthWithBudget": "이번 달은 가벼운 예산으로 시작해 보세요.",
+  "editBudget": "예산 수정",
+  "budgetNotSet": "아직 설정되지 않았어요",
+  "addExpenseSubtitle": "오늘의 작은 기록 하나.",
+  "addTodaySpending": "오늘 지출 추가",
+  "recentExpenses": "최근 기록",
+  "emptyRecentExpenses": "최근 기록이 여기에 표시됩니다.",
+  "monthlyReviewTitle": "월간 돌아보기",
+  "monthlyReviewSubtitle": "이번 달 돈의 흐름을 부드럽게 살펴보세요.",
+  "monthlyTotal": "이번 달 합계",
+  "selectMonth": "월 선택",
+  "categoryBreakdown": "카테고리별",
+  "expenseListTitle": "지출 목록",
+  "noReviewData": "이번 달에 기록된 지출이 아직 없어요.",
+  "topCategoryMessage": "이번 달에는 {category} 지출이 가장 많았어요.",
+  "@topCategoryMessage": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsTitle": "설정",
+  "settingsSubtitle": "단순하고, 조용하게 유지하세요.",
+  "languageSetting": "언어",
+  "currencySetting": "통화",
+  "currencyConversionNote": "표시 환산은 USD 기준 고정 환율을 사용합니다: 1 USD = 150 JPY, 1500 KRW, 1.35 SGD.",
+  "appInfo": "앱 정보",
+  "privacyNote": "개인정보",
+  "privacyMessage": "기록은 이 기기에 저장됩니다.",
+  "appInfoMessage": "Money Days는 일상의 지출을 차분하게 적어 두는 앱입니다.",
+  "addExpenseTitle": "지출 추가",
+  "amountLabel": "금액",
+  "memoLabel": "메모",
+  "memoHint": "선택 메모",
+  "dateLabel": "날짜",
+  "categoryLabel": "카테고리",
+  "saveButton": "저장",
+  "pickDate": "날짜 선택",
+  "savedMessage": "오늘 기록했어요.",
+  "validationAmountRequired": "금액을 입력해 주세요.",
+  "validationAmountInvalid": "올바른 금액을 입력해 주세요.",
+  "navigationHome": "홈",
+  "navigationReview": "리뷰",
+  "navigationSettings": "설정",
+  "languageEnglish": "English",
+  "languageJapanese": "日本語",
+  "languageKorean": "한국어",
+  "currencyJpy": "JPY",
+  "currencyUsd": "USD",
+  "currencyKrw": "KRW",
+  "currencySgd": "SGD",
+  "categoryFood": "식비",
+  "categoryCafe": "카페",
+  "categoryTransport": "교통",
+  "categoryShopping": "쇼핑",
+  "categoryHealth": "건강",
+  "categoryHome": "집",
+  "categorySubscription": "구독",
+  "categoryOther": "기타"
+}

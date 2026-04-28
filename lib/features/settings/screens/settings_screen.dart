@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_days/core/localization/generated/app_localizations.dart';
 import 'package:money_days/core/theme/app_colors.dart';
 
-import '../../../core/localization/app_language.dart';
 import '../../../core/widgets/app_page.dart';
 import '../../../core/widgets/page_intro.dart';
 import '../../../core/widgets/soft_section_card.dart';
 import '../../expenses/models/app_currency.dart';
 import '../controllers/settings_controller.dart';
+import '../models/app_language.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -24,13 +24,12 @@ class SettingsScreen extends ConsumerWidget {
         padding: const EdgeInsets.fromLTRB(20, 24, 20, 128),
         children: [
           PageIntro(
-            eyebrow: settings.currency.code,
+            eyebrow: settings.language.label(l10n),
             title: l10n.settingsTitle,
             subtitle: l10n.settingsSubtitle,
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           _SettingsPanel(
-            icon: Icons.translate_rounded,
             title: l10n.languageSetting,
             child: DropdownButtonFormField<AppLanguage>(
               value: settings.language,
@@ -42,11 +41,12 @@ class SettingsScreen extends ConsumerWidget {
                     child: Text(language.label(l10n)),
                   ),
               ],
-              onChanged: (value) {
+              onChanged: (value) async {
                 if (value == null) {
                   return;
                 }
-                ref
+
+                await ref
                     .read(settingsControllerProvider.notifier)
                     .updateLanguage(value);
               },
@@ -54,7 +54,6 @@ class SettingsScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
           _SettingsPanel(
-            icon: Icons.payments_outlined,
             title: l10n.currencySetting,
             supportingText: l10n.currencyConversionNote,
             child: DropdownButtonFormField<AppCurrency>(
@@ -79,39 +78,34 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 16),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final isWide = constraints.maxWidth >= 720;
-
-              final appInfoCard = _InfoPanel(
-                icon: Icons.auto_awesome_outlined,
-                title: l10n.appInfo,
-                message: l10n.appInfoMessage,
-              );
-              final privacyCard = _InfoPanel(
-                icon: Icons.shield_outlined,
-                title: l10n.privacyNote,
-                message: l10n.privacyMessage,
-              );
-
-              if (!isWide) {
-                return Column(
-                  children: [
-                    appInfoCard,
-                    const SizedBox(height: 16),
-                    privacyCard,
-                  ],
-                );
-              }
-
-              return Row(
-                children: [
-                  Expanded(child: appInfoCard),
-                  const SizedBox(width: 16),
-                  Expanded(child: privacyCard),
-                ],
-              );
-            },
+          SoftSectionCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.privacyNote,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  l10n.privacyMessage,
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 18),
+                  child: Divider(height: 1, color: AppColors.border),
+                ),
+                Text(
+                  l10n.appInfo,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  l10n.appInfoMessage,
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -121,13 +115,11 @@ class SettingsScreen extends ConsumerWidget {
 
 class _SettingsPanel extends StatelessWidget {
   const _SettingsPanel({
-    required this.icon,
     required this.title,
     required this.child,
     this.supportingText,
   });
 
-  final IconData icon;
   final String title;
   final Widget child;
   final String? supportingText;
@@ -138,25 +130,12 @@ class _SettingsPanel extends StatelessWidget {
 
     return SoftSectionCard(
       color: AppColors.surfaceRaised,
-      accentColor: AppColors.accentMuted,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: AppColors.surface.withValues(alpha: 0.88),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Icon(icon, color: AppColors.textPrimary),
-          ),
-          const SizedBox(height: 18),
           Text(title, style: theme.textTheme.titleLarge),
-          const SizedBox(height: 16),
-          child,
           if (supportingText != null) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             Text(
               supportingText!,
               style: theme.textTheme.bodyMedium?.copyWith(
@@ -164,44 +143,8 @@ class _SettingsPanel extends StatelessWidget {
               ),
             ),
           ],
-        ],
-      ),
-    );
-  }
-}
-
-class _InfoPanel extends StatelessWidget {
-  const _InfoPanel({
-    required this.icon,
-    required this.title,
-    required this.message,
-  });
-
-  final IconData icon;
-  final String title;
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return SoftSectionCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              color: AppColors.surfaceRaised,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Icon(icon, color: AppColors.textSecondary),
-          ),
-          const SizedBox(height: 18),
-          Text(title, style: theme.textTheme.titleLarge),
-          const SizedBox(height: 10),
-          Text(message, style: theme.textTheme.bodyLarge),
+          const SizedBox(height: 16),
+          child,
         ],
       ),
     );

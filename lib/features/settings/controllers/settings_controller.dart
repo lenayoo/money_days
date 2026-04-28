@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/localization/app_language.dart';
 import '../../expenses/models/app_currency.dart';
+import '../models/app_language.dart';
 import '../models/app_settings.dart';
 import '../repositories/settings_repository.dart';
 
@@ -16,14 +16,14 @@ class SettingsController extends Notifier<AppSettings> {
     return _repository.loadSettings();
   }
 
-  Future<void> updateLanguage(AppLanguage language) async {
-    final updatedSettings = state.copyWith(language: language);
+  Future<void> updateCurrency(AppCurrency currency) async {
+    final updatedSettings = state.copyWith(currency: currency);
     state = updatedSettings;
     await _repository.saveSettings(updatedSettings);
   }
 
-  Future<void> updateCurrency(AppCurrency currency) async {
-    final updatedSettings = state.copyWith(currency: currency);
+  Future<void> updateLanguage(AppLanguage language) async {
+    final updatedSettings = state.copyWith(language: language);
     state = updatedSettings;
     await _repository.saveSettings(updatedSettings);
   }

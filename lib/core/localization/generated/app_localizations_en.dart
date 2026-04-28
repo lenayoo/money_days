@@ -18,13 +18,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get todaySpending => 'Today\'s total';
 
   @override
-  String get weekSpending => 'This week';
-
-  @override
   String get monthSpending => 'This month so far';
 
   @override
   String get monthlyBudget => 'Monthly budget';
+
+  @override
+  String budgetProgressUsed(int percent) {
+    return '$percent% of the budget used';
+  }
+
+  @override
+  String budgetRemaining(String amount) {
+    return '$amount left for this month';
+  }
+
+  @override
+  String budgetExceeded(String amount) {
+    return '$amount above the budget';
+  }
+
+  @override
+  String get budgetReached => 'This month\'s budget is fully used';
 
   @override
   String get setThisMonthBudget => 'Set this month\'s budget';
@@ -89,7 +104,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get currencySetting => 'Currency';
 
   @override
-  String get currencyConversionNote => 'Uses a fixed display rate: 1 USD = 150 JPY = 1500 KRW.';
+  String get currencyConversionNote => 'Uses fixed USD-based rates: 1 USD = 150 JPY, 1500 KRW, 1.35 SGD.';
 
   @override
   String get appInfo => 'App information';
@@ -146,13 +161,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navigationSettings => 'Settings';
 
   @override
-  String get languageSystem => 'System';
-
-  @override
   String get languageEnglish => 'English';
 
   @override
-  String get languageJapanese => 'Japanese';
+  String get languageJapanese => '日本語';
+
+  @override
+  String get languageKorean => '한국어';
 
   @override
   String get currencyJpy => 'JPY';
@@ -162,6 +177,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get currencyKrw => 'KRW';
+
+  @override
+  String get currencySgd => 'SGD';
 
   @override
   String get categoryFood => 'Food';

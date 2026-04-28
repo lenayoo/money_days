@@ -10,6 +10,7 @@ import '../../../core/widgets/page_intro.dart';
 import '../../../core/widgets/soft_section_card.dart';
 import '../../../core/widgets/tone_pill.dart';
 import '../../budgets/controllers/monthly_budgets_controller.dart';
+import '../../budgets/models/monthly_budget.dart';
 import '../../budgets/widgets/monthly_budget_overview_card.dart';
 import '../../budgets/widgets/monthly_budget_sheet.dart';
 import '../../expenses/controllers/expenses_controller.dart';
@@ -97,9 +98,14 @@ class _MonthlyReviewScreenState extends ConsumerState<MonthlyReviewScreen> {
       anchorMonth: DateTime.now(),
     );
     final selectedMonthBudget = budgets[AppDateUtils.monthKey(_selectedMonth)];
-    final total = settings.currency.fromBaseAmount(
-      ExpenseInsights.totalInBaseForMonth(expenses, _selectedMonth),
+    final hasBudget =
+        selectedMonthBudget != null &&
+        selectedMonthBudget.amountInBaseCurrency > 0;
+    final totalInBase = ExpenseInsights.totalInBaseForMonth(
+      expenses,
+      _selectedMonth,
     );
+    final total = settings.currency.fromBaseAmount(totalInBase);
     final breakdown = ExpenseInsights.categoryTotalsForMonth(
       expenses,
       _selectedMonth,
@@ -114,13 +120,28 @@ class _MonthlyReviewScreenState extends ConsumerState<MonthlyReviewScreen> {
       DateTime.now(),
     );
     final budgetAmount =
-        selectedMonthBudget == null
+        !hasBudget
             ? l10n.budgetNotSet
             : AppFormatters.formatCurrency(
               selectedMonthBudget.amountForCurrency(settings.currency),
               settings.currency,
               locale,
             );
+    final budgetProgress =
+        !hasBudget
+            ? null
+            : totalInBase / selectedMonthBudget.amountInBaseCurrency;
+    final budgetProgressLabel =
+        !hasBudget
+            ? null
+            : l10n.budgetProgressUsed((budgetProgress! * 100).round());
+    final budgetStatusLabel = _buildBudgetStatusLabel(
+      l10n: l10n,
+      locale: locale,
+      currency: settings.currency,
+      totalInBaseCurrency: totalInBase,
+      budget: selectedMonthBudget,
+    );
 
     return AppPage(
       bottomSafeArea: false,
@@ -149,18 +170,16 @@ class _MonthlyReviewScreenState extends ConsumerState<MonthlyReviewScreen> {
             ),
             budgetLabel: l10n.monthlyBudget,
             budgetAmount: budgetAmount,
-            hasBudget: selectedMonthBudget != null,
-            actionLabel:
-                selectedMonthBudget == null
-                    ? l10n.setThisMonthBudget
-                    : l10n.editBudget,
+            hasBudget: hasBudget,
+            actionLabel: hasBudget ? l10n.editBudget : l10n.setThisMonthBudget,
             onActionPressed: () => _openBudgetSheet(context),
+            progress: budgetProgress,
+            progressLabel: budgetProgressLabel,
+            statusLabel: budgetStatusLabel,
             promptTitle:
-                selectedMonthBudget == null && isCurrentMonth
-                    ? l10n.setThisMonthBudget
-                    : null,
+                !hasBudget && isCurrentMonth ? l10n.setThisMonthBudget : null,
             promptSubtitle:
-                selectedMonthBudget == null && isCurrentMonth
+                !hasBudget && isCurrentMonth
                     ? l10n.startThisMonthWithBudget
                     : null,
           ),
@@ -170,19 +189,6 @@ class _MonthlyReviewScreenState extends ConsumerState<MonthlyReviewScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: AppColors.surfaceRaised,
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                    child: const Icon(
-                      Icons.pie_chart_outline_rounded,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                  const SizedBox(height: 18),
                   Text(l10n.noReviewData, style: theme.textTheme.bodyLarge),
                 ],
               ),
@@ -194,27 +200,16 @@ class _MonthlyReviewScreenState extends ConsumerState<MonthlyReviewScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Wrap(
-                    spacing: 10,
-                    runSpacing: 10,
-                    children: [
-                      TonePill(
-                        label: topCategory.category.label(l10n),
-                        icon: topCategory.category.icon,
-                        backgroundColor: Colors.white.withValues(alpha: 0.74),
-                        foregroundColor: AppColors.textPrimary,
-                      ),
-                      TonePill(
-                        label: '${(topCategory.share * 100).round()}%',
-                        backgroundColor: Colors.white.withValues(alpha: 0.74),
-                        foregroundColor: AppColors.textPrimary,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 18),
                   Text(
                     l10n.topCategoryMessage(topCategory.category.label(l10n)),
                     style: theme.textTheme.titleLarge?.copyWith(height: 1.35),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '${AppFormatters.formatCurrency(topCategory.totalForCurrency(settings.currency), settings.currency, locale)} · ${(topCategory.share * 100).round()}%',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                 ],
               ),
@@ -289,23 +284,8 @@ class _MonthSelectorCard extends StatelessWidget {
 
     return SoftSectionCard(
       onTap: onTap,
-      color: AppColors.surfaceRaised,
-      accentColor: AppColors.accentMuted,
       child: Row(
         children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: AppColors.surface.withValues(alpha: 0.88),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: const Icon(
-              Icons.event_note_rounded,
-              color: AppColors.textPrimary,
-            ),
-          ),
-          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -329,6 +309,41 @@ class _MonthSelectorCard extends StatelessWidget {
       ),
     );
   }
+}
+
+String? _buildBudgetStatusLabel({
+  required AppLocalizations l10n,
+  required Locale locale,
+  required AppCurrency currency,
+  required double totalInBaseCurrency,
+  required MonthlyBudget? budget,
+}) {
+  if (budget == null || budget.amountInBaseCurrency <= 0) {
+    return null;
+  }
+
+  final differenceInBaseCurrency =
+      budget.amountInBaseCurrency - totalInBaseCurrency;
+
+  if (differenceInBaseCurrency > 0) {
+    final remainingAmount = AppFormatters.formatCurrency(
+      currency.fromBaseAmount(differenceInBaseCurrency),
+      currency,
+      locale,
+    );
+    return l10n.budgetRemaining(remainingAmount);
+  }
+
+  if (differenceInBaseCurrency < 0) {
+    final exceededAmount = AppFormatters.formatCurrency(
+      currency.fromBaseAmount(-differenceInBaseCurrency),
+      currency,
+      locale,
+    );
+    return l10n.budgetExceeded(exceededAmount);
+  }
+
+  return l10n.budgetReached;
 }
 
 class _MonthSelectionSheet extends StatelessWidget {

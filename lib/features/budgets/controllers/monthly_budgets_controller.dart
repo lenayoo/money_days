@@ -33,6 +33,8 @@ class MonthlyBudgetsController extends Notifier<Map<String, MonthlyBudget>> {
       amountInBaseCurrency: currency.toBaseAmount(amount),
       createdAt: existingBudget?.createdAt ?? now,
       updatedAt: now,
+      enteredAmount: amount,
+      enteredCurrency: currency,
     );
 
     final updatedBudgets = Map<String, MonthlyBudget>.unmodifiable({

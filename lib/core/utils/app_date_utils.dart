@@ -9,13 +9,6 @@ class AppDateUtils {
     return DateTime(date.year, date.month);
   }
 
-  static DateTime startOfWeek(DateTime date) {
-    final normalizedDate = dateOnly(date);
-    return normalizedDate.subtract(
-      Duration(days: normalizedDate.weekday - DateTime.monday),
-    );
-  }
-
   static bool isSameDay(DateTime left, DateTime right) {
     return left.year == right.year &&
         left.month == right.month &&

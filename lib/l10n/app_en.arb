@@ -3,9 +3,33 @@
   "appName": "Money Days",
   "homeSubtitle": "Review your money days calmly.",
   "todaySpending": "Today's total",
-  "weekSpending": "This week",
   "monthSpending": "This month so far",
   "monthlyBudget": "Monthly budget",
+  "budgetProgressUsed": "{percent}% of the budget used",
+  "@budgetProgressUsed": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "budgetRemaining": "{amount} left for this month",
+  "@budgetRemaining": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetExceeded": "{amount} above the budget",
+  "@budgetExceeded": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetReached": "This month's budget is fully used",
   "setThisMonthBudget": "Set this month's budget",
   "startThisMonthWithBudget": "Start this month with a simple budget.",
   "editBudget": "Edit budget",
@@ -33,7 +57,7 @@
   "settingsSubtitle": "Keep things simple and private.",
   "languageSetting": "Language",
   "currencySetting": "Currency",
-  "currencyConversionNote": "Uses a fixed display rate: 1 USD = 150 JPY = 1500 KRW.",
+  "currencyConversionNote": "Uses fixed USD-based rates: 1 USD = 150 JPY, 1500 KRW, 1.35 SGD.",
   "appInfo": "App information",
   "privacyNote": "Privacy",
   "privacyMessage": "Your records are stored on this device.",
@@ -52,12 +76,13 @@
   "navigationHome": "Home",
   "navigationReview": "Review",
   "navigationSettings": "Settings",
-  "languageSystem": "System",
   "languageEnglish": "English",
-  "languageJapanese": "Japanese",
+  "languageJapanese": "日本語",
+  "languageKorean": "한국어",
   "currencyJpy": "JPY",
   "currencyUsd": "USD",
   "currencyKrw": "KRW",
+  "currencySgd": "SGD",
   "categoryFood": "Food",
   "categoryCafe": "Cafe",
   "categoryTransport": "Transport",

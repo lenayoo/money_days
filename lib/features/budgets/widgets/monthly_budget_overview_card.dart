@@ -15,6 +15,9 @@ class MonthlyBudgetOverviewCard extends StatelessWidget {
     required this.hasBudget,
     required this.actionLabel,
     required this.onActionPressed,
+    this.progress,
+    this.progressLabel,
+    this.statusLabel,
     this.promptTitle,
     this.promptSubtitle,
   });
@@ -27,6 +30,9 @@ class MonthlyBudgetOverviewCard extends StatelessWidget {
   final bool hasBudget;
   final String actionLabel;
   final VoidCallback onActionPressed;
+  final double? progress;
+  final String? progressLabel;
+  final String? statusLabel;
   final String? promptTitle;
   final String? promptSubtitle;
 
@@ -40,48 +46,64 @@ class MonthlyBudgetOverviewCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          TonePill(label: monthLabel),
+          const SizedBox(height: 18),
+          Text(
+            totalLabel,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: AppColors.textSecondary,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(totalAmount, style: theme.textTheme.headlineMedium),
+          const SizedBox(height: 18),
           Row(
             children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: AppColors.surface.withValues(alpha: 0.88),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: const Icon(
-                  Icons.calendar_month_rounded,
-                  color: AppColors.textPrimary,
+              Text(
+                budgetLabel,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: AppColors.textSecondary,
                 ),
               ),
               const Spacer(),
-              TonePill(label: monthLabel),
-            ],
-          ),
-          const SizedBox(height: 22),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: _MetricColumn(
-                  label: totalLabel,
-                  value: totalAmount,
-                  emphasized: true,
-                ),
-              ),
-              const SizedBox(width: 18),
-              Container(width: 1, height: 76, color: AppColors.border),
-              const SizedBox(width: 18),
-              Expanded(
-                child: _MetricColumn(
-                  label: budgetLabel,
-                  value: budgetAmount,
-                  emphasized: hasBudget,
-                ),
+              Text(
+                budgetAmount,
+                style:
+                    hasBudget
+                        ? theme.textTheme.titleLarge
+                        : theme.textTheme.titleMedium?.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
               ),
             ],
           ),
-          if (promptTitle != null) ...[
+          if (hasBudget && progress != null) ...[
+            const SizedBox(height: 18),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(999),
+              child: LinearProgressIndicator(
+                value: progress!.clamp(0.0, 1.0),
+                minHeight: 10,
+                backgroundColor: AppColors.surface,
+                valueColor: const AlwaysStoppedAnimation<Color>(
+                  AppColors.accentStrong,
+                ),
+              ),
+            ),
+            if (progressLabel != null) ...[
+              const SizedBox(height: 12),
+              Text(
+                progressLabel!,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ],
+            if (statusLabel != null) ...[
+              const SizedBox(height: 6),
+              Text(statusLabel!, style: theme.textTheme.titleMedium),
+            ],
+          ] else if (promptTitle != null) ...[
             const SizedBox(height: 18),
             Container(
               width: double.infinity,
@@ -108,7 +130,7 @@ class MonthlyBudgetOverviewCard extends StatelessWidget {
               ),
             ),
           ],
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           TextButton.icon(
             onPressed: onActionPressed,
             icon: const Icon(Icons.edit_note_rounded),
@@ -116,45 +138,6 @@ class MonthlyBudgetOverviewCard extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _MetricColumn extends StatelessWidget {
-  const _MetricColumn({
-    required this.label,
-    required this.value,
-    required this.emphasized,
-  });
-
-  final String label;
-  final String value;
-  final bool emphasized;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: AppColors.textSecondary,
-          ),
-        ),
-        const SizedBox(height: 10),
-        Text(
-          value,
-          style:
-              emphasized
-                  ? theme.textTheme.headlineSmall
-                  : theme.textTheme.titleMedium?.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-        ),
-      ],
     );
   }
 }

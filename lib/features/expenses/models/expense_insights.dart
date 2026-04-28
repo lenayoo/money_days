@@ -40,19 +40,6 @@ class ExpenseInsights {
     );
   }
 
-  static double totalInBaseForWeek(List<Expense> expenses, DateTime date) {
-    final startOfWeek = AppDateUtils.startOfWeek(date);
-    final endExclusive = startOfWeek.add(const Duration(days: 7));
-
-    return _sumBaseAmounts(
-      expenses.where((expense) {
-        final expenseDate = AppDateUtils.dateOnly(expense.date);
-        return !expenseDate.isBefore(startOfWeek) &&
-            expenseDate.isBefore(endExclusive);
-      }),
-    );
-  }
-
   static double totalInBaseForMonth(List<Expense> expenses, DateTime date) {
     return _sumBaseAmounts(
       expenses.where((expense) => AppDateUtils.isSameMonth(expense.date, date)),

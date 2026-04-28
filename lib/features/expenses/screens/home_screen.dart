@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_days/core/localization/generated/app_localizations.dart';
 
-import '../../../core/utils/app_date_utils.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/app_date_utils.dart';
 import '../../../core/utils/app_formatters.dart';
 import '../../../core/widgets/app_page.dart';
 import '../../../core/widgets/page_intro.dart';
 import '../../../core/widgets/soft_section_card.dart';
-import '../../../core/widgets/tone_pill.dart';
 import '../../budgets/controllers/monthly_budgets_controller.dart';
+import '../../budgets/models/monthly_budget.dart';
 import '../../budgets/widgets/monthly_budget_overview_card.dart';
 import '../../budgets/widgets/monthly_budget_sheet.dart';
 import '../../settings/controllers/settings_controller.dart';
@@ -34,27 +34,39 @@ class HomeScreen extends ConsumerWidget {
     final budgets = ref.watch(monthlyBudgetsControllerProvider);
 
     final today = DateTime.now();
-    final weekStart = AppDateUtils.startOfWeek(today);
-    final weekEnd = weekStart.add(const Duration(days: 6));
     final monthBudget = budgets[AppDateUtils.monthKey(today)];
+    final hasBudget =
+        monthBudget != null && monthBudget.amountInBaseCurrency > 0;
+    final monthTotalInBase = ExpenseInsights.totalInBaseForMonth(
+      expenses,
+      today,
+    );
     final todayTotal = settings.currency.fromBaseAmount(
       ExpenseInsights.totalInBaseForDay(expenses, today),
     );
-    final weekTotal = settings.currency.fromBaseAmount(
-      ExpenseInsights.totalInBaseForWeek(expenses, today),
-    );
-    final monthTotal = settings.currency.fromBaseAmount(
-      ExpenseInsights.totalInBaseForMonth(expenses, today),
-    );
+    final monthTotal = settings.currency.fromBaseAmount(monthTotalInBase);
     final recentExpenses = ExpenseInsights.recentExpenses(expenses);
     final monthBudgetAmount =
-        monthBudget == null
+        !hasBudget
             ? l10n.budgetNotSet
             : AppFormatters.formatCurrency(
               monthBudget.amountForCurrency(settings.currency),
               settings.currency,
               locale,
             );
+    final budgetProgress =
+        !hasBudget ? null : monthTotalInBase / monthBudget.amountInBaseCurrency;
+    final budgetProgressLabel =
+        !hasBudget
+            ? null
+            : l10n.budgetProgressUsed((budgetProgress! * 100).round());
+    final budgetStatusLabel = _buildBudgetStatusLabel(
+      l10n: l10n,
+      locale: locale,
+      currency: settings.currency,
+      totalInBaseCurrency: monthTotalInBase,
+      budget: monthBudget,
+    );
 
     Future<void> openBudgetSheet() async {
       final enteredAmount = await showMonthlyBudgetSheet(
@@ -97,23 +109,6 @@ class HomeScreen extends ConsumerWidget {
             ),
             supportingText: AppFormatters.formatLongDate(today, locale),
             icon: Icons.wb_sunny_outlined,
-            highlighted: true,
-            accentColor: AppColors.accentMuted,
-          ),
-          const SizedBox(height: 16),
-          SummaryCard(
-            title: l10n.weekSpending,
-            amount: AppFormatters.formatCurrency(
-              weekTotal,
-              settings.currency,
-              locale,
-            ),
-            supportingText: AppFormatters.formatDateRange(
-              weekStart,
-              weekEnd,
-              locale,
-            ),
-            icon: Icons.view_week_rounded,
           ),
           const SizedBox(height: 16),
           MonthlyBudgetOverviewCard(
@@ -126,47 +121,57 @@ class HomeScreen extends ConsumerWidget {
             ),
             budgetLabel: l10n.monthlyBudget,
             budgetAmount: monthBudgetAmount,
-            hasBudget: monthBudget != null,
-            actionLabel:
-                monthBudget == null ? l10n.setThisMonthBudget : l10n.editBudget,
+            hasBudget: hasBudget,
+            actionLabel: hasBudget ? l10n.editBudget : l10n.setThisMonthBudget,
             onActionPressed: openBudgetSheet,
-            promptTitle: monthBudget == null ? l10n.setThisMonthBudget : null,
-            promptSubtitle:
-                monthBudget == null ? l10n.startThisMonthWithBudget : null,
+            progress: budgetProgress,
+            progressLabel: budgetProgressLabel,
+            statusLabel: budgetStatusLabel,
+            promptTitle: hasBudget ? null : l10n.setThisMonthBudget,
+            promptSubtitle: hasBudget ? null : l10n.startThisMonthWithBudget,
           ),
           const SizedBox(height: 16),
           SoftSectionCard(
-            color: AppColors.surfaceRaised,
-            accentColor: AppColors.accentMuted,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 46,
-                  height: 46,
-                  decoration: BoxDecoration(
-                    color: AppColors.surface.withValues(alpha: 0.88),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: const Icon(
-                    Icons.add_rounded,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 22),
-                Text(l10n.addTodaySpending, style: theme.textTheme.titleLarge),
-                const SizedBox(height: 8),
-                Text(
-                  l10n.addExpenseSubtitle,
-                  style: theme.textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 18),
-                FilledButton.icon(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final isNarrow = constraints.maxWidth < 440;
+
+                final actionButton = FilledButton.icon(
                   onPressed: onAddExpense,
                   icon: const Icon(Icons.edit_note_rounded),
                   label: Text(l10n.addTodaySpending),
-                ),
-              ],
+                );
+
+                final copy = Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.addTodaySpending,
+                      style: theme.textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      l10n.addExpenseSubtitle,
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                  ],
+                );
+
+                if (isNarrow) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [copy, const SizedBox(height: 18), actionButton],
+                  );
+                }
+
+                return Row(
+                  children: [
+                    Expanded(child: copy),
+                    const SizedBox(width: 16),
+                    actionButton,
+                  ],
+                );
+              },
             ),
           ),
           const SizedBox(height: 16),
@@ -174,44 +179,14 @@ class HomeScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Text(
-                      l10n.recentExpenses,
-                      style: theme.textTheme.titleLarge,
-                    ),
-                    const Spacer(),
-                    if (recentExpenses.isNotEmpty)
-                      TonePill(label: '${recentExpenses.length}'),
-                  ],
-                ),
+                Text(l10n.recentExpenses, style: theme.textTheme.titleLarge),
                 const SizedBox(height: 18),
                 if (recentExpenses.isEmpty)
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Column(
-                        children: [
-                          Container(
-                            width: 56,
-                            height: 56,
-                            decoration: BoxDecoration(
-                              color: AppColors.surfaceRaised,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: const Icon(
-                              Icons.receipt_long_rounded,
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
-                          const SizedBox(height: 14),
-                          Text(
-                            l10n.emptyRecentExpenses,
-                            style: theme.textTheme.bodyLarge,
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Text(
+                      l10n.emptyRecentExpenses,
+                      style: theme.textTheme.bodyLarge,
                     ),
                   )
                 else
@@ -237,4 +212,39 @@ class HomeScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+String? _buildBudgetStatusLabel({
+  required AppLocalizations l10n,
+  required Locale locale,
+  required AppCurrency currency,
+  required double totalInBaseCurrency,
+  required MonthlyBudget? budget,
+}) {
+  if (budget == null || budget.amountInBaseCurrency <= 0) {
+    return null;
+  }
+
+  final differenceInBaseCurrency =
+      budget.amountInBaseCurrency - totalInBaseCurrency;
+
+  if (differenceInBaseCurrency > 0) {
+    final remainingAmount = AppFormatters.formatCurrency(
+      currency.fromBaseAmount(differenceInBaseCurrency),
+      currency,
+      locale,
+    );
+    return l10n.budgetRemaining(remainingAmount);
+  }
+
+  if (differenceInBaseCurrency < 0) {
+    final exceededAmount = AppFormatters.formatCurrency(
+      currency.fromBaseAmount(-differenceInBaseCurrency),
+      currency,
+      locale,
+    );
+    return l10n.budgetExceeded(exceededAmount);
+  }
+
+  return l10n.budgetReached;
 }

@@ -1,34 +1,43 @@
-import 'package:flutter/material.dart';
-
-import '../../../core/localization/app_language.dart';
 import '../../expenses/models/app_currency.dart';
+import 'app_language.dart';
 
 class AppSettings {
   const AppSettings({
-    this.language = AppLanguage.system,
     this.currency = AppCurrency.jpy,
+    this.language = AppLanguage.english,
   });
 
-  factory AppSettings.fromMap(Map<String, dynamic> map) {
+  factory AppSettings.fromMap(
+    Map<String, dynamic> map, {
+    AppCurrency defaultCurrency = AppCurrency.jpy,
+    AppLanguage defaultLanguage = AppLanguage.english,
+  }) {
+    final rawCurrency = map['currency'] as String?;
+    final rawLanguage = map['language'] as String?;
+
     return AppSettings(
-      language: appLanguageFromStorage(map['language'] as String?),
-      currency: appCurrencyFromStorage(map['currency'] as String?),
+      currency:
+          rawCurrency == null
+              ? defaultCurrency
+              : appCurrencyFromStorage(rawCurrency),
+      language:
+          rawLanguage == null
+              ? defaultLanguage
+              : appLanguageFromStorage(rawLanguage),
     );
   }
 
-  final AppLanguage language;
   final AppCurrency currency;
+  final AppLanguage language;
 
-  Locale? get locale => language.locale;
-
-  AppSettings copyWith({AppLanguage? language, AppCurrency? currency}) {
+  AppSettings copyWith({AppCurrency? currency, AppLanguage? language}) {
     return AppSettings(
-      language: language ?? this.language,
       currency: currency ?? this.currency,
+      language: language ?? this.language,
     );
   }
 
   Map<String, dynamic> toMap() {
-    return {'language': language.name, 'currency': currency.name};
+    return {'currency': currency.name, 'language': language.name};
   }
 }
