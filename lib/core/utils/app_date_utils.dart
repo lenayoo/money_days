@@ -1,3 +1,5 @@
+import 'app_clock.dart';
+
 class AppDateUtils {
   const AppDateUtils._();
 
@@ -29,13 +31,13 @@ class AppDateUtils {
   static DateTime monthFromKey(String key) {
     final parts = key.split('-');
     if (parts.length != 2) {
-      return startOfMonth(DateTime.now());
+      return startOfMonth(AppClock.now());
     }
 
     final year = int.tryParse(parts[0]);
     final month = int.tryParse(parts[1]);
     if (year == null || month == null || month < 1 || month > 12) {
-      return startOfMonth(DateTime.now());
+      return startOfMonth(AppClock.now());
     }
 
     return DateTime(year, month);

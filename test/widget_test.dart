@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:money_days/core/localization/generated/app_localizations.dart';
+import 'package:money_days/core/utils/app_clock.dart';
 import 'package:money_days/core/utils/app_date_utils.dart';
 import 'package:money_days/core/utils/app_formatters.dart';
 import 'package:money_days/features/budgets/models/monthly_budget.dart';
@@ -24,6 +25,10 @@ void main() {
     await initializeDateFormatting('en');
     await initializeDateFormatting('ja');
     await initializeDateFormatting('ko');
+  });
+
+  tearDown(() {
+    AppClock.testNow = null;
   });
 
   testWidgets('renders converted totals, monthly budget, and month selection', (
@@ -207,6 +212,86 @@ void main() {
     expect(find.text('설정'), findsOneWidget);
     expect(find.text('언어'), findsOneWidget);
     expect(find.text('통화'), findsOneWidget);
+  });
+
+  testWidgets('shows April data from review when current date is in May', (
+    tester,
+  ) async {
+    AppClock.testNow = DateTime(2026, 5, 3, 10);
+
+    final aprilDate = DateTime(2026, 4, 28);
+    final mayDate = AppDateUtils.startOfMonth(AppClock.now());
+    final expensesRepository = InMemoryExpensesRepository();
+    final monthlyBudgetsRepository = InMemoryMonthlyBudgetsRepository();
+    final settingsRepository = InMemorySettingsRepository();
+
+    await expensesRepository.saveExpenses([
+      Expense(
+        id: 'expense_april',
+        amount: 3000,
+        category: ExpenseCategory.food,
+        memo: 'April lunch',
+        date: aprilDate,
+        currency: AppCurrency.jpy,
+        createdAt: aprilDate,
+        updatedAt: aprilDate,
+      ),
+    ]);
+    await monthlyBudgetsRepository.saveBudgets({
+      AppDateUtils.monthKey(aprilDate): MonthlyBudget(
+        monthKey: AppDateUtils.monthKey(aprilDate),
+        amountInBaseCurrency: AppCurrency.jpy.toBaseAmount(50000),
+        createdAt: aprilDate,
+        updatedAt: aprilDate,
+        enteredAmount: 50000,
+        enteredCurrency: AppCurrency.jpy,
+      ),
+    });
+    await settingsRepository.saveSettings(
+      const AppSettings(currency: AppCurrency.jpy),
+    );
+
+    final mayLabel = AppFormatters.formatMonthLabel(
+      mayDate,
+      const Locale('en'),
+    );
+    final aprilLabel = AppFormatters.formatMonthLabel(
+      aprilDate,
+      const Locale('en'),
+    );
+    final aprilExpenseAmount = AppFormatters.formatCurrency(
+      3000,
+      AppCurrency.jpy,
+      const Locale('en'),
+    );
+
+    await tester.pumpWidget(
+      _buildTestApp(
+        expensesRepository: expensesRepository,
+        monthlyBudgetsRepository: monthlyBudgetsRepository,
+        settingsRepository: settingsRepository,
+        child: const MonthlyReviewScreen(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(mayLabel), findsWidgets);
+    expect(find.text('April lunch'), findsNothing);
+
+    await tester.tap(find.text('Select month'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(aprilLabel).last);
+    await tester.pumpAndSettle();
+
+    expect(find.text(aprilLabel), findsWidgets);
+    await tester.scrollUntilVisible(
+      find.text('April lunch'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pump();
+    expect(find.text('April lunch'), findsOneWidget);
+    expect(find.text(aprilExpenseAmount), findsWidgets);
   });
 }
 

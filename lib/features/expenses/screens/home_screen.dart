@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_days/core/localization/generated/app_localizations.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/app_clock.dart';
 import '../../../core/utils/app_date_utils.dart';
 import '../../../core/utils/app_formatters.dart';
 import '../../../core/widgets/app_page.dart';
@@ -33,7 +34,7 @@ class HomeScreen extends ConsumerWidget {
     final expenses = ref.watch(expensesControllerProvider);
     final budgets = ref.watch(monthlyBudgetsControllerProvider);
 
-    final today = DateTime.now();
+    final today = AppClock.now();
     final monthBudget = budgets[AppDateUtils.monthKey(today)];
     final hasBudget =
         monthBudget != null && monthBudget.amountInBaseCurrency > 0;

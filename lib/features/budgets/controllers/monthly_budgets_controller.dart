@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/utils/app_clock.dart';
 import '../../../core/utils/app_date_utils.dart';
 import '../../expenses/models/app_currency.dart';
 import '../models/monthly_budget.dart';
@@ -26,7 +27,7 @@ class MonthlyBudgetsController extends Notifier<Map<String, MonthlyBudget>> {
   }) async {
     final monthKey = AppDateUtils.monthKey(month);
     final existingBudget = state[monthKey];
-    final now = DateTime.now();
+    final now = AppClock.now();
 
     final budget = MonthlyBudget(
       monthKey: monthKey,

@@ -1,4 +1,5 @@
 import '../../../core/constants/app_constants.dart';
+import '../../../core/utils/app_clock.dart';
 import '../../../core/utils/app_date_utils.dart';
 import 'app_currency.dart';
 import 'expense.dart';
@@ -60,7 +61,7 @@ class ExpenseInsights {
     DateTime? anchorMonth,
   }) {
     final normalizedMonths = <DateTime>[
-      AppDateUtils.startOfMonth(anchorMonth ?? DateTime.now()),
+      AppDateUtils.startOfMonth(anchorMonth ?? AppClock.now()),
       ...expenses.map((expense) => AppDateUtils.startOfMonth(expense.date)),
       ...budgetMonths.map(AppDateUtils.startOfMonth),
     ];

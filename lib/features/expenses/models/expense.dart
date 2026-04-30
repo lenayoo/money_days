@@ -1,3 +1,4 @@
+import '../../../core/utils/app_clock.dart';
 import 'app_currency.dart';
 import 'expense_category.dart';
 
@@ -20,7 +21,7 @@ class Expense {
     required AppCurrency currency,
     String? memo,
   }) {
-    final now = DateTime.now();
+    final now = AppClock.now();
 
     return Expense(
       id: 'expense_${now.microsecondsSinceEpoch}',
@@ -40,14 +41,14 @@ class Expense {
       amount: (map['amount'] as num?)?.toDouble() ?? 0,
       category: expenseCategoryFromStorage(map['category'] as String?),
       memo: _normalizeMemo(map['memo'] as String?),
-      date: DateTime.tryParse(map['date'] as String? ?? '') ?? DateTime.now(),
+      date: DateTime.tryParse(map['date'] as String? ?? '') ?? AppClock.now(),
       currency: appCurrencyFromStorage(map['currency'] as String?),
       createdAt:
           DateTime.tryParse(map['createdAt'] as String? ?? '') ??
-          DateTime.now(),
+          AppClock.now(),
       updatedAt:
           DateTime.tryParse(map['updatedAt'] as String? ?? '') ??
-          DateTime.now(),
+          AppClock.now(),
     );
   }
 

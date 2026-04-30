@@ -1,3 +1,4 @@
+import '../../../core/utils/app_clock.dart';
 import '../../../core/utils/app_date_utils.dart';
 import '../../expenses/models/app_currency.dart';
 
@@ -36,10 +37,10 @@ class MonthlyBudget {
               : AppCurrency.jpy.toBaseAmount(rawAmountInBaseCurrency),
       createdAt:
           DateTime.tryParse(map['createdAt'] as String? ?? '') ??
-          DateTime.now(),
+          AppClock.now(),
       updatedAt:
           DateTime.tryParse(map['updatedAt'] as String? ?? '') ??
-          DateTime.now(),
+          AppClock.now(),
       enteredAmount: enteredAmount,
       enteredCurrency:
           enteredAmount != null && map[_enteredCurrencyKey] != null

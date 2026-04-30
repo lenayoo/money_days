@@ -5,6 +5,7 @@ import 'package:money_days/core/localization/generated/app_localizations.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/app_clock.dart';
 import '../../../core/utils/app_formatters.dart';
 import '../../../core/widgets/app_page.dart';
 import '../../../core/widgets/page_intro.dart';
@@ -28,7 +29,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
   final _memoController = TextEditingController();
 
   ExpenseCategory _selectedCategory = ExpenseCategory.food;
-  DateTime _selectedDate = DateTime.now();
+  DateTime _selectedDate = AppClock.now();
   bool _isSaving = false;
 
   @override
@@ -44,7 +45,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
       context: context,
       initialDate: _selectedDate,
       firstDate: DateTime(AppConstants.minimumExpenseYear),
-      lastDate: DateTime.now().add(const Duration(days: 3650)),
+      lastDate: AppClock.now().add(const Duration(days: 3650)),
       helpText: l10n.pickDate,
     );
 

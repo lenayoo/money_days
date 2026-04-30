@@ -5,6 +5,7 @@ import 'package:money_days/core/theme/app_colors.dart';
 
 import '../../../core/utils/app_date_utils.dart';
 import '../../../core/utils/app_formatters.dart';
+import '../../../core/utils/app_clock.dart';
 import '../../../core/widgets/app_page.dart';
 import '../../../core/widgets/page_intro.dart';
 import '../../../core/widgets/soft_section_card.dart';
@@ -35,7 +36,7 @@ class _MonthlyReviewScreenState extends ConsumerState<MonthlyReviewScreen> {
   @override
   void initState() {
     super.initState();
-    _selectedMonth = AppDateUtils.startOfMonth(DateTime.now());
+    _selectedMonth = AppDateUtils.startOfMonth(AppClock.now());
   }
 
   Future<void> _selectMonth(BuildContext context, List<DateTime> months) async {
@@ -95,7 +96,7 @@ class _MonthlyReviewScreenState extends ConsumerState<MonthlyReviewScreen> {
     final availableMonths = ExpenseInsights.availableMonths(
       expenses,
       budgetMonths: budgets.values.map((budget) => budget.month),
-      anchorMonth: DateTime.now(),
+      anchorMonth: AppClock.now(),
     );
     final selectedMonthBudget = budgets[AppDateUtils.monthKey(_selectedMonth)];
     final hasBudget =
@@ -117,7 +118,7 @@ class _MonthlyReviewScreenState extends ConsumerState<MonthlyReviewScreen> {
     final topCategory = breakdown.isEmpty ? null : breakdown.first;
     final isCurrentMonth = AppDateUtils.isSameMonth(
       _selectedMonth,
-      DateTime.now(),
+      AppClock.now(),
     );
     final budgetAmount =
         !hasBudget
