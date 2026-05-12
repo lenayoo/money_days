@@ -291,14 +291,6 @@ The app should be App Store / Google Play ready after basic polish.
 
 ## Additional Money Days Features
 
-### Weekly Total
-The Home screen should show this week’s total spending below today’s total.
-
-Suggested order:
-- Today
-- This week
-- This month so far
-
 ### Monthly Budget
 Money Days should support a monthly budget.
 
@@ -415,3 +407,205 @@ If logo files do not exist, create them before completing the task.
 
 ### Principle
 Focus on speed and simplicity over completeness.
+
+## Category Trend and Share Features
+
+Money Days should support simple category-based spending review and sharing.
+
+### Share Feature
+
+Money Days should include a simple share feature.
+
+Users should be able to share:
+- Monthly summary
+- Selected category trend
+- Budget progress
+
+Share content should include:
+- App name: Money Days
+- Selected month
+- Total spending
+- Budget progress if available
+- Category summary if available
+
+Share format:
+- Generate a clean image card for sharing.
+- The share card should follow Verydays design:
+  - soft background
+  - centered layout
+  - simple typography
+  - no unnecessary decoration
+
+Example share text:
+- “My Money Days summary”
+- “This month so far”
+- “Monthly budget progress”
+- “A quiet record of my spending.”
+
+Important:
+- Do not include private memo details by default.
+- Do not expose full expense history in shared content.
+- Sharing should feel safe and minimal.
+
+## Major UI Refactor Direction
+
+Money Days should be refactored into a clean monthly calendar-based money tracking app.
+
+The UI reference direction is:
+- Full monthly calendar view
+- Clear income and expense summary
+- Simple monthly budget overview
+- Category analysis using a pie chart
+- Clean white-based design
+- Minimal, modern, non-AI-generated look
+
+The app should feel like a polished personal finance calendar, not a complex accounting dashboard.
+
+---
+
+## Main Screen: Monthly Calendar View
+
+The main screen should center around a full monthly calendar.
+
+Requirements:
+- Show the selected month at the top.
+- Display a full calendar grid for the month.
+- Show daily expense/income indicators inside each date cell.
+- Keep the calendar clean and readable.
+- Avoid heavy colors and visual clutter.
+
+Top monthly summary should include:
+- Monthly income
+- Monthly expense
+- Monthly budget
+- Remaining budget or budget progress
+
+Example layout:
+
+May 2026
+
+Income: ¥120,000  
+Budget: ¥80,000  
+Expense: ¥53,000  
+
+Remaining: ¥27,000
+
+The monthly budget area should clearly show:
+- Income
+- Monthly budget
+- Monthly spending
+- Remaining amount
+
+Use a simple progress bar to show budget usage.
+
+---
+
+## Add Transaction Screen
+
+The add transaction screen should allow users to add both expense and income.
+
+Required fields:
+- Type: Expense / Income
+- Amount
+- Date
+- Category
+- Payment method optional
+- Memo optional
+
+Design rules:
+- Keep the screen simple.
+- Do not use oversized text.
+- Avoid too many colorful icons.
+- Category selection should be clean and easy to scan.
+- Use simple icons only if they improve usability.
+
+---
+
+## Review / Analysis Screen
+
+The Review screen should focus on simple category analysis.
+
+Use:
+- Pie chart for category breakdown
+- Monthly total
+- Category list with amount and percentage
+
+Do NOT use:
+- Radar chart
+- Star-shaped chart
+- Complex finance dashboard UI
+- Heavy graph decorations
+
+Pie chart rules:
+- Soft colors only
+- Minimal labels
+- Show category name, amount, and percentage
+- Keep the chart readable and calm
+
+Purpose:
+The analysis should help users understand where their money went this month without feeling judged.
+
+---
+
+## Monthly Budget Display
+
+Money Days must support monthly budget tracking.
+
+The monthly budget section must show:
+- Monthly income
+- Monthly budget
+- Monthly expense
+- Remaining budget
+
+Budget calculation:
+- Remaining budget = Monthly budget - Monthly expense
+- Income is shown separately and should not replace budget
+- Budget should be stored per month
+- Past month budgets should remain unchanged
+
+If no budget is set:
+- Show a calm prompt:
+  - “Set monthly budget”
+
+Design:
+- Use white background
+- Use subtle borders or soft cards
+- Use a simple progress bar
+- Avoid aggressive warning colors
+
+---
+
+## Visual Design Refactor
+
+Refactor the entire app to a clean white-based design.
+
+Use:
+- White background
+- Dark neutral text
+- Light gray secondary text
+- Very soft accent colors
+- Minimal cards
+- Subtle dividers
+
+Avoid:
+- Dark theme as default
+- Heavy gray/yellow theme
+- Oversized typography
+- AI-generated looking UI
+- Too many decorative icons
+- Strong shadows
+- Strong gradients
+
+Typography:
+- Use smaller, refined font sizes
+- Large numbers should be readable but not huge
+- Section titles should be calm and minimal
+- Keep spacing consistent
+
+The app should feel:
+- clean
+- calm
+- modern
+- human-made
+- polished
+- App Store ready

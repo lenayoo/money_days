@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:money_days/core/localization/generated/app_localizations.dart';
 
+import 'transaction_type.dart';
+
 enum ExpenseCategory {
   food,
   cafe,
@@ -9,6 +11,10 @@ enum ExpenseCategory {
   health,
   home,
   subscription,
+  salary,
+  bonus,
+  gift,
+  refund,
   other,
 }
 
@@ -21,29 +27,41 @@ extension ExpenseCategoryX on ExpenseCategory {
     ExpenseCategory.health => Icons.favorite_rounded,
     ExpenseCategory.home => Icons.home_rounded,
     ExpenseCategory.subscription => Icons.repeat_rounded,
+    ExpenseCategory.salary => Icons.account_balance_wallet_rounded,
+    ExpenseCategory.bonus => Icons.auto_awesome_rounded,
+    ExpenseCategory.gift => Icons.card_giftcard_rounded,
+    ExpenseCategory.refund => Icons.undo_rounded,
     ExpenseCategory.other => Icons.more_horiz_rounded,
   };
 
   Color get color => switch (this) {
-    ExpenseCategory.food => const Color(0xFFB97B59),
-    ExpenseCategory.cafe => const Color(0xFF9C765F),
-    ExpenseCategory.transport => const Color(0xFF6D8897),
-    ExpenseCategory.shopping => const Color(0xFF8D6E93),
-    ExpenseCategory.health => const Color(0xFFB56F73),
-    ExpenseCategory.home => const Color(0xFF8A8163),
-    ExpenseCategory.subscription => const Color(0xFF6D7B6B),
-    ExpenseCategory.other => const Color(0xFF8A827B),
+    ExpenseCategory.food => const Color(0xFF7E746B),
+    ExpenseCategory.cafe => const Color(0xFF7B706D),
+    ExpenseCategory.transport => const Color(0xFF6F7C86),
+    ExpenseCategory.shopping => const Color(0xFF7B7680),
+    ExpenseCategory.health => const Color(0xFF87747A),
+    ExpenseCategory.home => const Color(0xFF7A7871),
+    ExpenseCategory.subscription => const Color(0xFF707C76),
+    ExpenseCategory.salary => const Color(0xFF6E8572),
+    ExpenseCategory.bonus => const Color(0xFF7C8668),
+    ExpenseCategory.gift => const Color(0xFF73858C),
+    ExpenseCategory.refund => const Color(0xFF6D877D),
+    ExpenseCategory.other => const Color(0xFF88888C),
   };
 
   Color get surfaceColor => switch (this) {
-    ExpenseCategory.food => const Color(0xFFF4E5DA),
-    ExpenseCategory.cafe => const Color(0xFFF1E4DC),
-    ExpenseCategory.transport => const Color(0xFFE3EDF1),
-    ExpenseCategory.shopping => const Color(0xFFEEE4F1),
-    ExpenseCategory.health => const Color(0xFFF4E2E4),
-    ExpenseCategory.home => const Color(0xFFEFEBE0),
-    ExpenseCategory.subscription => const Color(0xFFE5ECE4),
-    ExpenseCategory.other => const Color(0xFFECE9E5),
+    ExpenseCategory.food => const Color(0xFFF3F0ED),
+    ExpenseCategory.cafe => const Color(0xFFF3F0EF),
+    ExpenseCategory.transport => const Color(0xFFEEF2F4),
+    ExpenseCategory.shopping => const Color(0xFFF1EFF3),
+    ExpenseCategory.health => const Color(0xFFF4EFF1),
+    ExpenseCategory.home => const Color(0xFFF3F2EF),
+    ExpenseCategory.subscription => const Color(0xFFEEF3F0),
+    ExpenseCategory.salary => const Color(0xFFF2F6F1),
+    ExpenseCategory.bonus => const Color(0xFFF5F6EE),
+    ExpenseCategory.gift => const Color(0xFFF0F5F6),
+    ExpenseCategory.refund => const Color(0xFFF0F6F4),
+    ExpenseCategory.other => const Color(0xFFF4F4F5),
   };
 
   String label(AppLocalizations l10n) => switch (this) {
@@ -54,7 +72,42 @@ extension ExpenseCategoryX on ExpenseCategory {
     ExpenseCategory.health => l10n.categoryHealth,
     ExpenseCategory.home => l10n.categoryHome,
     ExpenseCategory.subscription => l10n.categorySubscription,
+    ExpenseCategory.salary => l10n.categorySalary,
+    ExpenseCategory.bonus => l10n.categoryBonus,
+    ExpenseCategory.gift => l10n.categoryGift,
+    ExpenseCategory.refund => l10n.categoryRefund,
     ExpenseCategory.other => l10n.categoryOther,
+  };
+
+  bool supportsType(TransactionType type) => switch (type) {
+    TransactionType.expense => switch (this) {
+      ExpenseCategory.food ||
+      ExpenseCategory.cafe ||
+      ExpenseCategory.transport ||
+      ExpenseCategory.shopping ||
+      ExpenseCategory.health ||
+      ExpenseCategory.home ||
+      ExpenseCategory.subscription ||
+      ExpenseCategory.other => true,
+      ExpenseCategory.salary ||
+      ExpenseCategory.bonus ||
+      ExpenseCategory.gift ||
+      ExpenseCategory.refund => false,
+    },
+    TransactionType.income => switch (this) {
+      ExpenseCategory.salary ||
+      ExpenseCategory.bonus ||
+      ExpenseCategory.gift ||
+      ExpenseCategory.refund ||
+      ExpenseCategory.other => true,
+      ExpenseCategory.food ||
+      ExpenseCategory.cafe ||
+      ExpenseCategory.transport ||
+      ExpenseCategory.shopping ||
+      ExpenseCategory.health ||
+      ExpenseCategory.home ||
+      ExpenseCategory.subscription => false,
+    },
   };
 }
 
@@ -63,4 +116,11 @@ ExpenseCategory expenseCategoryFromStorage(String? value) {
     (category) => category.name == value,
     orElse: () => ExpenseCategory.other,
   );
+}
+
+List<ExpenseCategory> expenseCategoriesForType(TransactionType type) {
+  return [
+    for (final category in ExpenseCategory.values)
+      if (category.supportsType(type)) category,
+  ];
 }

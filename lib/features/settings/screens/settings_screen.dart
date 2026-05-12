@@ -4,7 +4,7 @@ import 'package:money_days/core/localization/generated/app_localizations.dart';
 import 'package:money_days/core/theme/app_colors.dart';
 
 import '../../../core/widgets/app_page.dart';
-import '../../../core/widgets/page_intro.dart';
+import '../../../core/widgets/round_icon_button.dart';
 import '../../../core/widgets/soft_section_card.dart';
 import '../../expenses/models/app_currency.dart';
 import '../controllers/settings_controller.dart';
@@ -16,98 +16,97 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
     final settings = ref.watch(settingsControllerProvider);
 
-    return AppPage(
-      bottomSafeArea: false,
-      child: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 24, 20, 128),
-        children: [
-          PageIntro(
-            eyebrow: settings.language.label(l10n),
-            title: l10n.settingsTitle,
-            subtitle: l10n.settingsSubtitle,
-          ),
-          const SizedBox(height: 16),
-          _SettingsPanel(
-            title: l10n.languageSetting,
-            child: DropdownButtonFormField<AppLanguage>(
-              value: settings.language,
-              decoration: const InputDecoration(),
-              items: [
-                for (final language in AppLanguage.values)
-                  DropdownMenuItem(
-                    value: language,
-                    child: Text(language.label(l10n)),
-                  ),
-              ],
-              onChanged: (value) async {
-                if (value == null) {
-                  return;
-                }
-
-                await ref
-                    .read(settingsControllerProvider.notifier)
-                    .updateLanguage(value);
-              },
-            ),
-          ),
-          const SizedBox(height: 16),
-          _SettingsPanel(
-            title: l10n.currencySetting,
-            supportingText: l10n.currencyConversionNote,
-            child: DropdownButtonFormField<AppCurrency>(
-              value: settings.currency,
-              decoration: const InputDecoration(),
-              items: [
-                for (final currency in AppCurrency.values)
-                  DropdownMenuItem(
-                    value: currency,
-                    child: Text(currency.label(l10n)),
-                  ),
-              ],
-              onChanged: (value) async {
-                if (value == null) {
-                  return;
-                }
-
-                await ref
-                    .read(settingsControllerProvider.notifier)
-                    .updateCurrency(value);
-              },
-            ),
-          ),
-          const SizedBox(height: 16),
-          SoftSectionCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: AppPage(
+        bottomSafeArea: false,
+        maxWidth: 520,
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
+          children: [
+            Row(
               children: [
-                Text(
-                  l10n.privacyNote,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  l10n.privacyMessage,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 18),
-                  child: Divider(height: 1, color: AppColors.border),
-                ),
-                Text(
-                  l10n.appInfo,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  l10n.appInfoMessage,
-                  style: Theme.of(context).textTheme.bodyLarge,
+                RoundIconButton(
+                  icon: Icons.close_rounded,
+                  onPressed: () => Navigator.of(context).maybePop(),
                 ),
               ],
             ),
-          ),
-        ],
+            const SizedBox(height: 24),
+            Text(l10n.settingsTitle, style: theme.textTheme.headlineMedium),
+            const SizedBox(height: 6),
+            Text(l10n.settingsSubtitle, style: theme.textTheme.bodyLarge),
+            const SizedBox(height: 20),
+            _SettingsPanel(
+              title: l10n.languageSetting,
+              child: DropdownButtonFormField<AppLanguage>(
+                value: settings.language,
+                items: [
+                  for (final language in AppLanguage.values)
+                    DropdownMenuItem(
+                      value: language,
+                      child: Text(language.label(l10n)),
+                    ),
+                ],
+                onChanged: (value) async {
+                  if (value == null) {
+                    return;
+                  }
+
+                  await ref
+                      .read(settingsControllerProvider.notifier)
+                      .updateLanguage(value);
+                },
+              ),
+            ),
+            const SizedBox(height: 14),
+            _SettingsPanel(
+              title: l10n.currencySetting,
+              supportingText: l10n.currencyConversionNote,
+              child: DropdownButtonFormField<AppCurrency>(
+                value: settings.currency,
+                items: [
+                  for (final currency in AppCurrency.values)
+                    DropdownMenuItem(
+                      value: currency,
+                      child: Text(currency.label(l10n)),
+                    ),
+                ],
+                onChanged: (value) async {
+                  if (value == null) {
+                    return;
+                  }
+
+                  await ref
+                      .read(settingsControllerProvider.notifier)
+                      .updateCurrency(value);
+                },
+              ),
+            ),
+            const SizedBox(height: 14),
+            SoftSectionCard(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(l10n.privacyNote, style: theme.textTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(l10n.privacyMessage, style: theme.textTheme.bodyLarge),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 18),
+                    child: Divider(height: 1, color: AppColors.border),
+                  ),
+                  Text(l10n.appInfo, style: theme.textTheme.titleLarge),
+                  const SizedBox(height: 8),
+                  Text(l10n.appInfoMessage, style: theme.textTheme.bodyLarge),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -129,13 +128,13 @@ class _SettingsPanel extends StatelessWidget {
     final theme = Theme.of(context);
 
     return SoftSectionCard(
-      color: AppColors.surfaceRaised,
+      padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(title, style: theme.textTheme.titleLarge),
           if (supportingText != null) ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             Text(
               supportingText!,
               style: theme.textTheme.bodyMedium?.copyWith(
@@ -143,7 +142,7 @@ class _SettingsPanel extends StatelessWidget {
               ),
             ),
           ],
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
           child,
         ],
       ),

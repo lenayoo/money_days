@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:money_days/core/localization/generated/app_localizations.dart';
+import 'package:money_days/core/theme/app_theme.dart';
 import 'package:money_days/core/utils/app_clock.dart';
 import 'package:money_days/core/utils/app_date_utils.dart';
 import 'package:money_days/core/utils/app_formatters.dart';
@@ -10,15 +12,15 @@ import 'package:money_days/features/budgets/repositories/monthly_budgets_reposit
 import 'package:money_days/features/expenses/models/app_currency.dart';
 import 'package:money_days/features/expenses/models/expense.dart';
 import 'package:money_days/features/expenses/models/expense_category.dart';
+import 'package:money_days/features/expenses/models/payment_method.dart';
+import 'package:money_days/features/expenses/models/transaction_type.dart';
 import 'package:money_days/features/expenses/repositories/expenses_repository.dart';
 import 'package:money_days/features/expenses/screens/home_screen.dart';
-import 'package:money_days/features/expenses/widgets/summary_card.dart';
 import 'package:money_days/features/review/screens/monthly_review_screen.dart';
 import 'package:money_days/features/settings/models/app_language.dart';
 import 'package:money_days/features/settings/models/app_settings.dart';
 import 'package:money_days/features/settings/repositories/settings_repository.dart';
 import 'package:money_days/features/settings/screens/settings_screen.dart';
-import 'package:intl/date_symbol_data_local.dart';
 
 void main() {
   setUpAll(() async {
@@ -31,77 +33,51 @@ void main() {
     AppClock.testNow = null;
   });
 
-  testWidgets('renders converted totals, monthly budget, and month selection', (
+  testWidgets('home screen shows month summary, calendar, and records', (
     tester,
   ) async {
-    final today = DateTime.now();
-    final currentMonthExpense = Expense(
-      id: 'expense_current',
-      amount: 1500,
-      category: ExpenseCategory.food,
-      memo: 'Lunch',
-      date: DateTime(today.year, today.month, today.day),
-      currency: AppCurrency.jpy,
-      createdAt: today,
-      updatedAt: today,
-    );
-    final previousMonthDate = DateTime(today.year, today.month - 1, 12);
-    final previousMonthExpense = Expense(
-      id: 'expense_previous',
-      amount: 3000,
-      category: ExpenseCategory.transport,
-      memo: 'Train pass',
-      date: previousMonthDate,
-      currency: AppCurrency.jpy,
-      createdAt: previousMonthDate,
-      updatedAt: previousMonthDate,
-    );
+    AppClock.testNow = DateTime(2026, 5, 3, 10);
 
+    final mayDate = DateTime(2026, 5, 3);
     final expensesRepository = InMemoryExpensesRepository();
     final monthlyBudgetsRepository = InMemoryMonthlyBudgetsRepository();
     final settingsRepository = InMemorySettingsRepository();
 
     await expensesRepository.saveExpenses([
-      currentMonthExpense,
-      previousMonthExpense,
+      Expense(
+        id: 'expense_may',
+        type: TransactionType.expense,
+        amount: 1500,
+        category: ExpenseCategory.food,
+        memo: 'Lunch',
+        date: mayDate,
+        currency: AppCurrency.jpy,
+        createdAt: mayDate,
+        updatedAt: mayDate,
+        paymentMethod: PaymentMethod.card,
+      ),
+      Expense(
+        id: 'income_may',
+        type: TransactionType.income,
+        amount: 300,
+        category: ExpenseCategory.salary,
+        memo: 'Salary',
+        date: DateTime(2026, 5, 1),
+        currency: AppCurrency.usd,
+        createdAt: DateTime(2026, 5, 1, 9),
+        updatedAt: DateTime(2026, 5, 1, 9),
+      ),
     ]);
     await monthlyBudgetsRepository.saveBudgets({
-      AppDateUtils.monthKey(today): MonthlyBudget(
-        monthKey: AppDateUtils.monthKey(today),
+      AppDateUtils.monthKey(mayDate): MonthlyBudget(
+        monthKey: AppDateUtils.monthKey(mayDate),
         amountInBaseCurrency: 200,
-        createdAt: today,
-        updatedAt: today,
-      ),
-      AppDateUtils.monthKey(previousMonthDate): MonthlyBudget(
-        monthKey: AppDateUtils.monthKey(previousMonthDate),
-        amountInBaseCurrency: 300,
-        createdAt: previousMonthDate,
-        updatedAt: previousMonthDate,
+        createdAt: mayDate,
+        updatedAt: mayDate,
       ),
     });
     await settingsRepository.saveSettings(
       const AppSettings(currency: AppCurrency.usd),
-    );
-
-    final currentExpenseAmount = AppFormatters.formatCurrency(
-      currentMonthExpense.amountForCurrency(AppCurrency.usd),
-      AppCurrency.usd,
-      const Locale('en'),
-    );
-    final currentBudgetAmount = AppFormatters.formatCurrency(
-      AppCurrency.usd.fromBaseAmount(200),
-      AppCurrency.usd,
-      const Locale('en'),
-    );
-    final currentBudgetProgress = '5% of the budget used';
-    final previousBudgetAmount = AppFormatters.formatCurrency(
-      AppCurrency.usd.fromBaseAmount(300),
-      AppCurrency.usd,
-      const Locale('en'),
-    );
-    final previousMonthLabel = AppFormatters.formatMonthLabel(
-      previousMonthDate,
-      const Locale('en'),
     );
 
     await tester.pumpWidget(
@@ -109,29 +85,77 @@ void main() {
         expensesRepository: expensesRepository,
         monthlyBudgetsRepository: monthlyBudgetsRepository,
         settingsRepository: settingsRepository,
-        child: HomeScreen(onAddExpense: () {}),
+        child: HomeScreen(
+          onAddTransaction: _noop,
+          onOpenReview: _noop,
+          onOpenSettings: _noop,
+          onOpenDay: _noopDay,
+        ),
       ),
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Money Days'), findsOneWidget);
-    expect(find.byType(SummaryCard), findsOneWidget);
-    await tester.scrollUntilVisible(
-      find.text(currentBudgetAmount),
-      200,
-      scrollable: find.byType(Scrollable).first,
+    expect(find.text('May'), findsOneWidget);
+    expect(find.text('\$300.00'), findsWidgets);
+    expect(find.text('\$10.00'), findsWidgets);
+    expect(find.text('\$200.00'), findsOneWidget);
+    expect(find.text('\$190.00'), findsOneWidget);
+    expect(find.byIcon(Icons.edit_outlined), findsOneWidget);
+  });
+
+  testWidgets('review screen switches months and updates records', (
+    tester,
+  ) async {
+    AppClock.testNow = DateTime(2026, 5, 3, 10);
+
+    final aprilDate = DateTime(2026, 4, 28);
+    final mayDate = DateTime(2026, 5, 2);
+    final expensesRepository = InMemoryExpensesRepository();
+    final monthlyBudgetsRepository = InMemoryMonthlyBudgetsRepository();
+    final settingsRepository = InMemorySettingsRepository();
+
+    await expensesRepository.saveExpenses([
+      Expense(
+        id: 'expense_april',
+        type: TransactionType.expense,
+        amount: 3000,
+        category: ExpenseCategory.food,
+        memo: 'April lunch',
+        date: aprilDate,
+        currency: AppCurrency.jpy,
+        createdAt: aprilDate,
+        updatedAt: aprilDate,
+      ),
+      Expense(
+        id: 'expense_may',
+        type: TransactionType.expense,
+        amount: 2400,
+        category: ExpenseCategory.cafe,
+        memo: 'May coffee',
+        date: mayDate,
+        currency: AppCurrency.jpy,
+        createdAt: mayDate,
+        updatedAt: mayDate,
+      ),
+    ]);
+    await monthlyBudgetsRepository.saveBudgets({
+      AppDateUtils.monthKey(aprilDate): MonthlyBudget(
+        monthKey: AppDateUtils.monthKey(aprilDate),
+        amountInBaseCurrency: AppCurrency.jpy.toBaseAmount(50000),
+        createdAt: aprilDate,
+        updatedAt: aprilDate,
+        enteredAmount: 50000,
+        enteredCurrency: AppCurrency.jpy,
+      ),
+    });
+    await settingsRepository.saveSettings(
+      const AppSettings(currency: AppCurrency.jpy),
     );
-    await tester.pump();
-    expect(find.text(currentBudgetAmount), findsOneWidget);
-    expect(find.text(currentBudgetProgress), findsOneWidget);
-    await tester.scrollUntilVisible(
-      find.text(currentMonthExpense.memo!),
-      200,
-      scrollable: find.byType(Scrollable).first,
+
+    final aprilLabel = AppFormatters.formatMonthLabel(
+      aprilDate,
+      const Locale('en'),
     );
-    await tester.pump();
-    expect(find.text(currentMonthExpense.memo!), findsOneWidget);
-    expect(find.text(currentExpenseAmount), findsWidgets);
 
     await tester.pumpWidget(
       _buildTestApp(
@@ -143,26 +167,21 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Monthly review'), findsOneWidget);
-    expect(find.text(currentBudgetAmount), findsOneWidget);
+    expect(find.text('Monthly'), findsOneWidget);
+    expect(find.text('Spending by category'), findsOneWidget);
+    expect(find.text('¥2,400'), findsOneWidget);
 
-    await tester.tap(find.text('Select month'));
+    await tester.tap(find.text(AppFormatters.formatMonthLabel(mayDate, const Locale('en'))));
     await tester.pumpAndSettle();
-    await tester.tap(find.text(previousMonthLabel).last);
+    await tester.tap(find.text(aprilLabel).last);
     await tester.pumpAndSettle();
 
-    expect(find.text(previousBudgetAmount), findsOneWidget);
-    await tester.scrollUntilVisible(
-      find.text('Train pass'),
-      200,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.pump();
-    expect(find.text('Train pass'), findsOneWidget);
-    expect(find.text('Lunch'), findsNothing);
+    expect(find.text('¥3,000'), findsOneWidget);
+    expect(find.text('¥2,400'), findsNothing);
+    expect(find.textContaining('¥47,000'), findsOneWidget);
   });
 
-  testWidgets('renders localized settings copy for Japanese and Korean', (
+  testWidgets('settings stays localized for Japanese and Korean', (
     tester,
   ) async {
     final expensesRepository = InMemoryExpensesRepository();
@@ -189,7 +208,7 @@ void main() {
 
     expect(find.text('設定'), findsOneWidget);
     expect(find.text('言語'), findsOneWidget);
-    expect(find.text('日本語'), findsWidgets);
+    expect(find.text('通貨'), findsOneWidget);
 
     await settingsRepository.saveSettings(
       const AppSettings(
@@ -213,86 +232,6 @@ void main() {
     expect(find.text('언어'), findsOneWidget);
     expect(find.text('통화'), findsOneWidget);
   });
-
-  testWidgets('shows April data from review when current date is in May', (
-    tester,
-  ) async {
-    AppClock.testNow = DateTime(2026, 5, 3, 10);
-
-    final aprilDate = DateTime(2026, 4, 28);
-    final mayDate = AppDateUtils.startOfMonth(AppClock.now());
-    final expensesRepository = InMemoryExpensesRepository();
-    final monthlyBudgetsRepository = InMemoryMonthlyBudgetsRepository();
-    final settingsRepository = InMemorySettingsRepository();
-
-    await expensesRepository.saveExpenses([
-      Expense(
-        id: 'expense_april',
-        amount: 3000,
-        category: ExpenseCategory.food,
-        memo: 'April lunch',
-        date: aprilDate,
-        currency: AppCurrency.jpy,
-        createdAt: aprilDate,
-        updatedAt: aprilDate,
-      ),
-    ]);
-    await monthlyBudgetsRepository.saveBudgets({
-      AppDateUtils.monthKey(aprilDate): MonthlyBudget(
-        monthKey: AppDateUtils.monthKey(aprilDate),
-        amountInBaseCurrency: AppCurrency.jpy.toBaseAmount(50000),
-        createdAt: aprilDate,
-        updatedAt: aprilDate,
-        enteredAmount: 50000,
-        enteredCurrency: AppCurrency.jpy,
-      ),
-    });
-    await settingsRepository.saveSettings(
-      const AppSettings(currency: AppCurrency.jpy),
-    );
-
-    final mayLabel = AppFormatters.formatMonthLabel(
-      mayDate,
-      const Locale('en'),
-    );
-    final aprilLabel = AppFormatters.formatMonthLabel(
-      aprilDate,
-      const Locale('en'),
-    );
-    final aprilExpenseAmount = AppFormatters.formatCurrency(
-      3000,
-      AppCurrency.jpy,
-      const Locale('en'),
-    );
-
-    await tester.pumpWidget(
-      _buildTestApp(
-        expensesRepository: expensesRepository,
-        monthlyBudgetsRepository: monthlyBudgetsRepository,
-        settingsRepository: settingsRepository,
-        child: const MonthlyReviewScreen(),
-      ),
-    );
-    await tester.pumpAndSettle();
-
-    expect(find.text(mayLabel), findsWidgets);
-    expect(find.text('April lunch'), findsNothing);
-
-    await tester.tap(find.text('Select month'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text(aprilLabel).last);
-    await tester.pumpAndSettle();
-
-    expect(find.text(aprilLabel), findsWidgets);
-    await tester.scrollUntilVisible(
-      find.text('April lunch'),
-      200,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.pump();
-    expect(find.text('April lunch'), findsOneWidget);
-    expect(find.text(aprilExpenseAmount), findsWidgets);
-  });
 }
 
 Widget _buildTestApp({
@@ -311,6 +250,7 @@ Widget _buildTestApp({
       settingsRepositoryProvider.overrideWithValue(settingsRepository),
     ],
     child: MaterialApp(
+      theme: AppTheme.light(),
       locale: locale,
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -318,3 +258,7 @@ Widget _buildTestApp({
     ),
   );
 }
+
+void _noop() {}
+
+void _noopDay(DateTime _) {}

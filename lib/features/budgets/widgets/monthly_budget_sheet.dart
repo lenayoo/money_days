@@ -99,20 +99,20 @@ class _MonthlyBudgetSheetState extends State<_MonthlyBudgetSheet> {
           key: _formKey,
           child: SoftSectionCard(
             color: AppColors.surface,
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(22),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(title, style: theme.textTheme.headlineSmall),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
                 Text(
                   AppFormatters.formatMonthLabel(widget.month, locale),
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: AppColors.textSecondary,
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 20),
                 Text(l10n.monthlyBudget, style: theme.textTheme.bodyMedium),
                 const SizedBox(height: 10),
                 TextFormField(
@@ -126,7 +126,7 @@ class _MonthlyBudgetSheetState extends State<_MonthlyBudgetSheet> {
                   ],
                   style: theme.textTheme.displaySmall?.copyWith(
                     color: AppColors.textPrimary,
-                    fontSize: 38,
+                    fontSize: 34,
                   ),
                   decoration: InputDecoration(
                     filled: false,
@@ -153,12 +153,8 @@ class _MonthlyBudgetSheetState extends State<_MonthlyBudgetSheet> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 20),
-                FilledButton.icon(
-                  onPressed: _save,
-                  icon: const Icon(Icons.check_rounded),
-                  label: Text(l10n.saveButton),
-                ),
+                const SizedBox(height: 18),
+                FilledButton(onPressed: _save, child: Text(l10n.saveButton)),
               ],
             ),
           ),

@@ -5,6 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:money_days/features/expenses/models/app_currency.dart';
 import 'package:money_days/features/expenses/models/expense.dart';
 import 'package:money_days/features/expenses/models/expense_category.dart';
+import 'package:money_days/features/expenses/models/transaction_type.dart';
 import 'package:money_days/features/expenses/repositories/expenses_repository.dart';
 
 void main() {
@@ -35,6 +36,7 @@ void main() {
       final createdAt = DateTime(2026, 4, 27, 8, 45);
       final expense = Expense(
         id: 'expense_42',
+        type: TransactionType.expense,
         amount: 2400,
         category: ExpenseCategory.food,
         memo: 'Lunch set',

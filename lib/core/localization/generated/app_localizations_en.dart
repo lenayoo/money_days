@@ -12,13 +12,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appName => 'Money Days';
 
   @override
-  String get todaySpending => 'Today\'s total';
+  String get homeSubtitle => 'A quiet view of this month.';
 
   @override
-  String get monthSpending => 'This month so far';
+  String get monthlyIncome => 'Income';
+
+  @override
+  String get monthlyExpense => 'Expense';
 
   @override
   String get monthlyBudget => 'Monthly budget';
+
+  @override
+  String get remainingBudget => 'Remaining';
 
   @override
   String budgetProgressUsed(int percent) {
@@ -51,31 +57,48 @@ class AppLocalizationsEn extends AppLocalizations {
   String get budgetNotSet => 'Not set yet';
 
   @override
-  String get addTodaySpending => 'Add today\'s spending';
+  String get monthlyCalendarTitle => 'Monthly calendar';
 
   @override
-  String get recentExpenses => 'Recent spending';
+  String get recentTransactions => 'Recent records';
 
   @override
-  String get emptyRecentExpenses => 'Recent records will appear here.';
+  String get emptyMonthTransactions => 'No records for this month yet.';
 
   @override
   String get monthlyReviewTitle => 'Monthly review';
 
   @override
-  String get monthlyTotal => 'Monthly total';
+  String get monthlyReviewSubtitle => 'See the month in a calm, simple way.';
+
+  @override
+  String get monthlyPeriodLabel => 'Monthly';
 
   @override
   String get selectMonth => 'Select month';
 
   @override
-  String get categoryBreakdown => 'By category';
+  String get monthTransactions => 'Monthly records';
 
   @override
-  String get expenseListTitle => 'Spending list';
+  String get spendingByCategory => 'Spending by category';
+
+  @override
+  String get incomeByCategory => 'Income by category';
+
+  @override
+  String get noCategoryData => 'No category records this month.';
 
   @override
   String get noReviewData => 'No spending recorded this month.';
+
+  @override
+  String get emptyDayTransactions => 'No records for this day yet.';
+
+  @override
+  String recordCount(int count) {
+    return '$count record';
+  }
 
   @override
   String topCategoryMessage(String category) {
@@ -86,7 +109,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsTitle => 'Settings';
 
   @override
-  String get settingsSubtitle => 'Keep things simple and private.';
+  String get settingsSubtitle => 'Keep the app quiet and local.';
 
   @override
   String get languageSetting => 'Language';
@@ -107,10 +130,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get privacyMessage => 'Your records are stored on this device.';
 
   @override
-  String get appInfoMessage => 'Money Days is a calm place to note everyday spending.';
+  String get appInfoMessage => 'Money Days is a calm calendar for everyday money records.';
 
   @override
-  String get addExpenseTitle => 'Add expense';
+  String get addTransactionTitle => 'Add record';
+
+  @override
+  String get addTransactionSubtitle => 'Keep it light. Add income or spending.';
+
+  @override
+  String get addTransactionButton => 'Add record';
 
   @override
   String get amountLabel => 'Amount';
@@ -128,13 +157,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get categoryLabel => 'Category';
 
   @override
+  String get typeLabel => 'Type';
+
+  @override
+  String get paymentMethodLabel => 'Payment method';
+
+  @override
+  String get paymentMethodOptional => 'Optional';
+
+  @override
   String get saveButton => 'Save';
 
   @override
   String get pickDate => 'Choose date';
 
   @override
-  String get savedMessage => 'Saved for today.';
+  String get transactionSavedMessage => 'Saved.';
 
   @override
   String get validationAmountRequired => 'Enter an amount.';
@@ -194,5 +232,38 @@ class AppLocalizationsEn extends AppLocalizations {
   String get categorySubscription => 'Subscription';
 
   @override
+  String get categorySalary => 'Salary';
+
+  @override
+  String get categoryBonus => 'Bonus';
+
+  @override
+  String get categoryGift => 'Gift';
+
+  @override
+  String get categoryRefund => 'Refund';
+
+  @override
   String get categoryOther => 'Other';
+
+  @override
+  String get paymentMethodCash => 'Cash';
+
+  @override
+  String get paymentMethodCard => 'Card';
+
+  @override
+  String get paymentMethodBankTransfer => 'Bank transfer';
+
+  @override
+  String get paymentMethodMobilePay => 'Mobile pay';
+
+  @override
+  String get paymentMethodOther => 'Other';
+
+  @override
+  String get transactionTypeExpense => 'Expense';
+
+  @override
+  String get transactionTypeIncome => 'Income';
 }

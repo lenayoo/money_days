@@ -1,9 +1,11 @@
 {
   "@@locale": "en",
   "appName": "Money Days",
-  "todaySpending": "Today's total",
-  "monthSpending": "This month so far",
+  "homeSubtitle": "A quiet view of this month.",
+  "monthlyIncome": "Income",
+  "monthlyExpense": "Expense",
   "monthlyBudget": "Monthly budget",
+  "remainingBudget": "Remaining",
   "budgetProgressUsed": "{percent}% of the budget used",
   "@budgetProgressUsed": {
     "placeholders": {
@@ -33,15 +35,27 @@
   "startThisMonthWithBudget": "Start this month with a simple budget.",
   "editBudget": "Edit budget",
   "budgetNotSet": "Not set yet",
-  "addTodaySpending": "Add today's spending",
-  "recentExpenses": "Recent spending",
-  "emptyRecentExpenses": "Recent records will appear here.",
+  "monthlyCalendarTitle": "Monthly calendar",
+  "recentTransactions": "Recent records",
+  "emptyMonthTransactions": "No records for this month yet.",
   "monthlyReviewTitle": "Monthly review",
-  "monthlyTotal": "Monthly total",
+  "monthlyReviewSubtitle": "See the month in a calm, simple way.",
+  "monthlyPeriodLabel": "Monthly",
   "selectMonth": "Select month",
-  "categoryBreakdown": "By category",
-  "expenseListTitle": "Spending list",
+  "monthTransactions": "Monthly records",
+  "spendingByCategory": "Spending by category",
+  "incomeByCategory": "Income by category",
+  "noCategoryData": "No category records this month.",
   "noReviewData": "No spending recorded this month.",
+  "emptyDayTransactions": "No records for this day yet.",
+  "recordCount": "{count} record",
+  "@recordCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "topCategoryMessage": "You spent most on {category} this month.",
   "@topCategoryMessage": {
     "placeholders": {
@@ -51,23 +65,28 @@
     }
   },
   "settingsTitle": "Settings",
-  "settingsSubtitle": "Keep things simple and private.",
+  "settingsSubtitle": "Keep the app quiet and local.",
   "languageSetting": "Language",
   "currencySetting": "Currency",
   "currencyConversionNote": "Uses fixed USD-based rates: 1 USD = 150 JPY, 1500 KRW, 1.35 SGD.",
   "appInfo": "App information",
   "privacyNote": "Privacy",
   "privacyMessage": "Your records are stored on this device.",
-  "appInfoMessage": "Money Days is a calm place to note everyday spending.",
-  "addExpenseTitle": "Add expense",
+  "appInfoMessage": "Money Days is a calm calendar for everyday money records.",
+  "addTransactionTitle": "Add record",
+  "addTransactionSubtitle": "Keep it light. Add income or spending.",
+  "addTransactionButton": "Add record",
   "amountLabel": "Amount",
   "memoLabel": "Memo",
   "memoHint": "Optional note",
   "dateLabel": "Date",
   "categoryLabel": "Category",
+  "typeLabel": "Type",
+  "paymentMethodLabel": "Payment method",
+  "paymentMethodOptional": "Optional",
   "saveButton": "Save",
   "pickDate": "Choose date",
-  "savedMessage": "Saved for today.",
+  "transactionSavedMessage": "Saved.",
   "validationAmountRequired": "Enter an amount.",
   "validationAmountInvalid": "Enter a valid amount.",
   "navigationHome": "Home",
@@ -87,5 +106,16 @@
   "categoryHealth": "Health",
   "categoryHome": "Home",
   "categorySubscription": "Subscription",
-  "categoryOther": "Other"
+  "categorySalary": "Salary",
+  "categoryBonus": "Bonus",
+  "categoryGift": "Gift",
+  "categoryRefund": "Refund",
+  "categoryOther": "Other",
+  "paymentMethodCash": "Cash",
+  "paymentMethodCard": "Card",
+  "paymentMethodBankTransfer": "Bank transfer",
+  "paymentMethodMobilePay": "Mobile pay",
+  "paymentMethodOther": "Other",
+  "transactionTypeExpense": "Expense",
+  "transactionTypeIncome": "Income"
 }

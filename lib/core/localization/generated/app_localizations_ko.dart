@@ -12,13 +12,19 @@ class AppLocalizationsKo extends AppLocalizations {
   String get appName => 'Money Days';
 
   @override
-  String get todaySpending => '오늘 합계';
+  String get homeSubtitle => '이번 달 흐름을 조용히 볼 수 있어요.';
 
   @override
-  String get monthSpending => '이번 달 누적';
+  String get monthlyIncome => '수입';
+
+  @override
+  String get monthlyExpense => '지출';
 
   @override
   String get monthlyBudget => '월 예산';
+
+  @override
+  String get remainingBudget => '남은 예산';
 
   @override
   String budgetProgressUsed(int percent) {
@@ -51,31 +57,48 @@ class AppLocalizationsKo extends AppLocalizations {
   String get budgetNotSet => '아직 설정되지 않았어요';
 
   @override
-  String get addTodaySpending => '오늘 지출 추가';
+  String get monthlyCalendarTitle => '월간 캘린더';
 
   @override
-  String get recentExpenses => '최근 기록';
+  String get recentTransactions => '최근 기록';
 
   @override
-  String get emptyRecentExpenses => '최근 기록이 여기에 표시됩니다.';
+  String get emptyMonthTransactions => '이번 달 기록이 아직 없어요.';
 
   @override
   String get monthlyReviewTitle => '월간 돌아보기';
 
   @override
-  String get monthlyTotal => '이번 달 합계';
+  String get monthlyReviewSubtitle => '이번 달 흐름을 차분하게 돌아보세요.';
+
+  @override
+  String get monthlyPeriodLabel => '월별';
 
   @override
   String get selectMonth => '월 선택';
 
   @override
-  String get categoryBreakdown => '카테고리별';
+  String get monthTransactions => '이번 달 기록';
 
   @override
-  String get expenseListTitle => '지출 목록';
+  String get spendingByCategory => '카테고리별 지출';
+
+  @override
+  String get incomeByCategory => '카테고리별 수입';
+
+  @override
+  String get noCategoryData => '이번 달 카테고리 기록이 아직 없어요.';
 
   @override
   String get noReviewData => '이번 달에 기록된 지출이 아직 없어요.';
+
+  @override
+  String get emptyDayTransactions => '이 날의 기록이 아직 없어요.';
+
+  @override
+  String recordCount(int count) {
+    return '$count건';
+  }
 
   @override
   String topCategoryMessage(String category) {
@@ -86,7 +109,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settingsTitle => '설정';
 
   @override
-  String get settingsSubtitle => '단순하고, 조용하게 유지하세요.';
+  String get settingsSubtitle => '단순하게, 이 기기 안에서만.';
 
   @override
   String get languageSetting => '언어';
@@ -107,10 +130,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String get privacyMessage => '기록은 이 기기에 저장됩니다.';
 
   @override
-  String get appInfoMessage => 'Money Days는 일상의 지출을 차분하게 적어 두는 앱입니다.';
+  String get appInfoMessage => 'Money Days는 일상의 돈 흐름을 조용히 남기는 캘린더예요.';
 
   @override
-  String get addExpenseTitle => '지출 추가';
+  String get addTransactionTitle => '기록 추가';
+
+  @override
+  String get addTransactionSubtitle => '지출과 수입을 가볍게 남겨 보세요.';
+
+  @override
+  String get addTransactionButton => '기록 추가';
 
   @override
   String get amountLabel => '금액';
@@ -128,13 +157,22 @@ class AppLocalizationsKo extends AppLocalizations {
   String get categoryLabel => '카테고리';
 
   @override
+  String get typeLabel => '구분';
+
+  @override
+  String get paymentMethodLabel => '결제 수단';
+
+  @override
+  String get paymentMethodOptional => '선택';
+
+  @override
   String get saveButton => '저장';
 
   @override
   String get pickDate => '날짜 선택';
 
   @override
-  String get savedMessage => '오늘 기록했어요.';
+  String get transactionSavedMessage => '저장했어요.';
 
   @override
   String get validationAmountRequired => '금액을 입력해 주세요.';
@@ -194,5 +232,38 @@ class AppLocalizationsKo extends AppLocalizations {
   String get categorySubscription => '구독';
 
   @override
+  String get categorySalary => '급여';
+
+  @override
+  String get categoryBonus => '보너스';
+
+  @override
+  String get categoryGift => '선물';
+
+  @override
+  String get categoryRefund => '환급';
+
+  @override
   String get categoryOther => '기타';
+
+  @override
+  String get paymentMethodCash => '현금';
+
+  @override
+  String get paymentMethodCard => '카드';
+
+  @override
+  String get paymentMethodBankTransfer => '계좌이체';
+
+  @override
+  String get paymentMethodMobilePay => '모바일 결제';
+
+  @override
+  String get paymentMethodOther => '기타';
+
+  @override
+  String get transactionTypeExpense => '지출';
+
+  @override
+  String get transactionTypeIncome => '수입';
 }

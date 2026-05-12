@@ -9,6 +9,7 @@ class SoftSectionCard extends StatelessWidget {
     this.padding = const EdgeInsets.all(20),
     this.color,
     this.accentColor,
+    this.borderColor,
     this.onTap,
   });
 
@@ -16,52 +17,32 @@ class SoftSectionCard extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   final Color? color;
   final Color? accentColor;
+  final Color? borderColor;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final backgroundColor = color ?? AppColors.surface;
+    final resolvedBorderColor =
+        borderColor ??
+        (accentColor == null
+            ? AppColors.border
+            : accentColor!.withValues(alpha: 0.12));
 
     final content = Ink(
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: resolvedBorderColor),
         boxShadow: const [
           BoxShadow(
             color: AppColors.shadow,
-            blurRadius: 26,
-            offset: Offset(0, 14),
+            blurRadius: 10,
+            offset: Offset(0, 2),
           ),
         ],
       ),
-      child: Stack(
-        children: [
-          if (accentColor != null)
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              height: 94,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(30),
-                  ),
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      accentColor!.withValues(alpha: 0.18),
-                      accentColor!.withValues(alpha: 0.0),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          Padding(padding: padding, child: child),
-        ],
-      ),
+      child: Padding(padding: padding, child: child),
     );
 
     if (onTap == null) {
@@ -71,7 +52,7 @@ class SoftSectionCard extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(24),
         onTap: onTap,
         child: content,
       ),

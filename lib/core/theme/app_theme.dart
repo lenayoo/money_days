@@ -8,60 +8,67 @@ class AppTheme {
   static ThemeData light() {
     final baseTextTheme = const TextTheme(
       displaySmall: TextStyle(
-        fontSize: 42,
+        fontSize: 30,
         fontWeight: FontWeight.w600,
-        height: 1.0,
+        height: 1.08,
         color: AppColors.textPrimary,
       ),
       headlineLarge: TextStyle(
-        fontSize: 36,
+        fontSize: 24,
         fontWeight: FontWeight.w600,
-        height: 1.1,
+        height: 1.16,
         color: AppColors.textPrimary,
       ),
       headlineMedium: TextStyle(
-        fontSize: 30,
+        fontSize: 21,
         fontWeight: FontWeight.w600,
-        height: 1.15,
+        height: 1.18,
+        color: AppColors.textPrimary,
+      ),
+      headlineSmall: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        height: 1.2,
         color: AppColors.textPrimary,
       ),
       titleLarge: TextStyle(
-        fontSize: 22,
+        fontSize: 16,
         fontWeight: FontWeight.w600,
-        height: 1.2,
+        height: 1.25,
         color: AppColors.textPrimary,
       ),
       titleMedium: TextStyle(
-        fontSize: 17,
+        fontSize: 14,
         fontWeight: FontWeight.w600,
-        height: 1.2,
+        height: 1.3,
         color: AppColors.textPrimary,
       ),
       bodyLarge: TextStyle(
-        fontSize: 16,
+        fontSize: 13,
+        fontWeight: FontWeight.w400,
+        height: 1.5,
+        color: AppColors.textSecondary,
+      ),
+      bodyMedium: TextStyle(
+        fontSize: 12,
         fontWeight: FontWeight.w400,
         height: 1.45,
         color: AppColors.textSecondary,
       ),
-      bodyMedium: TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.w400,
-        height: 1.4,
-        color: AppColors.textSecondary,
-      ),
       bodySmall: TextStyle(
-        fontSize: 12,
+        fontSize: 11,
         fontWeight: FontWeight.w400,
-        height: 1.35,
+        height: 1.45,
         color: AppColors.textTertiary,
       ),
       labelLarge: TextStyle(
-        fontSize: 15,
+        fontSize: 13,
         fontWeight: FontWeight.w600,
         height: 1.2,
+        color: AppColors.textPrimary,
       ),
       labelMedium: TextStyle(
-        fontSize: 13,
+        fontSize: 11,
         fontWeight: FontWeight.w600,
         height: 1.2,
         color: AppColors.textSecondary,
@@ -81,7 +88,7 @@ class AppTheme {
     );
 
     final outlineBorder = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(24),
+      borderRadius: BorderRadius.circular(18),
       borderSide: const BorderSide(color: AppColors.border),
     );
 
@@ -102,7 +109,7 @@ class AppTheme {
         backgroundColor: Colors.transparent,
         indicatorColor: AppColors.surfaceMuted,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-        height: 76,
+        height: 68,
         iconTheme: WidgetStateProperty.resolveWith(
           (states) => IconThemeData(
             color:
@@ -117,7 +124,7 @@ class AppTheme {
                 states.contains(WidgetState.selected)
                     ? AppColors.textPrimary
                     : AppColors.textSecondary,
-            fontSize: 13,
+            fontSize: 11,
             fontWeight:
                 states.contains(WidgetState.selected)
                     ? FontWeight.w600
@@ -129,37 +136,42 @@ class AppTheme {
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.accentStrong,
           foregroundColor: Colors.white,
-          minimumSize: const Size.fromHeight(54),
+          elevation: 0,
+          minimumSize: const Size.fromHeight(46),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(22),
+            borderRadius: BorderRadius.circular(15),
           ),
-          textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+          textStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
         ),
       ),
       chipTheme: ChipThemeData(
-        backgroundColor: AppColors.surface,
-        selectedColor: AppColors.surfaceMuted,
+        backgroundColor: AppColors.surfaceMuted,
+        selectedColor: AppColors.surfaceAccent,
         side: const BorderSide(color: AppColors.border),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        labelStyle: const TextStyle(color: AppColors.textPrimary, fontSize: 14),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+        labelStyle: const TextStyle(color: AppColors.textPrimary, fontSize: 13),
         secondaryLabelStyle: const TextStyle(
           color: AppColors.textPrimary,
-          fontSize: 14,
+          fontSize: 13,
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.surface,
+        fillColor: AppColors.surfaceMuted,
         labelStyle: const TextStyle(color: AppColors.textSecondary),
         hintStyle: const TextStyle(color: AppColors.textTertiary),
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: 18,
-          vertical: 18,
+          horizontal: 16,
+          vertical: 16,
         ),
         enabledBorder: outlineBorder,
         focusedBorder: outlineBorder.copyWith(
-          borderSide: const BorderSide(color: AppColors.accent, width: 1.2),
+          borderSide: const BorderSide(
+            color: AppColors.textPrimary,
+            width: 1.1,
+          ),
         ),
         errorBorder: outlineBorder.copyWith(
           borderSide: const BorderSide(color: Colors.redAccent),
@@ -171,17 +183,58 @@ class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.textPrimary,
-          side: const BorderSide(color: AppColors.borderStrong),
-          minimumSize: const Size.fromHeight(52),
+          backgroundColor: AppColors.surface,
+          side: const BorderSide(color: AppColors.border),
+          minimumSize: const Size.fromHeight(46),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(22),
+            borderRadius: BorderRadius.circular(15),
+          ),
+        ),
+      ),
+      segmentedButtonTheme: SegmentedButtonThemeData(
+        style: ButtonStyle(
+          backgroundColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return AppColors.accentStrong;
+            }
+            return AppColors.surfaceMuted;
+          }),
+          foregroundColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return Colors.white;
+            }
+            return AppColors.textPrimary;
+          }),
+          side: const WidgetStatePropertyAll(
+            BorderSide(color: AppColors.border),
+          ),
+          padding: const WidgetStatePropertyAll(
+            EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          ),
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          ),
+          textStyle: const WidgetStatePropertyAll(
+            TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+          ),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: AppColors.textPrimary,
+          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+          textStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
       ),
       snackBarTheme: SnackBarThemeData(
         backgroundColor: AppColors.accentStrong,
         contentTextStyle: const TextStyle(color: Colors.white),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         behavior: SnackBarBehavior.floating,
       ),
     );

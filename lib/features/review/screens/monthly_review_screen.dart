@@ -1,26 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_days/core/localization/generated/app_localizations.dart';
-import 'package:money_days/core/theme/app_colors.dart';
 
+import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/app_clock.dart';
 import '../../../core/utils/app_date_utils.dart';
 import '../../../core/utils/app_formatters.dart';
-import '../../../core/utils/app_clock.dart';
 import '../../../core/widgets/app_page.dart';
-import '../../../core/widgets/page_intro.dart';
-import '../../../core/widgets/soft_section_card.dart';
-import '../../../core/widgets/tone_pill.dart';
+import '../../../core/widgets/month_picker_sheet.dart';
+import '../../../core/widgets/round_icon_button.dart';
 import '../../budgets/controllers/monthly_budgets_controller.dart';
-import '../../budgets/models/monthly_budget.dart';
-import '../../budgets/widgets/monthly_budget_overview_card.dart';
-import '../../budgets/widgets/monthly_budget_sheet.dart';
 import '../../expenses/controllers/expenses_controller.dart';
 import '../../expenses/models/app_currency.dart';
-import '../../expenses/models/expense_category.dart';
 import '../../expenses/models/expense_insights.dart';
-import '../../expenses/widgets/expense_list_item.dart';
+import '../../expenses/models/transaction_type.dart';
 import '../../settings/controllers/settings_controller.dart';
-import '../widgets/category_breakdown_card.dart';
+import '../widgets/category_pie_chart_card.dart';
 
 class MonthlyReviewScreen extends ConsumerStatefulWidget {
   const MonthlyReviewScreen({super.key});
@@ -32,6 +27,7 @@ class MonthlyReviewScreen extends ConsumerStatefulWidget {
 
 class _MonthlyReviewScreenState extends ConsumerState<MonthlyReviewScreen> {
   late DateTime _selectedMonth;
+  TransactionType _selectedType = TransactionType.expense;
 
   @override
   void initState() {
@@ -39,15 +35,22 @@ class _MonthlyReviewScreenState extends ConsumerState<MonthlyReviewScreen> {
     _selectedMonth = AppDateUtils.startOfMonth(AppClock.now());
   }
 
+  void _moveMonth(List<DateTime> months, int currentIndex, int delta) {
+    final nextIndex = currentIndex + delta;
+    if (nextIndex < 0 || nextIndex >= months.length) {
+      return;
+    }
+
+    setState(() {
+      _selectedMonth = months[nextIndex];
+    });
+  }
+
   Future<void> _selectMonth(BuildContext context, List<DateTime> months) async {
-    final selectedMonth = await showModalBottomSheet<DateTime>(
+    final selectedMonth = await showMonthPickerSheet(
       context: context,
-      backgroundColor: Colors.transparent,
-      builder:
-          (context) => _MonthSelectionSheet(
-            months: months,
-            selectedMonth: _selectedMonth,
-          ),
+      months: months,
+      selectedMonth: _selectedMonth,
     );
 
     if (selectedMonth == null || !mounted) {
@@ -59,359 +62,204 @@ class _MonthlyReviewScreenState extends ConsumerState<MonthlyReviewScreen> {
     });
   }
 
-  Future<void> _openBudgetSheet(BuildContext context) async {
-    final settings = ref.read(settingsControllerProvider);
-    final budgets = ref.read(monthlyBudgetsControllerProvider);
-    final selectedBudget = budgets[AppDateUtils.monthKey(_selectedMonth)];
-
-    final enteredAmount = await showMonthlyBudgetSheet(
-      context: context,
-      month: _selectedMonth,
-      currency: settings.currency,
-      initialAmount: selectedBudget?.amountForCurrency(settings.currency),
-    );
-
-    if (enteredAmount == null) {
-      return;
-    }
-
-    await ref
-        .read(monthlyBudgetsControllerProvider.notifier)
-        .setBudget(
-          month: _selectedMonth,
-          amount: enteredAmount,
-          currency: settings.currency,
-        );
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
     final locale = Localizations.localeOf(context);
+    final theme = Theme.of(context);
     final settings = ref.watch(settingsControllerProvider);
     final expenses = ref.watch(expensesControllerProvider);
     final budgets = ref.watch(monthlyBudgetsControllerProvider);
-
+    final selectedBudget = budgets[AppDateUtils.monthKey(_selectedMonth)];
     final availableMonths = ExpenseInsights.availableMonths(
       expenses,
       budgetMonths: budgets.values.map((budget) => budget.month),
       anchorMonth: AppClock.now(),
     );
-    final selectedMonthBudget = budgets[AppDateUtils.monthKey(_selectedMonth)];
-    final hasBudget =
-        selectedMonthBudget != null &&
-        selectedMonthBudget.amountInBaseCurrency > 0;
-    final totalInBase = ExpenseInsights.totalInBaseForMonth(
+    final monthIndex = _selectedMonthIndex(availableMonths, _selectedMonth);
+    final totalInBase =
+        _selectedType == TransactionType.expense
+            ? ExpenseInsights.totalExpenseInBaseForMonth(expenses, _selectedMonth)
+            : ExpenseInsights.totalIncomeInBaseForMonth(expenses, _selectedMonth);
+    final breakdown = ExpenseInsights.categoryTotalsForMonthByType(
       expenses,
       _selectedMonth,
+      _selectedType,
     );
-    final total = settings.currency.fromBaseAmount(totalInBase);
-    final breakdown = ExpenseInsights.categoryTotalsForMonth(
-      expenses,
-      _selectedMonth,
+    final totalAmount = AppFormatters.formatCurrency(
+      settings.currency.fromBaseAmount(totalInBase),
+      settings.currency,
+      locale,
     );
-    final monthlyExpenses = ExpenseInsights.expensesForMonth(
-      expenses,
-      _selectedMonth,
-    );
-    final topCategory = breakdown.isEmpty ? null : breakdown.first;
-    final isCurrentMonth = AppDateUtils.isSameMonth(
-      _selectedMonth,
-      AppClock.now(),
-    );
-    final budgetAmount =
-        !hasBudget
-            ? l10n.budgetNotSet
-            : AppFormatters.formatCurrency(
-              selectedMonthBudget.amountForCurrency(settings.currency),
-              settings.currency,
-              locale,
-            );
-    final budgetProgress =
-        !hasBudget
-            ? null
-            : totalInBase / selectedMonthBudget.amountInBaseCurrency;
-    final budgetProgressLabel =
-        !hasBudget
-            ? null
-            : l10n.budgetProgressUsed((budgetProgress! * 100).round());
-    final budgetStatusLabel = _buildBudgetStatusLabel(
-      l10n: l10n,
-      locale: locale,
-      currency: settings.currency,
-      totalInBaseCurrency: totalInBase,
-      budget: selectedMonthBudget,
-    );
+    final monthLabel = AppFormatters.formatMonthLabel(_selectedMonth, locale);
 
-    return AppPage(
-      bottomSafeArea: false,
-      child: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 24, 20, 128),
-        children: [
-          PageIntro(
-            eyebrow: AppFormatters.formatMonthLabel(_selectedMonth, locale),
-            title: l10n.monthlyReviewTitle,
-          ),
-          const SizedBox(height: 16),
-          _MonthSelectorCard(
-            label: l10n.selectMonth,
-            monthLabel: AppFormatters.formatMonthLabel(_selectedMonth, locale),
-            onTap: () => _selectMonth(context, availableMonths),
-          ),
-          const SizedBox(height: 16),
-          MonthlyBudgetOverviewCard(
-            monthLabel: AppFormatters.formatMonthLabel(_selectedMonth, locale),
-            totalLabel: l10n.monthlyTotal,
-            totalAmount: AppFormatters.formatCurrency(
-              total,
-              settings.currency,
-              locale,
-            ),
-            budgetLabel: l10n.monthlyBudget,
-            budgetAmount: budgetAmount,
-            hasBudget: hasBudget,
-            actionLabel: hasBudget ? l10n.editBudget : l10n.setThisMonthBudget,
-            onActionPressed: () => _openBudgetSheet(context),
-            progress: budgetProgress,
-            progressLabel: budgetProgressLabel,
-            statusLabel: budgetStatusLabel,
-            promptTitle:
-                !hasBudget && isCurrentMonth ? l10n.setThisMonthBudget : null,
-            promptSubtitle:
-                !hasBudget && isCurrentMonth
-                    ? l10n.startThisMonthWithBudget
-                    : null,
-          ),
-          const SizedBox(height: 16),
-          if (topCategory == null)
-            SoftSectionCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(l10n.noReviewData, style: theme.textTheme.bodyLarge),
-                ],
-              ),
-            )
-          else ...[
-            SoftSectionCard(
-              color: topCategory.category.surfaceColor,
-              accentColor: topCategory.category.color,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    l10n.topCategoryMessage(topCategory.category.label(l10n)),
-                    style: theme.textTheme.titleLarge?.copyWith(height: 1.35),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '${AppFormatters.formatCurrency(topCategory.totalForCurrency(settings.currency), settings.currency, locale)} · ${(topCategory.share * 100).round()}%',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 18),
-            Text(l10n.categoryBreakdown, style: theme.textTheme.titleLarge),
-            const SizedBox(height: 12),
-            for (final item in breakdown) ...[
-              CategoryBreakdownCard(
-                spending: item,
-                currency: settings.currency,
-              ),
-              if (item != breakdown.last) const SizedBox(height: 12),
-            ],
-          ],
-          if (monthlyExpenses.isNotEmpty) ...[
-            const SizedBox(height: 18),
-            SoftSectionCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        l10n.expenseListTitle,
-                        style: theme.textTheme.titleLarge,
-                      ),
-                      const Spacer(),
-                      TonePill(label: '${monthlyExpenses.length}'),
-                    ],
-                  ),
-                  const SizedBox(height: 18),
-                  for (
-                    var index = 0;
-                    index < monthlyExpenses.length;
-                    index++
-                  ) ...[
-                    ExpenseListItem(
-                      expense: monthlyExpenses[index],
-                      displayCurrency: settings.currency,
-                    ),
-                    if (index != monthlyExpenses.length - 1)
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 18),
-                        child: Divider(height: 1, color: AppColors.border),
-                      ),
-                  ],
-                ],
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class _MonthSelectorCard extends StatelessWidget {
-  const _MonthSelectorCard({
-    required this.label,
-    required this.monthLabel,
-    required this.onTap,
-  });
-
-  final String label;
-  final String monthLabel;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return SoftSectionCard(
-      onTap: onTap,
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return Scaffold(
+      body: AppPage(
+        maxWidth: 520,
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
+          children: [
+            Row(
               children: [
-                Text(label, style: theme.textTheme.titleMedium),
-                const SizedBox(height: 6),
-                Text(
-                  monthLabel,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: AppColors.textSecondary,
+                RoundIconButton(
+                  icon: Icons.close_rounded,
+                  onPressed: () => Navigator.of(context).maybePop(),
+                ),
+                const Spacer(),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(999),
+                    border: Border.all(color: AppColors.border),
+                  ),
+                  child: Text(
+                    l10n.monthlyPeriodLabel,
+                    style: theme.textTheme.labelLarge,
                   ),
                 ),
               ],
             ),
-          ),
-          const Icon(
-            Icons.keyboard_arrow_down_rounded,
-            color: AppColors.textSecondary,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-String? _buildBudgetStatusLabel({
-  required AppLocalizations l10n,
-  required Locale locale,
-  required AppCurrency currency,
-  required double totalInBaseCurrency,
-  required MonthlyBudget? budget,
-}) {
-  if (budget == null || budget.amountInBaseCurrency <= 0) {
-    return null;
-  }
-
-  final differenceInBaseCurrency =
-      budget.amountInBaseCurrency - totalInBaseCurrency;
-
-  if (differenceInBaseCurrency > 0) {
-    final remainingAmount = AppFormatters.formatCurrency(
-      currency.fromBaseAmount(differenceInBaseCurrency),
-      currency,
-      locale,
-    );
-    return l10n.budgetRemaining(remainingAmount);
-  }
-
-  if (differenceInBaseCurrency < 0) {
-    final exceededAmount = AppFormatters.formatCurrency(
-      currency.fromBaseAmount(-differenceInBaseCurrency),
-      currency,
-      locale,
-    );
-    return l10n.budgetExceeded(exceededAmount);
-  }
-
-  return l10n.budgetReached;
-}
-
-class _MonthSelectionSheet extends StatelessWidget {
-  const _MonthSelectionSheet({
-    required this.months,
-    required this.selectedMonth,
-  });
-
-  final List<DateTime> months;
-  final DateTime selectedMonth;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final locale = Localizations.localeOf(context);
-    final theme = Theme.of(context);
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-      child: SafeArea(
-        top: false,
-        child: SoftSectionCard(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(l10n.selectMonth, style: theme.textTheme.headlineSmall),
-              const SizedBox(height: 16),
-              ConstrainedBox(
-                constraints: const BoxConstraints(maxHeight: 360),
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  itemCount: months.length,
-                  separatorBuilder:
-                      (_, _) =>
-                          const Divider(height: 1, color: AppColors.border),
-                  itemBuilder: (context, index) {
-                    final month = months[index];
-                    final isSelected = AppDateUtils.isSameMonth(
-                      month,
-                      selectedMonth,
-                    );
-
-                    return ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18),
-                      ),
-                      onTap: () => Navigator.of(context).pop(month),
-                      title: Text(
-                        AppFormatters.formatMonthLabel(month, locale),
-                      ),
-                      trailing:
-                          isSelected
-                              ? const Icon(
-                                Icons.check_rounded,
-                                color: AppColors.accentStrong,
-                              )
-                              : null,
-                    );
-                  },
+            const SizedBox(height: 26),
+            Center(
+              child: SegmentedButton<TransactionType>(
+                segments: [
+                  ButtonSegment(
+                    value: TransactionType.expense,
+                    label: Text(l10n.transactionTypeExpense),
+                  ),
+                  ButtonSegment(
+                    value: TransactionType.income,
+                    label: Text(l10n.transactionTypeIncome),
+                  ),
+                ],
+                selected: {_selectedType},
+                onSelectionChanged: (selection) {
+                  setState(() {
+                    _selectedType = selection.first;
+                  });
+                },
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  onPressed:
+                      monthIndex < availableMonths.length - 1
+                          ? () => _moveMonth(availableMonths, monthIndex, 1)
+                          : null,
+                  visualDensity: VisualDensity.compact,
+                  icon: const Icon(Icons.chevron_left_rounded),
+                ),
+                InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () => _selectMonth(context, availableMonths),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    child: Text(
+                      monthLabel,
+                      style: theme.textTheme.headlineSmall,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed:
+                      monthIndex > 0
+                          ? () => _moveMonth(availableMonths, monthIndex, -1)
+                          : null,
+                  visualDensity: VisualDensity.compact,
+                  icon: const Icon(Icons.chevron_right_rounded),
+                ),
+              ],
+            ),
+            const SizedBox(height: 28),
+            Text(
+              _selectedType == TransactionType.expense
+                  ? l10n.monthlyExpense
+                  : l10n.monthlyIncome,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyLarge,
+            ),
+            const SizedBox(height: 6),
+            Text(
+              totalAmount,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.displaySmall?.copyWith(
+                color:
+                    _selectedType == TransactionType.expense
+                        ? AppColors.expense
+                        : AppColors.income,
+              ),
+            ),
+            if (_selectedType == TransactionType.expense && selectedBudget != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Text(
+                  _budgetHelperText(
+                    l10n: l10n,
+                    locale: locale,
+                    budgetInBase: selectedBudget.amountInBaseCurrency,
+                    expenseInBase: totalInBase,
+                    currency: settings.currency,
+                  ),
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodyMedium,
                 ),
               ),
-            ],
-          ),
+            const SizedBox(height: 22),
+            CategoryPieChartCard(
+              title:
+                  _selectedType == TransactionType.expense
+                      ? l10n.spendingByCategory
+                      : l10n.incomeByCategory,
+              emptyLabel: l10n.noCategoryData,
+              breakdown: breakdown,
+              currency: settings.currency,
+              amountColor:
+                  _selectedType == TransactionType.expense
+                      ? AppColors.expense
+                      : AppColors.income,
+            ),
+          ],
         ),
       ),
     );
   }
+}
+
+int _selectedMonthIndex(List<DateTime> months, DateTime selectedMonth) {
+  final index = months.indexWhere(
+    (month) =>
+        month.year == selectedMonth.year && month.month == selectedMonth.month,
+  );
+  return index == -1 ? 0 : index;
+}
+
+String _budgetHelperText({
+  required AppLocalizations l10n,
+  required Locale locale,
+  required double budgetInBase,
+  required double expenseInBase,
+  required AppCurrency currency,
+}) {
+  final difference = budgetInBase - expenseInBase;
+  final amount = AppFormatters.formatCurrency(
+    currency.fromBaseAmount(difference.abs()),
+    currency,
+    locale,
+  );
+
+  if (difference >= 0) {
+    return l10n.budgetRemaining(amount);
+  }
+
+  return l10n.budgetExceeded(amount);
 }

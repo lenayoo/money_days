@@ -7,239 +7,424 @@ import '../../../core/utils/app_clock.dart';
 import '../../../core/utils/app_date_utils.dart';
 import '../../../core/utils/app_formatters.dart';
 import '../../../core/widgets/app_page.dart';
-import '../../../core/widgets/page_intro.dart';
-import '../../../core/widgets/soft_section_card.dart';
+import '../../../core/widgets/month_picker_sheet.dart';
+import '../../../core/widgets/round_icon_button.dart';
 import '../../budgets/controllers/monthly_budgets_controller.dart';
 import '../../budgets/models/monthly_budget.dart';
-import '../../budgets/widgets/monthly_budget_overview_card.dart';
 import '../../budgets/widgets/monthly_budget_sheet.dart';
 import '../../settings/controllers/settings_controller.dart';
-import '../models/app_currency.dart';
 import '../controllers/expenses_controller.dart';
+import '../models/app_currency.dart';
 import '../models/expense_insights.dart';
-import '../widgets/expense_list_item.dart';
-import '../widgets/summary_card.dart';
+import '../widgets/month_calendar_card.dart';
 
-class HomeScreen extends ConsumerWidget {
-  const HomeScreen({super.key, required this.onAddExpense});
+class HomeScreen extends ConsumerStatefulWidget {
+  const HomeScreen({
+    super.key,
+    required this.onAddTransaction,
+    required this.onOpenReview,
+    required this.onOpenSettings,
+    required this.onOpenDay,
+  });
 
-  final VoidCallback onAddExpense;
+  final VoidCallback onAddTransaction;
+  final VoidCallback onOpenReview;
+  final VoidCallback onOpenSettings;
+  final ValueChanged<DateTime> onOpenDay;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  late DateTime _selectedMonth;
+  late DateTime _selectedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    final now = AppClock.now();
+    _selectedMonth = AppDateUtils.startOfMonth(now);
+    _selectedDate = AppDateUtils.dateOnly(now);
+  }
+
+  void _moveMonth(List<DateTime> months, int currentIndex, int delta) {
+    final nextIndex = currentIndex + delta;
+    if (nextIndex < 0 || nextIndex >= months.length) {
+      return;
+    }
+
+    final nextMonth = months[nextIndex];
+    setState(() {
+      _selectedMonth = nextMonth;
+      _selectedDate = DateTime(nextMonth.year, nextMonth.month, 1);
+    });
+  }
+
+  Future<void> _selectMonth(BuildContext context, List<DateTime> months) async {
+    final selectedMonth = await showMonthPickerSheet(
+      context: context,
+      months: months,
+      selectedMonth: _selectedMonth,
+    );
+
+    if (selectedMonth == null || !mounted) {
+      return;
+    }
+
+    setState(() {
+      _selectedMonth = selectedMonth;
+      _selectedDate = DateTime(selectedMonth.year, selectedMonth.month, 1);
+    });
+  }
+
+  Future<void> _openBudgetSheet(BuildContext context) async {
+    final settings = ref.read(settingsControllerProvider);
+    final budgets = ref.read(monthlyBudgetsControllerProvider);
+    final selectedBudget = budgets[AppDateUtils.monthKey(_selectedMonth)];
+
+    final enteredAmount = await showMonthlyBudgetSheet(
+      context: context,
+      month: _selectedMonth,
+      currency: settings.currency,
+      initialAmount: selectedBudget?.amountForCurrency(settings.currency),
+    );
+
+    if (enteredAmount == null) {
+      return;
+    }
+
+    await ref
+        .read(monthlyBudgetsControllerProvider.notifier)
+        .setBudget(
+          month: _selectedMonth,
+          amount: enteredAmount,
+          currency: settings.currency,
+        );
+  }
+
+  void _handleDayTap(DateTime date) {
+    setState(() {
+      _selectedDate = date;
+    });
+    widget.onOpenDay(date);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
     final locale = Localizations.localeOf(context);
     final settings = ref.watch(settingsControllerProvider);
     final expenses = ref.watch(expensesControllerProvider);
     final budgets = ref.watch(monthlyBudgetsControllerProvider);
-
     final today = AppClock.now();
-    final monthBudget = budgets[AppDateUtils.monthKey(today)];
-    final hasBudget =
-        monthBudget != null && monthBudget.amountInBaseCurrency > 0;
-    final monthTotalInBase = ExpenseInsights.totalInBaseForMonth(
+
+    final availableMonths = ExpenseInsights.availableMonths(
       expenses,
-      today,
+      budgetMonths: budgets.values.map((budget) => budget.month),
+      anchorMonth: today,
     );
-    final todayTotal = settings.currency.fromBaseAmount(
-      ExpenseInsights.totalInBaseForDay(expenses, today),
+    final monthIndex = _selectedMonthIndex(availableMonths, _selectedMonth);
+    final selectedBudget = budgets[AppDateUtils.monthKey(_selectedMonth)];
+    final incomeInBase = ExpenseInsights.totalIncomeInBaseForMonth(
+      expenses,
+      _selectedMonth,
     );
-    final monthTotal = settings.currency.fromBaseAmount(monthTotalInBase);
-    final recentExpenses = ExpenseInsights.recentExpenses(expenses);
-    final monthBudgetAmount =
-        !hasBudget
-            ? l10n.budgetNotSet
-            : AppFormatters.formatCurrency(
-              monthBudget.amountForCurrency(settings.currency),
-              settings.currency,
-              locale,
-            );
-    final budgetProgress =
-        !hasBudget ? null : monthTotalInBase / monthBudget.amountInBaseCurrency;
-    final budgetProgressLabel =
-        !hasBudget
-            ? null
-            : l10n.budgetProgressUsed((budgetProgress! * 100).round());
-    final budgetStatusLabel = _buildBudgetStatusLabel(
-      l10n: l10n,
-      locale: locale,
-      currency: settings.currency,
-      totalInBaseCurrency: monthTotalInBase,
-      budget: monthBudget,
+    final expenseInBase = ExpenseInsights.totalExpenseInBaseForMonth(
+      expenses,
+      _selectedMonth,
+    );
+    final budgetStatus = _budgetStatus(
+      budget: selectedBudget,
+      expenseInBase: expenseInBase,
+    );
+    final dailySummaries = ExpenseInsights.dailyTotalsForMonth(
+      expenses,
+      _selectedMonth,
     );
 
-    Future<void> openBudgetSheet() async {
-      final enteredAmount = await showMonthlyBudgetSheet(
-        context: context,
-        month: today,
-        currency: settings.currency,
-        initialAmount: monthBudget?.amountForCurrency(settings.currency),
-      );
-
-      if (enteredAmount == null) {
-        return;
-      }
-
-      await ref
-          .read(monthlyBudgetsControllerProvider.notifier)
-          .setBudget(
-            month: today,
-            amount: enteredAmount,
-            currency: settings.currency,
-          );
-    }
-
-    return AppPage(
-      bottomSafeArea: false,
-      child: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 24, 20, 128),
-        children: [
-          PageIntro(
-            eyebrow: AppFormatters.formatMonthLabel(today, locale),
-            title: l10n.appName,
-          ),
-          const SizedBox(height: 24),
-          SummaryCard(
-            title: l10n.todaySpending,
-            amount: AppFormatters.formatCurrency(
-              todayTotal,
-              settings.currency,
-              locale,
-            ),
-            supportingText: AppFormatters.formatLongDate(today, locale),
-            icon: Icons.wb_sunny_outlined,
-          ),
-          const SizedBox(height: 16),
-          MonthlyBudgetOverviewCard(
-            monthLabel: AppFormatters.formatMonthLabel(today, locale),
-            totalLabel: l10n.monthSpending,
-            totalAmount: AppFormatters.formatCurrency(
-              monthTotal,
-              settings.currency,
-              locale,
-            ),
-            budgetLabel: l10n.monthlyBudget,
-            budgetAmount: monthBudgetAmount,
-            hasBudget: hasBudget,
-            actionLabel: hasBudget ? l10n.editBudget : l10n.setThisMonthBudget,
-            onActionPressed: openBudgetSheet,
-            progress: budgetProgress,
-            progressLabel: budgetProgressLabel,
-            statusLabel: budgetStatusLabel,
-            promptTitle: hasBudget ? null : l10n.setThisMonthBudget,
-            promptSubtitle: hasBudget ? null : l10n.startThisMonthWithBudget,
-          ),
-          const SizedBox(height: 16),
-          SoftSectionCard(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final isNarrow = constraints.maxWidth < 440;
-
-                final actionButton = FilledButton.icon(
-                  onPressed: onAddExpense,
-                  icon: const Icon(Icons.edit_note_rounded),
-                  label: Text(l10n.addTodaySpending),
-                );
-
-                final copy = Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.addTodaySpending,
-                      style: theme.textTheme.titleLarge,
-                    ),
-                  ],
-                );
-
-                if (isNarrow) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [copy, const SizedBox(height: 18), actionButton],
-                  );
-                }
-
-                return Row(
-                  children: [
-                    Expanded(child: copy),
-                    const SizedBox(width: 16),
-                    actionButton,
-                  ],
-                );
-              },
-            ),
-          ),
-          const SizedBox(height: 16),
-          SoftSectionCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      floatingActionButton: FloatingActionButton(
+        onPressed: widget.onAddTransaction,
+        backgroundColor: AppColors.surface,
+        foregroundColor: AppColors.textPrimary,
+        elevation: 2,
+        shape: const CircleBorder(
+          side: BorderSide(color: AppColors.border),
+        ),
+        child: const Icon(Icons.edit_outlined),
+      ),
+      body: AppPage(
+        maxWidth: 520,
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(20, 18, 20, 108),
+          children: [
+            Row(
               children: [
-                Text(l10n.recentExpenses, style: theme.textTheme.titleLarge),
-                const SizedBox(height: 18),
-                if (recentExpenses.isEmpty)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: Text(
-                      l10n.emptyRecentExpenses,
-                      style: theme.textTheme.bodyLarge,
+                RoundIconButton(
+                  icon: Icons.bar_chart_rounded,
+                  onPressed: widget.onOpenReview,
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: _MonthTitleControl(
+                    monthLabel: AppFormatters.formatMonthOnlyLabel(
+                      _selectedMonth,
+                      locale,
                     ),
-                  )
-                else
-                  for (
-                    var index = 0;
-                    index < recentExpenses.length;
-                    index++
-                  ) ...[
-                    ExpenseListItem(
-                      expense: recentExpenses[index],
-                      displayCurrency: settings.currency,
-                    ),
-                    if (index != recentExpenses.length - 1)
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 18),
-                        child: Divider(height: 1, color: AppColors.border),
-                      ),
-                  ],
+                    canGoPrevious: monthIndex < availableMonths.length - 1,
+                    canGoNext: monthIndex > 0,
+                    onPrevious: () => _moveMonth(availableMonths, monthIndex, 1),
+                    onNext: () => _moveMonth(availableMonths, monthIndex, -1),
+                    onSelectMonth: () => _selectMonth(context, availableMonths),
+                  ),
+                ),
+                const SizedBox(width: 14),
+                RoundIconButton(
+                  icon: Icons.tune_rounded,
+                  onPressed: widget.onOpenSettings,
+                ),
               ],
             ),
-          ),
-        ],
+            const SizedBox(height: 24),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: _MetricColumn(
+                    topLabel: l10n.monthlyIncome,
+                    topValue: AppFormatters.formatCurrency(
+                      settings.currency.fromBaseAmount(incomeInBase),
+                      settings.currency,
+                      locale,
+                    ),
+                    topColor: AppColors.income,
+                    bottomLabel: l10n.monthlyExpense,
+                    bottomValue: AppFormatters.formatCurrency(
+                      settings.currency.fromBaseAmount(expenseInBase),
+                      settings.currency,
+                      locale,
+                    ),
+                    bottomColor: AppColors.expense,
+                  ),
+                ),
+                const SizedBox(width: 24),
+                Expanded(
+                  child: _MetricColumn(
+                    topLabel: l10n.monthlyBudget,
+                    topValue:
+                        selectedBudget == null
+                            ? l10n.budgetNotSet
+                            : AppFormatters.formatCurrency(
+                              selectedBudget.amountForCurrency(settings.currency),
+                              settings.currency,
+                              locale,
+                            ),
+                    bottomLabel: l10n.remainingBudget,
+                    bottomValue: _formatBudgetDifference(
+                      currency: settings.currency,
+                      locale: locale,
+                      budget: selectedBudget,
+                      differenceInBase: budgetStatus,
+                      emptyText: l10n.budgetNotSet,
+                    ),
+                    bottomColor:
+                        budgetStatus == null
+                            ? AppColors.textPrimary
+                            : budgetStatus < 0
+                            ? AppColors.expense
+                            : AppColors.textPrimary,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () => _openBudgetSheet(context),
+                child: Text(
+                  selectedBudget == null ? l10n.setThisMonthBudget : l10n.editBudget,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            MonthCalendarCard(
+              month: _selectedMonth,
+              currency: settings.currency,
+              dailySummaries: dailySummaries,
+              today: today,
+              selectedDate: _selectedDate,
+              onDateSelected: _handleDayTap,
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-String? _buildBudgetStatusLabel({
-  required AppLocalizations l10n,
-  required Locale locale,
-  required AppCurrency currency,
-  required double totalInBaseCurrency,
+int _selectedMonthIndex(List<DateTime> months, DateTime selectedMonth) {
+  final index = months.indexWhere(
+    (month) =>
+        month.year == selectedMonth.year && month.month == selectedMonth.month,
+  );
+  return index == -1 ? 0 : index;
+}
+
+double? _budgetStatus({
   required MonthlyBudget? budget,
+  required double expenseInBase,
 }) {
   if (budget == null || budget.amountInBaseCurrency <= 0) {
     return null;
   }
 
-  final differenceInBaseCurrency =
-      budget.amountInBaseCurrency - totalInBaseCurrency;
+  return budget.amountInBaseCurrency - expenseInBase;
+}
 
-  if (differenceInBaseCurrency > 0) {
-    final remainingAmount = AppFormatters.formatCurrency(
-      currency.fromBaseAmount(differenceInBaseCurrency),
-      currency,
-      locale,
-    );
-    return l10n.budgetRemaining(remainingAmount);
+String _formatBudgetDifference({
+  required AppCurrency currency,
+  required Locale locale,
+  required MonthlyBudget? budget,
+  required double? differenceInBase,
+  required String emptyText,
+}) {
+  if (budget == null || differenceInBase == null) {
+    return emptyText;
   }
 
-  if (differenceInBaseCurrency < 0) {
-    final exceededAmount = AppFormatters.formatCurrency(
-      currency.fromBaseAmount(-differenceInBaseCurrency),
-      currency,
-      locale,
-    );
-    return l10n.budgetExceeded(exceededAmount);
+  final amount = AppFormatters.formatCurrency(
+    currency.fromBaseAmount(differenceInBase.abs()),
+    currency,
+    locale,
+  );
+
+  if (differenceInBase < 0) {
+    return '-$amount';
   }
 
-  return l10n.budgetReached;
+  return amount;
+}
+
+class _MonthTitleControl extends StatelessWidget {
+  const _MonthTitleControl({
+    required this.monthLabel,
+    required this.onSelectMonth,
+    required this.onPrevious,
+    required this.onNext,
+    required this.canGoPrevious,
+    required this.canGoNext,
+  });
+
+  final String monthLabel;
+  final VoidCallback onSelectMonth;
+  final VoidCallback onPrevious;
+  final VoidCallback onNext;
+  final bool canGoPrevious;
+  final bool canGoNext;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+          onPressed: canGoPrevious ? onPrevious : null,
+          visualDensity: VisualDensity.compact,
+          icon: const Icon(Icons.chevron_left_rounded),
+        ),
+        Flexible(
+          child: InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: onSelectMonth,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              child: Text(
+                monthLabel,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.headlineSmall,
+              ),
+            ),
+          ),
+        ),
+        IconButton(
+          onPressed: canGoNext ? onNext : null,
+          visualDensity: VisualDensity.compact,
+          icon: const Icon(Icons.chevron_right_rounded),
+        ),
+      ],
+    );
+  }
+}
+
+class _MetricColumn extends StatelessWidget {
+  const _MetricColumn({
+    required this.topLabel,
+    required this.topValue,
+    required this.bottomLabel,
+    required this.bottomValue,
+    this.topColor = AppColors.textPrimary,
+    this.bottomColor = AppColors.textPrimary,
+  });
+
+  final String topLabel;
+  final String topValue;
+  final String bottomLabel;
+  final String bottomValue;
+  final Color topColor;
+  final Color bottomColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _MetricText(label: topLabel, value: topValue, valueColor: topColor),
+        const SizedBox(height: 14),
+        _MetricText(
+          label: bottomLabel,
+          value: bottomValue,
+          valueColor: bottomColor,
+        ),
+      ],
+    );
+  }
+}
+
+class _MetricText extends StatelessWidget {
+  const _MetricText({
+    required this.label,
+    required this.value,
+    required this.valueColor,
+  });
+
+  final String label;
+  final String value;
+  final Color valueColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: AppColors.textSecondary,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: theme.textTheme.titleLarge?.copyWith(color: valueColor),
+        ),
+      ],
+    );
+  }
 }

@@ -103,23 +103,35 @@ abstract class AppLocalizations {
   /// **'Money Days'**
   String get appName;
 
-  /// No description provided for @todaySpending.
+  /// No description provided for @homeSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Today\'s total'**
-  String get todaySpending;
+  /// **'A quiet view of this month.'**
+  String get homeSubtitle;
 
-  /// No description provided for @monthSpending.
+  /// No description provided for @monthlyIncome.
   ///
   /// In en, this message translates to:
-  /// **'This month so far'**
-  String get monthSpending;
+  /// **'Income'**
+  String get monthlyIncome;
+
+  /// No description provided for @monthlyExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get monthlyExpense;
 
   /// No description provided for @monthlyBudget.
   ///
   /// In en, this message translates to:
   /// **'Monthly budget'**
   String get monthlyBudget;
+
+  /// No description provided for @remainingBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining'**
+  String get remainingBudget;
 
   /// No description provided for @budgetProgressUsed.
   ///
@@ -169,23 +181,23 @@ abstract class AppLocalizations {
   /// **'Not set yet'**
   String get budgetNotSet;
 
-  /// No description provided for @addTodaySpending.
+  /// No description provided for @monthlyCalendarTitle.
   ///
   /// In en, this message translates to:
-  /// **'Add today\'s spending'**
-  String get addTodaySpending;
+  /// **'Monthly calendar'**
+  String get monthlyCalendarTitle;
 
-  /// No description provided for @recentExpenses.
+  /// No description provided for @recentTransactions.
   ///
   /// In en, this message translates to:
-  /// **'Recent spending'**
-  String get recentExpenses;
+  /// **'Recent records'**
+  String get recentTransactions;
 
-  /// No description provided for @emptyRecentExpenses.
+  /// No description provided for @emptyMonthTransactions.
   ///
   /// In en, this message translates to:
-  /// **'Recent records will appear here.'**
-  String get emptyRecentExpenses;
+  /// **'No records for this month yet.'**
+  String get emptyMonthTransactions;
 
   /// No description provided for @monthlyReviewTitle.
   ///
@@ -193,11 +205,17 @@ abstract class AppLocalizations {
   /// **'Monthly review'**
   String get monthlyReviewTitle;
 
-  /// No description provided for @monthlyTotal.
+  /// No description provided for @monthlyReviewSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Monthly total'**
-  String get monthlyTotal;
+  /// **'See the month in a calm, simple way.'**
+  String get monthlyReviewSubtitle;
+
+  /// No description provided for @monthlyPeriodLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get monthlyPeriodLabel;
 
   /// No description provided for @selectMonth.
   ///
@@ -205,23 +223,47 @@ abstract class AppLocalizations {
   /// **'Select month'**
   String get selectMonth;
 
-  /// No description provided for @categoryBreakdown.
+  /// No description provided for @monthTransactions.
   ///
   /// In en, this message translates to:
-  /// **'By category'**
-  String get categoryBreakdown;
+  /// **'Monthly records'**
+  String get monthTransactions;
 
-  /// No description provided for @expenseListTitle.
+  /// No description provided for @spendingByCategory.
   ///
   /// In en, this message translates to:
-  /// **'Spending list'**
-  String get expenseListTitle;
+  /// **'Spending by category'**
+  String get spendingByCategory;
+
+  /// No description provided for @incomeByCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Income by category'**
+  String get incomeByCategory;
+
+  /// No description provided for @noCategoryData.
+  ///
+  /// In en, this message translates to:
+  /// **'No category records this month.'**
+  String get noCategoryData;
 
   /// No description provided for @noReviewData.
   ///
   /// In en, this message translates to:
   /// **'No spending recorded this month.'**
   String get noReviewData;
+
+  /// No description provided for @emptyDayTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'No records for this day yet.'**
+  String get emptyDayTransactions;
+
+  /// No description provided for @recordCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} record'**
+  String recordCount(int count);
 
   /// No description provided for @topCategoryMessage.
   ///
@@ -238,7 +280,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Keep things simple and private.'**
+  /// **'Keep the app quiet and local.'**
   String get settingsSubtitle;
 
   /// No description provided for @languageSetting.
@@ -280,14 +322,26 @@ abstract class AppLocalizations {
   /// No description provided for @appInfoMessage.
   ///
   /// In en, this message translates to:
-  /// **'Money Days is a calm place to note everyday spending.'**
+  /// **'Money Days is a calm calendar for everyday money records.'**
   String get appInfoMessage;
 
-  /// No description provided for @addExpenseTitle.
+  /// No description provided for @addTransactionTitle.
   ///
   /// In en, this message translates to:
-  /// **'Add expense'**
-  String get addExpenseTitle;
+  /// **'Add record'**
+  String get addTransactionTitle;
+
+  /// No description provided for @addTransactionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it light. Add income or spending.'**
+  String get addTransactionSubtitle;
+
+  /// No description provided for @addTransactionButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add record'**
+  String get addTransactionButton;
 
   /// No description provided for @amountLabel.
   ///
@@ -319,6 +373,24 @@ abstract class AppLocalizations {
   /// **'Category'**
   String get categoryLabel;
 
+  /// No description provided for @typeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get typeLabel;
+
+  /// No description provided for @paymentMethodLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment method'**
+  String get paymentMethodLabel;
+
+  /// No description provided for @paymentMethodOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get paymentMethodOptional;
+
   /// No description provided for @saveButton.
   ///
   /// In en, this message translates to:
@@ -331,11 +403,11 @@ abstract class AppLocalizations {
   /// **'Choose date'**
   String get pickDate;
 
-  /// No description provided for @savedMessage.
+  /// No description provided for @transactionSavedMessage.
   ///
   /// In en, this message translates to:
-  /// **'Saved for today.'**
-  String get savedMessage;
+  /// **'Saved.'**
+  String get transactionSavedMessage;
 
   /// No description provided for @validationAmountRequired.
   ///
@@ -451,11 +523,77 @@ abstract class AppLocalizations {
   /// **'Subscription'**
   String get categorySubscription;
 
+  /// No description provided for @categorySalary.
+  ///
+  /// In en, this message translates to:
+  /// **'Salary'**
+  String get categorySalary;
+
+  /// No description provided for @categoryBonus.
+  ///
+  /// In en, this message translates to:
+  /// **'Bonus'**
+  String get categoryBonus;
+
+  /// No description provided for @categoryGift.
+  ///
+  /// In en, this message translates to:
+  /// **'Gift'**
+  String get categoryGift;
+
+  /// No description provided for @categoryRefund.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund'**
+  String get categoryRefund;
+
   /// No description provided for @categoryOther.
   ///
   /// In en, this message translates to:
   /// **'Other'**
   String get categoryOther;
+
+  /// No description provided for @paymentMethodCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash'**
+  String get paymentMethodCash;
+
+  /// No description provided for @paymentMethodCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Card'**
+  String get paymentMethodCard;
+
+  /// No description provided for @paymentMethodBankTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank transfer'**
+  String get paymentMethodBankTransfer;
+
+  /// No description provided for @paymentMethodMobilePay.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile pay'**
+  String get paymentMethodMobilePay;
+
+  /// No description provided for @paymentMethodOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get paymentMethodOther;
+
+  /// No description provided for @transactionTypeExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get transactionTypeExpense;
+
+  /// No description provided for @transactionTypeIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get transactionTypeIncome;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

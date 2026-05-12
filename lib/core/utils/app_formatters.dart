@@ -30,4 +30,37 @@ class AppFormatters {
   static String formatMonthLabel(DateTime date, Locale locale) {
     return DateFormat.yMMMM(locale.toLanguageTag()).format(date);
   }
+
+  static String formatMonthOnlyLabel(DateTime date, Locale locale) {
+    return DateFormat.MMMM(locale.toLanguageTag()).format(date);
+  }
+
+  static String formatCompactCurrency(
+    double amount,
+    AppCurrency currency,
+    Locale locale,
+  ) {
+    final compactNumber = NumberFormat.compact(
+      locale: locale.toLanguageTag(),
+    ).format(amount);
+    return '${currency.symbol}$compactNumber';
+  }
+
+  static String formatSignedCurrency(
+    double amount,
+    AppCurrency currency,
+    Locale locale, {
+    required bool isIncome,
+  }) {
+    final prefix = isIncome ? '+' : '-';
+    return '$prefix${formatCurrency(amount.abs(), currency, locale)}';
+  }
+
+  static String formatWeekdayLabel(DateTime date, Locale locale) {
+    return DateFormat.E(locale.toLanguageTag()).format(date);
+  }
+
+  static String formatDayWithWeekday(DateTime date, Locale locale) {
+    return DateFormat('MM.dd EEEE', locale.toLanguageTag()).format(date);
+  }
 }

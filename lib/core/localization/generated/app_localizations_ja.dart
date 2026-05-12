@@ -12,13 +12,19 @@ class AppLocalizationsJa extends AppLocalizations {
   String get appName => 'Money Days';
 
   @override
-  String get todaySpending => '今日の合計';
+  String get homeSubtitle => '今月のお金を静かに見渡せます。';
 
   @override
-  String get monthSpending => '今月ここまで';
+  String get monthlyIncome => '収入';
+
+  @override
+  String get monthlyExpense => '支出';
 
   @override
   String get monthlyBudget => '今月の予算';
+
+  @override
+  String get remainingBudget => '残り予算';
 
   @override
   String budgetProgressUsed(int percent) {
@@ -51,31 +57,48 @@ class AppLocalizationsJa extends AppLocalizations {
   String get budgetNotSet => 'まだ設定されていません';
 
   @override
-  String get addTodaySpending => '今日の支出を追加';
+  String get monthlyCalendarTitle => '月間カレンダー';
 
   @override
-  String get recentExpenses => '最近の記録';
+  String get recentTransactions => '最近の記録';
 
   @override
-  String get emptyRecentExpenses => '最近の記録がここに表示されます。';
+  String get emptyMonthTransactions => '今月の記録はまだありません。';
 
   @override
   String get monthlyReviewTitle => '月のふり返り';
 
   @override
-  String get monthlyTotal => '今月の合計';
+  String get monthlyReviewSubtitle => '今月の流れを落ち着いて見返せます。';
+
+  @override
+  String get monthlyPeriodLabel => '月別';
 
   @override
   String get selectMonth => '月を選択';
 
   @override
-  String get categoryBreakdown => 'カテゴリ別';
+  String get monthTransactions => '今月の記録';
 
   @override
-  String get expenseListTitle => '支出一覧';
+  String get spendingByCategory => 'カテゴリ別の支出';
+
+  @override
+  String get incomeByCategory => 'カテゴリ別の収入';
+
+  @override
+  String get noCategoryData => '今月のカテゴリ記録はまだありません。';
 
   @override
   String get noReviewData => '今月の支出はまだありません。';
+
+  @override
+  String get emptyDayTransactions => 'この日の記録はまだありません。';
+
+  @override
+  String recordCount(int count) {
+    return '$count件';
+  }
 
   @override
   String topCategoryMessage(String category) {
@@ -86,7 +109,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get settingsTitle => '設定';
 
   @override
-  String get settingsSubtitle => 'シンプルで、安心できるままに。';
+  String get settingsSubtitle => 'シンプルに、この端末だけで。';
 
   @override
   String get languageSetting => '言語';
@@ -107,10 +130,16 @@ class AppLocalizationsJa extends AppLocalizations {
   String get privacyMessage => '記録はこの端末に保存されます。';
 
   @override
-  String get appInfoMessage => 'Money Days は、毎日の支出を静かに残すためのアプリです。';
+  String get appInfoMessage => 'Money Days は、日々のお金を静かに記録するカレンダーです。';
 
   @override
-  String get addExpenseTitle => '支出を追加';
+  String get addTransactionTitle => '記録を追加';
+
+  @override
+  String get addTransactionSubtitle => '支出も収入も、軽く残しましょう。';
+
+  @override
+  String get addTransactionButton => '記録を追加';
 
   @override
   String get amountLabel => '金額';
@@ -128,13 +157,22 @@ class AppLocalizationsJa extends AppLocalizations {
   String get categoryLabel => 'カテゴリ';
 
   @override
+  String get typeLabel => '種類';
+
+  @override
+  String get paymentMethodLabel => '支払い方法';
+
+  @override
+  String get paymentMethodOptional => '任意';
+
+  @override
   String get saveButton => '保存';
 
   @override
   String get pickDate => '日付を選ぶ';
 
   @override
-  String get savedMessage => '記録しました。';
+  String get transactionSavedMessage => '保存しました。';
 
   @override
   String get validationAmountRequired => '金額を入力してください。';
@@ -194,5 +232,38 @@ class AppLocalizationsJa extends AppLocalizations {
   String get categorySubscription => 'サブスク';
 
   @override
+  String get categorySalary => '給与';
+
+  @override
+  String get categoryBonus => 'ボーナス';
+
+  @override
+  String get categoryGift => '贈り物';
+
+  @override
+  String get categoryRefund => '返金';
+
+  @override
   String get categoryOther => 'その他';
+
+  @override
+  String get paymentMethodCash => '現金';
+
+  @override
+  String get paymentMethodCard => 'カード';
+
+  @override
+  String get paymentMethodBankTransfer => '振込';
+
+  @override
+  String get paymentMethodMobilePay => 'モバイル決済';
+
+  @override
+  String get paymentMethodOther => 'その他';
+
+  @override
+  String get transactionTypeExpense => '支出';
+
+  @override
+  String get transactionTypeIncome => '収入';
 }

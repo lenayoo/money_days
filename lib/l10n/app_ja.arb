@@ -1,9 +1,11 @@
 {
   "@@locale": "ja",
   "appName": "Money Days",
-  "todaySpending": "今日の合計",
-  "monthSpending": "今月ここまで",
+  "homeSubtitle": "今月のお金を静かに見渡せます。",
+  "monthlyIncome": "収入",
+  "monthlyExpense": "支出",
   "monthlyBudget": "今月の予算",
+  "remainingBudget": "残り予算",
   "budgetProgressUsed": "予算の{percent}%を使っています",
   "@budgetProgressUsed": {
     "placeholders": {
@@ -33,15 +35,27 @@
   "startThisMonthWithBudget": "今月は、シンプルな予算から始めましょう。",
   "editBudget": "予算を編集",
   "budgetNotSet": "まだ設定されていません",
-  "addTodaySpending": "今日の支出を追加",
-  "recentExpenses": "最近の記録",
-  "emptyRecentExpenses": "最近の記録がここに表示されます。",
+  "monthlyCalendarTitle": "月間カレンダー",
+  "recentTransactions": "最近の記録",
+  "emptyMonthTransactions": "今月の記録はまだありません。",
   "monthlyReviewTitle": "月のふり返り",
-  "monthlyTotal": "今月の合計",
+  "monthlyReviewSubtitle": "今月の流れを落ち着いて見返せます。",
+  "monthlyPeriodLabel": "月別",
   "selectMonth": "月を選択",
-  "categoryBreakdown": "カテゴリ別",
-  "expenseListTitle": "支出一覧",
+  "monthTransactions": "今月の記録",
+  "spendingByCategory": "カテゴリ別の支出",
+  "incomeByCategory": "カテゴリ別の収入",
+  "noCategoryData": "今月のカテゴリ記録はまだありません。",
   "noReviewData": "今月の支出はまだありません。",
+  "emptyDayTransactions": "この日の記録はまだありません。",
+  "recordCount": "{count}件",
+  "@recordCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "topCategoryMessage": "今月は{category}の支出がいちばん多いです。",
   "@topCategoryMessage": {
     "placeholders": {
@@ -51,23 +65,28 @@
     }
   },
   "settingsTitle": "設定",
-  "settingsSubtitle": "シンプルで、安心できるままに。",
+  "settingsSubtitle": "シンプルに、この端末だけで。",
   "languageSetting": "言語",
   "currencySetting": "通貨",
   "currencyConversionNote": "表示の換算には USD 基準の固定レートを使います: 1 USD = 150 JPY、1500 KRW、1.35 SGD。",
   "appInfo": "アプリについて",
   "privacyNote": "プライバシー",
   "privacyMessage": "記録はこの端末に保存されます。",
-  "appInfoMessage": "Money Days は、毎日の支出を静かに残すためのアプリです。",
-  "addExpenseTitle": "支出を追加",
+  "appInfoMessage": "Money Days は、日々のお金を静かに記録するカレンダーです。",
+  "addTransactionTitle": "記録を追加",
+  "addTransactionSubtitle": "支出も収入も、軽く残しましょう。",
+  "addTransactionButton": "記録を追加",
   "amountLabel": "金額",
   "memoLabel": "メモ",
   "memoHint": "メモは任意です",
   "dateLabel": "日付",
   "categoryLabel": "カテゴリ",
+  "typeLabel": "種類",
+  "paymentMethodLabel": "支払い方法",
+  "paymentMethodOptional": "任意",
   "saveButton": "保存",
   "pickDate": "日付を選ぶ",
-  "savedMessage": "記録しました。",
+  "transactionSavedMessage": "保存しました。",
   "validationAmountRequired": "金額を入力してください。",
   "validationAmountInvalid": "正しい金額を入力してください。",
   "navigationHome": "ホーム",
@@ -87,5 +106,16 @@
   "categoryHealth": "健康",
   "categoryHome": "家",
   "categorySubscription": "サブスク",
-  "categoryOther": "その他"
+  "categorySalary": "給与",
+  "categoryBonus": "ボーナス",
+  "categoryGift": "贈り物",
+  "categoryRefund": "返金",
+  "categoryOther": "その他",
+  "paymentMethodCash": "現金",
+  "paymentMethodCard": "カード",
+  "paymentMethodBankTransfer": "振込",
+  "paymentMethodMobilePay": "モバイル決済",
+  "paymentMethodOther": "その他",
+  "transactionTypeExpense": "支出",
+  "transactionTypeIncome": "収入"
 }

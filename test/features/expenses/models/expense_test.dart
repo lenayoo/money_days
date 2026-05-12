@@ -2,6 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:money_days/features/expenses/models/app_currency.dart';
 import 'package:money_days/features/expenses/models/expense.dart';
 import 'package:money_days/features/expenses/models/expense_category.dart';
+import 'package:money_days/features/expenses/models/payment_method.dart';
+import 'package:money_days/features/expenses/models/transaction_type.dart';
 
 void main() {
   test('Expense round-trips all persisted fields', () {
@@ -9,6 +11,7 @@ void main() {
     final updatedAt = DateTime(2026, 4, 27, 10, 15);
     final expense = Expense(
       id: 'expense_1',
+      type: TransactionType.expense,
       amount: 1280,
       category: ExpenseCategory.cafe,
       memo: 'Morning coffee',
@@ -16,6 +19,7 @@ void main() {
       currency: AppCurrency.jpy,
       createdAt: createdAt,
       updatedAt: updatedAt,
+      paymentMethod: PaymentMethod.card,
     );
 
     final restoredExpense = Expense.fromMap(expense.toMap());
@@ -26,6 +30,7 @@ void main() {
   test('Expense converts through the fixed base currency without mutation', () {
     final expense = Expense(
       id: 'expense_usd',
+      type: TransactionType.expense,
       amount: 12.5,
       category: ExpenseCategory.cafe,
       memo: 'Coffee beans',
@@ -35,6 +40,7 @@ void main() {
       updatedAt: DateTime(2026, 4, 27, 9, 30),
     );
 
+    expect(expense.isExpense, isTrue);
     expect(expense.amountInBaseCurrency, closeTo(12.5, 0.0001));
     expect(expense.amountForCurrency(AppCurrency.jpy), closeTo(1875, 0.0001));
     expect(expense.amountForCurrency(AppCurrency.krw), closeTo(18750, 0.0001));
