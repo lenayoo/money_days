@@ -9,16 +9,21 @@ import '../../../core/utils/app_formatters.dart';
 import '../../../core/widgets/app_page.dart';
 import '../../../core/widgets/month_picker_sheet.dart';
 import '../../../core/widgets/round_icon_button.dart';
+import '../../../core/widgets/soft_section_card.dart';
 import '../../budgets/controllers/monthly_budgets_controller.dart';
 import '../../budgets/models/monthly_budget.dart';
 import '../../expenses/controllers/expenses_controller.dart';
 import '../../expenses/models/app_currency.dart';
+import '../../expenses/models/expense.dart';
 import '../../expenses/models/expense_insights.dart';
 import '../../expenses/models/transaction_type.dart';
+import '../../expenses/screens/add_transaction_screen.dart';
+import '../../expenses/widgets/transaction_list_item.dart';
 import '../../settings/controllers/settings_controller.dart';
+import '../widgets/category_pie_chart_card.dart';
 import '../widgets/monthly_insights_card.dart';
 import '../widgets/monthly_summary_share_sheet.dart';
-import '../widgets/category_pie_chart_card.dart';
+import '../widgets/swipe_action_transaction_card.dart';
 
 class MonthlyReviewScreen extends ConsumerStatefulWidget {
   const MonthlyReviewScreen({super.key});
@@ -82,6 +87,54 @@ class _MonthlyReviewScreenState extends ConsumerState<MonthlyReviewScreen> {
     );
   }
 
+  Future<void> _editTransaction(Expense expense) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => AddTransactionScreen(expense: expense),
+      ),
+    );
+  }
+
+  Future<void> _deleteTransaction(BuildContext context, Expense expense) async {
+    final l10n = AppLocalizations.of(context)!;
+    final shouldDelete =
+        await showDialog<bool>(
+          context: context,
+          builder:
+              (dialogContext) => AlertDialog(
+                title: Text(l10n.deleteRecordTitle),
+                content: Text(l10n.deleteRecordMessage),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(false),
+                    child: Text(l10n.cancelButton),
+                  ),
+                  FilledButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(true),
+                    child: Text(l10n.deleteRecord),
+                  ),
+                ],
+              ),
+        ) ??
+        false;
+
+    if (!shouldDelete || !context.mounted) {
+      return;
+    }
+
+    await ref
+        .read(expensesControllerProvider.notifier)
+        .removeTransaction(expense.id);
+
+    if (!context.mounted) {
+      return;
+    }
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(l10n.transactionDeletedMessage)));
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -99,9 +152,20 @@ class _MonthlyReviewScreenState extends ConsumerState<MonthlyReviewScreen> {
     final monthIndex = _selectedMonthIndex(availableMonths, _selectedMonth);
     final totalInBase =
         _selectedType == TransactionType.expense
-            ? ExpenseInsights.totalExpenseInBaseForMonth(expenses, _selectedMonth)
-            : ExpenseInsights.totalIncomeInBaseForMonth(expenses, _selectedMonth);
+            ? ExpenseInsights.totalExpenseInBaseForMonth(
+              expenses,
+              _selectedMonth,
+            )
+            : ExpenseInsights.totalIncomeInBaseForMonth(
+              expenses,
+              _selectedMonth,
+            );
     final breakdown = ExpenseInsights.categoryTotalsForMonthByType(
+      expenses,
+      _selectedMonth,
+      _selectedType,
+    );
+    final monthlyTransactions = ExpenseInsights.transactionsForMonthByType(
       expenses,
       _selectedMonth,
       _selectedType,
@@ -116,15 +180,17 @@ class _MonthlyReviewScreenState extends ConsumerState<MonthlyReviewScreen> {
       _selectedMonth,
       TransactionType.expense,
     );
-    final averageInBase = ExpenseInsights.averageAmountInBaseForActiveDaysByType(
-      expenses,
-      _selectedMonth,
-      TransactionType.expense,
-    );
-    final totalAmount = AppFormatters.formatCurrency(
+    final averageInBase =
+        ExpenseInsights.averageAmountInBaseForActiveDaysByType(
+          expenses,
+          _selectedMonth,
+          TransactionType.expense,
+        );
+    final totalAmount = AppFormatters.formatSignedCurrency(
       settings.currency.fromBaseAmount(totalInBase),
       settings.currency,
       locale,
+      isIncome: _selectedType == TransactionType.income,
     );
     final monthLabel = AppFormatters.formatMonthLabel(_selectedMonth, locale);
     final shareData = ExpenseInsightsData(
@@ -274,6 +340,7 @@ class _MonthlyReviewScreenState extends ConsumerState<MonthlyReviewScreen> {
               emptyLabel: l10n.noCategoryData,
               breakdown: breakdown,
               currency: settings.currency,
+              isIncome: _selectedType == TransactionType.income,
               amountColor:
                   _selectedType == TransactionType.expense
                       ? AppColors.expense
@@ -288,6 +355,46 @@ class _MonthlyReviewScreenState extends ConsumerState<MonthlyReviewScreen> {
                 currency: settings.currency,
               ),
             ],
+            const SizedBox(height: 14),
+            Text(l10n.monthTransactions, style: theme.textTheme.titleLarge),
+            const SizedBox(height: 12),
+            if (monthlyTransactions.isEmpty)
+              SoftSectionCard(
+                padding: const EdgeInsets.all(20),
+                child: Text(
+                  l10n.emptyMonthTransactions,
+                  style: theme.textTheme.bodyLarge,
+                ),
+              )
+            else
+              for (
+                var index = 0;
+                index < monthlyTransactions.length;
+                index++
+              ) ...[
+                SwipeActionTransactionCard(
+                  key: ValueKey('${monthlyTransactions[index].id}-swipe-card'),
+                  actionKeyPrefix: monthlyTransactions[index].id,
+                  editLabel: l10n.editRecord,
+                  deleteLabel: l10n.deleteRecord,
+                  onEdit: () => _editTransaction(monthlyTransactions[index]),
+                  onDelete:
+                      () => _deleteTransaction(
+                        context,
+                        monthlyTransactions[index],
+                      ),
+                  child: SoftSectionCard(
+                    padding: const EdgeInsets.all(16),
+                    color: AppColors.surfaceRaised,
+                    child: TransactionListItem(
+                      expense: monthlyTransactions[index],
+                      displayCurrency: settings.currency,
+                    ),
+                  ),
+                ),
+                if (index != monthlyTransactions.length - 1)
+                  const SizedBox(height: 12),
+              ],
           ],
         ),
       ),

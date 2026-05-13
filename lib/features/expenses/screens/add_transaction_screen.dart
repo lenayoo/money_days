@@ -9,16 +9,18 @@ import '../../../core/utils/app_clock.dart';
 import '../../../core/utils/app_formatters.dart';
 import '../../../core/widgets/app_page.dart';
 import '../../../core/widgets/round_icon_button.dart';
-import '../../../core/widgets/soft_section_card.dart';
 import '../../settings/controllers/settings_controller.dart';
 import '../controllers/expenses_controller.dart';
 import '../models/app_currency.dart';
+import '../models/expense.dart';
 import '../models/expense_category.dart';
 import '../models/payment_method.dart';
 import '../models/transaction_type.dart';
 
 class AddTransactionScreen extends ConsumerStatefulWidget {
-  const AddTransactionScreen({super.key});
+  const AddTransactionScreen({super.key, this.expense});
+
+  final Expense? expense;
 
   @override
   ConsumerState<AddTransactionScreen> createState() =>
@@ -26,6 +28,9 @@ class AddTransactionScreen extends ConsumerStatefulWidget {
 }
 
 class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
+  static const _maxAmountDigits = 7;
+  static const _maxMemoLength = 20;
+
   final _formKey = GlobalKey<FormState>();
   final _amountController = TextEditingController();
   final _memoController = TextEditingController();
@@ -39,7 +44,26 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
   @override
   void initState() {
     super.initState();
-    _selectedCategory = expenseCategoriesForType(_selectedType).first;
+    final existingExpense = widget.expense;
+    if (existingExpense == null) {
+      _selectedCategory = expenseCategoriesForType(_selectedType).first;
+      return;
+    }
+
+    _selectedType = existingExpense.type;
+    final categories = expenseCategoriesForType(_selectedType);
+    _selectedCategory =
+        categories.contains(existingExpense.category)
+            ? existingExpense.category
+            : categories.first;
+    _selectedPaymentMethod =
+        existingExpense.paymentMethod ?? PaymentMethod.card;
+    _selectedDate = existingExpense.date;
+    _amountController.text = _formatEditableAmount(
+      existingExpense.amount,
+      existingExpense.currency,
+    );
+    _memoController.text = existingExpense.memo ?? '';
   }
 
   @override
@@ -87,6 +111,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
   Future<void> _saveTransaction() async {
     final l10n = AppLocalizations.of(context)!;
     final settings = ref.read(settingsControllerProvider);
+    final activeCurrency = widget.expense?.currency ?? settings.currency;
     final amount = _parseAmount(_amountController.text);
 
     if (!_formKey.currentState!.validate() || amount == null) {
@@ -97,25 +122,43 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
       _isSaving = true;
     });
 
-    await ref
-        .read(expensesControllerProvider.notifier)
-        .addTransaction(
-          type: _selectedType,
-          amount: amount,
-          category: _selectedCategory,
-          date: _selectedDate,
-          currency: settings.currency,
-          paymentMethod: _selectedPaymentMethod,
-          memo: _memoController.text,
-        );
+    final controller = ref.read(expensesControllerProvider.notifier);
+    if (widget.expense case final expense?) {
+      await controller.updateTransaction(
+        id: expense.id,
+        type: _selectedType,
+        amount: amount,
+        category: _selectedCategory,
+        date: _selectedDate,
+        currency: activeCurrency,
+        paymentMethod: _selectedPaymentMethod,
+        memo: _memoController.text,
+      );
+    } else {
+      await controller.addTransaction(
+        type: _selectedType,
+        amount: amount,
+        category: _selectedCategory,
+        date: _selectedDate,
+        currency: activeCurrency,
+        paymentMethod: _selectedPaymentMethod,
+        memo: _memoController.text,
+      );
+    }
 
     if (!mounted) {
       return;
     }
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(l10n.transactionSavedMessage)));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          widget.expense == null
+              ? l10n.transactionSavedMessage
+              : l10n.transactionUpdatedMessage,
+        ),
+      ),
+    );
     Navigator.of(context).pop();
   }
 
@@ -124,7 +167,8 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final locale = Localizations.localeOf(context);
-    final currency = ref.watch(settingsControllerProvider).currency;
+    final settings = ref.watch(settingsControllerProvider);
+    final currency = widget.expense?.currency ?? settings.currency;
     final categories = expenseCategoriesForType(_selectedType);
 
     return Scaffold(
@@ -144,7 +188,10 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                   ),
                   const Spacer(),
                   RoundIconButton(
-                    icon: _isSaving ? Icons.more_horiz_rounded : Icons.check_rounded,
+                    icon:
+                        _isSaving
+                            ? Icons.more_horiz_rounded
+                            : Icons.check_rounded,
                     onPressed: _isSaving ? null : _saveTransaction,
                   ),
                 ],
@@ -182,7 +229,10 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          AppFormatters.formatDayWithWeekday(_selectedDate, locale),
+                          AppFormatters.formatDayWithWeekday(
+                            _selectedDate,
+                            locale,
+                          ),
                           style: theme.textTheme.titleMedium?.copyWith(
                             color: AppColors.textSecondary,
                           ),
@@ -211,13 +261,13 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                     ),
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
+                      _DigitCountLimitingTextInputFormatter(_maxAmountDigits),
                     ],
                     style: theme.textTheme.displaySmall?.copyWith(
                       fontSize: 42,
                       color: AppColors.textPrimary,
                     ),
                     decoration: InputDecoration(
-                      hintText: '0',
                       border: InputBorder.none,
                       enabledBorder: InputBorder.none,
                       focusedBorder: InputBorder.none,
@@ -294,12 +344,13 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: categories.length,
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 4,
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 14,
-                        childAspectRatio: 0.82,
-                      ),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 4,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 14,
+                            childAspectRatio: 0.82,
+                          ),
                       itemBuilder: (context, index) {
                         final category = categories[index];
 
@@ -316,22 +367,41 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                         );
                       },
                     ),
-                    const SizedBox(height: 18),
-                    SoftSectionCard(
-                      padding: const EdgeInsets.fromLTRB(14, 4, 14, 4),
-                      color: AppColors.surfaceRaised,
-                      child: TextFormField(
-                        controller: _memoController,
-                        decoration: InputDecoration(
-                          labelText: l10n.memoLabel,
-                          hintText: l10n.memoHint,
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                        ),
-                        maxLength: 60,
-                        maxLines: 2,
+                    const SizedBox(height: 20),
+                    Text(
+                      l10n.memoLabel,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: AppColors.textSecondary,
                       ),
+                    ),
+                    const SizedBox(height: 8),
+                    TextFormField(
+                      controller: _memoController,
+                      decoration: InputDecoration(
+                        hintText: l10n.memoHint,
+                        filled: false,
+                        fillColor: Colors.transparent,
+                        border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        focusedErrorBorder: InputBorder.none,
+                        contentPadding: EdgeInsets.zero,
+                        counterText: '',
+                      ),
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(_maxMemoLength),
+                      ],
+                      maxLength: _maxMemoLength,
+                      maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                      buildCounter:
+                          (
+                            context, {
+                            required currentLength,
+                            required isFocused,
+                            required maxLength,
+                          }) => null,
+                      maxLines: 2,
                     ),
                   ],
                 ),
@@ -340,6 +410,58 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+String _formatEditableAmount(double amount, AppCurrency currency) {
+  final fixedAmount = amount.toStringAsFixed(currency.decimalDigits);
+  if (!fixedAmount.contains('.')) {
+    return fixedAmount;
+  }
+
+  return fixedAmount
+      .replaceFirst(RegExp(r'0+$'), '')
+      .replaceFirst(RegExp(r'\.$'), '');
+}
+
+class _DigitCountLimitingTextInputFormatter extends TextInputFormatter {
+  const _DigitCountLimitingTextInputFormatter(this.maxDigits);
+
+  final int maxDigits;
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    var digitCount = 0;
+    final buffer = StringBuffer();
+
+    for (final character in newValue.text.split('')) {
+      final isDigit = RegExp(r'\d').hasMatch(character);
+      if (isDigit) {
+        if (digitCount >= maxDigits) {
+          continue;
+        }
+        digitCount += 1;
+      }
+      buffer.write(character);
+    }
+
+    final limitedText = buffer.toString();
+    if (limitedText == newValue.text) {
+      return newValue;
+    }
+
+    final selectionOffset =
+        newValue.selection.baseOffset > limitedText.length
+            ? limitedText.length
+            : newValue.selection.baseOffset;
+
+    return TextEditingValue(
+      text: limitedText,
+      selection: TextSelection.collapsed(offset: selectionOffset),
     );
   }
 }
@@ -376,7 +498,8 @@ class _PaymentMethodChip extends StatelessWidget {
           child: Text(
             label,
             style: theme.textTheme.labelLarge?.copyWith(
-              color: selected ? AppColors.accentStrong : AppColors.textSecondary,
+              color:
+                  selected ? AppColors.accentStrong : AppColors.textSecondary,
             ),
           ),
         ),
@@ -419,7 +542,8 @@ class _CategoryGridItem extends StatelessWidget {
                     : AppColors.surfaceRaised,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: selected ? accent.withValues(alpha: 0.5) : AppColors.border,
+              color:
+                  selected ? accent.withValues(alpha: 0.5) : AppColors.border,
             ),
           ),
           child: Column(

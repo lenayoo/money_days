@@ -221,6 +221,27 @@ class AppLocalizationsJa extends AppLocalizations {
   String get transactionSavedMessage => '保存しました。';
 
   @override
+  String get transactionUpdatedMessage => '更新しました。';
+
+  @override
+  String get transactionDeletedMessage => '削除しました。';
+
+  @override
+  String get editRecord => '編集';
+
+  @override
+  String get deleteRecord => '削除';
+
+  @override
+  String get deleteRecordTitle => 'この記録を削除しますか？';
+
+  @override
+  String get deleteRecordMessage => 'この小さな記録は一覧から外れます。';
+
+  @override
+  String get cancelButton => 'キャンセル';
+
+  @override
   String get validationAmountRequired => '金額を入力してください。';
 
   @override

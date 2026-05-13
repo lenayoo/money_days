@@ -52,6 +52,20 @@ class AppFormatters {
     ).format(amount.abs());
   }
 
+  static String formatSignedAmountWithoutSymbol(
+    double amount,
+    AppCurrency currency,
+    Locale locale, {
+    required bool isIncome,
+  }) {
+    final prefix = isIncome ? '+' : '-';
+    final formatted = NumberFormat.decimalPatternDigits(
+      locale: locale.toLanguageTag(),
+      decimalDigits: currency.decimalDigits,
+    ).format(amount.abs());
+    return '$prefix$formatted';
+  }
+
   static String formatSignedCurrency(
     double amount,
     AppCurrency currency,

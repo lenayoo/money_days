@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/app_date_utils.dart';
 import '../../../core/utils/app_formatters.dart';
-import '../../../core/widgets/soft_section_card.dart';
 import '../models/app_currency.dart';
 import '../models/expense_insights.dart';
 
@@ -41,8 +40,8 @@ class MonthCalendarCard extends StatelessWidget {
       for (final summary in dailySummaries) summary.date.day: summary,
     };
 
-    return SoftSectionCard(
-      padding: const EdgeInsets.fromLTRB(16, 18, 16, 18),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(2, 10, 2, 6),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -67,16 +66,16 @@ class MonthCalendarCard extends StatelessWidget {
                 ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 18),
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: dates.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 7,
-              crossAxisSpacing: 6,
-              mainAxisSpacing: 14,
-              childAspectRatio: 0.82,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 18,
+              childAspectRatio: 0.76,
             ),
             itemBuilder: (context, index) {
               final date = dates[index];
@@ -166,21 +165,26 @@ class _CalendarDayCell extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 6),
               if (isSelected && hasExpense)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      AppFormatters.formatCompactAmount(
-                        summary!.expenseForCurrency(currency),
-                        locale,
-                      ),
-                      maxLines: 1,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: AppColors.expense,
-                        fontWeight: FontWeight.w600,
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        AppFormatters.formatSignedAmountWithoutSymbol(
+                          summary!.expenseForCurrency(currency),
+                          currency,
+                          locale,
+                          isIncome: false,
+                        ),
+                        maxLines: 1,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: AppColors.expense,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
@@ -188,17 +192,22 @@ class _CalendarDayCell extends StatelessWidget {
               else if (isSelected && hasIncome)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      AppFormatters.formatCompactAmount(
-                        summary!.incomeForCurrency(currency),
-                        locale,
-                      ),
-                      maxLines: 1,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: AppColors.income,
-                        fontWeight: FontWeight.w600,
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        AppFormatters.formatSignedAmountWithoutSymbol(
+                          summary!.incomeForCurrency(currency),
+                          currency,
+                          locale,
+                          isIncome: true,
+                        ),
+                        maxLines: 1,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: AppColors.income,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),

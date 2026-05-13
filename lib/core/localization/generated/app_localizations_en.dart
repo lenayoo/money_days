@@ -221,6 +221,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get transactionSavedMessage => 'Saved.';
 
   @override
+  String get transactionUpdatedMessage => 'Updated.';
+
+  @override
+  String get transactionDeletedMessage => 'Deleted.';
+
+  @override
+  String get editRecord => 'Edit';
+
+  @override
+  String get deleteRecord => 'Delete';
+
+  @override
+  String get deleteRecordTitle => 'Delete this record?';
+
+  @override
+  String get deleteRecordMessage => 'This quiet record will be removed.';
+
+  @override
+  String get cancelButton => 'Cancel';
+
+  @override
   String get validationAmountRequired => 'Enter an amount.';
 
   @override

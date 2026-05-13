@@ -44,10 +44,11 @@ class MonthlyInsightsCard extends StatelessWidget {
             _InsightRow(
               label: l10n.spendingInsightTopCategory,
               value: topCategory!.category.label(l10n),
-              supporting: AppFormatters.formatCurrency(
+              supporting: AppFormatters.formatSignedCurrency(
                 topCategory!.totalForCurrency(currency),
                 currency,
                 locale,
+                isIncome: false,
               ),
             ),
             const SizedBox(height: 12),
@@ -58,10 +59,11 @@ class MonthlyInsightsCard extends StatelessWidget {
             const SizedBox(height: 12),
             _InsightRow(
               label: l10n.spendingInsightDailyAverage,
-              value: AppFormatters.formatCurrency(
+              value: AppFormatters.formatSignedCurrency(
                 currency.fromBaseAmount(averageInBase),
                 currency,
                 locale,
+                isIncome: false,
               ),
             ),
           ],

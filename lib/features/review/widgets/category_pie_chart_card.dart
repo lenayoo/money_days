@@ -17,6 +17,7 @@ class CategoryPieChartCard extends StatelessWidget {
     required this.emptyLabel,
     required this.breakdown,
     required this.currency,
+    required this.isIncome,
     this.amountColor = AppColors.expense,
   });
 
@@ -24,6 +25,7 @@ class CategoryPieChartCard extends StatelessWidget {
   final String emptyLabel;
   final List<CategorySpending> breakdown;
   final AppCurrency currency;
+  final bool isIncome;
   final Color amountColor;
 
   @override
@@ -71,6 +73,7 @@ class CategoryPieChartCard extends StatelessWidget {
                       _CategorySummaryTile(
                         spending: breakdown[index],
                         currency: currency,
+                        isIncome: isIncome,
                         amountColor: amountColor,
                       ),
               if (index != breakdown.length - 1) const SizedBox(height: 12),
@@ -122,11 +125,13 @@ class _CategorySummaryTile extends StatelessWidget {
   const _CategorySummaryTile({
     required this.spending,
     required this.currency,
+    required this.isIncome,
     required this.amountColor,
   });
 
   final CategorySpending spending;
   final AppCurrency currency;
+  final bool isIncome;
   final Color amountColor;
 
   @override
@@ -194,10 +199,11 @@ class _CategorySummaryTile extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           Text(
-            AppFormatters.formatCurrency(
+            AppFormatters.formatSignedCurrency(
               spending.totalForCurrency(currency),
               currency,
               locale,
+              isIncome: isIncome,
             ),
             style: theme.textTheme.titleMedium?.copyWith(color: amountColor),
           ),

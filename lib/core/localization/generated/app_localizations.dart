@@ -493,6 +493,48 @@ abstract class AppLocalizations {
   /// **'Saved.'**
   String get transactionSavedMessage;
 
+  /// No description provided for @transactionUpdatedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated.'**
+  String get transactionUpdatedMessage;
+
+  /// No description provided for @transactionDeletedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted.'**
+  String get transactionDeletedMessage;
+
+  /// No description provided for @editRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get editRecord;
+
+  /// No description provided for @deleteRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get deleteRecord;
+
+  /// No description provided for @deleteRecordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this record?'**
+  String get deleteRecordTitle;
+
+  /// No description provided for @deleteRecordMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This quiet record will be removed.'**
+  String get deleteRecordMessage;
+
+  /// No description provided for @cancelButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancelButton;
+
   /// No description provided for @validationAmountRequired.
   ///
   /// In en, this message translates to:

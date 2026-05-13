@@ -221,6 +221,27 @@ class AppLocalizationsKo extends AppLocalizations {
   String get transactionSavedMessage => '저장했어요.';
 
   @override
+  String get transactionUpdatedMessage => '수정했어요.';
+
+  @override
+  String get transactionDeletedMessage => '삭제했어요.';
+
+  @override
+  String get editRecord => '수정';
+
+  @override
+  String get deleteRecord => '삭제';
+
+  @override
+  String get deleteRecordTitle => '이 기록을 지울까요?';
+
+  @override
+  String get deleteRecordMessage => '이 작은 기록은 목록에서 사라져요.';
+
+  @override
+  String get cancelButton => '취소';
+
+  @override
   String get validationAmountRequired => '금액을 입력해 주세요.';
 
   @override

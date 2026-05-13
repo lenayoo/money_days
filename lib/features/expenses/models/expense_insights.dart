@@ -149,7 +149,26 @@ class ExpenseInsights {
     return sorted(monthlyTransactions);
   }
 
-  static List<Expense> transactionsForDay(List<Expense> expenses, DateTime date) {
+  static List<Expense> transactionsForMonthByType(
+    List<Expense> expenses,
+    DateTime date,
+    TransactionType type,
+  ) {
+    final monthlyTransactions = expenses
+        .where(
+          (expense) =>
+              expense.type == type &&
+              AppDateUtils.isSameMonth(expense.date, date),
+        )
+        .toList(growable: false);
+
+    return sorted(monthlyTransactions);
+  }
+
+  static List<Expense> transactionsForDay(
+    List<Expense> expenses,
+    DateTime date,
+  ) {
     final dailyTransactions = expenses
         .where((expense) => AppDateUtils.isSameDay(expense.date, date))
         .toList(growable: false);
@@ -260,7 +279,11 @@ class ExpenseInsights {
     List<Expense> expenses,
     DateTime date,
   ) {
-    return categoryTotalsForMonthByType(expenses, date, TransactionType.expense);
+    return categoryTotalsForMonthByType(
+      expenses,
+      date,
+      TransactionType.expense,
+    );
   }
 
   static List<CategorySpending> categoryTotalsForMonthByType(
@@ -326,13 +349,15 @@ class ExpenseInsights {
     DateTime date,
     TransactionType type,
   ) {
-    final activeDays = expenses
-        .where(
-          (expense) =>
-              expense.type == type && AppDateUtils.isSameMonth(expense.date, date),
-        )
-        .map((expense) => AppDateUtils.dateOnly(expense.date))
-        .toSet();
+    final activeDays =
+        expenses
+            .where(
+              (expense) =>
+                  expense.type == type &&
+                  AppDateUtils.isSameMonth(expense.date, date),
+            )
+            .map((expense) => AppDateUtils.dateOnly(expense.date))
+            .toSet();
 
     return activeDays.length;
   }

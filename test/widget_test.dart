@@ -9,12 +9,14 @@ import 'package:money_days/core/utils/app_date_utils.dart';
 import 'package:money_days/core/utils/app_formatters.dart';
 import 'package:money_days/features/budgets/models/monthly_budget.dart';
 import 'package:money_days/features/budgets/repositories/monthly_budgets_repository.dart';
+import 'package:money_days/features/expenses/controllers/expenses_controller.dart';
 import 'package:money_days/features/expenses/models/app_currency.dart';
 import 'package:money_days/features/expenses/models/expense.dart';
 import 'package:money_days/features/expenses/models/expense_category.dart';
 import 'package:money_days/features/expenses/models/payment_method.dart';
 import 'package:money_days/features/expenses/models/transaction_type.dart';
 import 'package:money_days/features/expenses/repositories/expenses_repository.dart';
+import 'package:money_days/features/expenses/screens/add_transaction_screen.dart';
 import 'package:money_days/features/expenses/screens/home_screen.dart';
 import 'package:money_days/features/review/screens/monthly_review_screen.dart';
 import 'package:money_days/features/settings/models/app_language.dart';
@@ -31,6 +33,53 @@ void main() {
 
   tearDown(() {
     AppClock.testNow = null;
+  });
+
+  test('expenses controller updates and removes a record', () async {
+    final existing = Expense(
+      id: 'expense_may',
+      type: TransactionType.expense,
+      amount: 2400,
+      category: ExpenseCategory.cafe,
+      memo: 'May coffee',
+      date: DateTime(2026, 5, 2),
+      currency: AppCurrency.jpy,
+      createdAt: DateTime(2026, 5, 2),
+      updatedAt: DateTime(2026, 5, 2),
+      paymentMethod: PaymentMethod.card,
+    );
+    final repository = InMemoryExpensesRepository();
+    await repository.saveExpenses([existing]);
+
+    final container = ProviderContainer(
+      overrides: [expensesRepositoryProvider.overrideWithValue(repository)],
+    );
+    addTearDown(container.dispose);
+
+    await container
+        .read(expensesControllerProvider.notifier)
+        .updateTransaction(
+          id: existing.id,
+          type: TransactionType.expense,
+          amount: 3600,
+          category: ExpenseCategory.food,
+          date: existing.date,
+          currency: existing.currency,
+          paymentMethod: PaymentMethod.cash,
+          memo: 'Dinner',
+        );
+
+    final updated = container.read(expensesControllerProvider).single;
+    expect(updated.amount, 3600);
+    expect(updated.category, ExpenseCategory.food);
+    expect(updated.memo, 'Dinner');
+    expect(updated.paymentMethod, PaymentMethod.cash);
+
+    await container
+        .read(expensesControllerProvider.notifier)
+        .removeTransaction(existing.id);
+
+    expect(container.read(expensesControllerProvider), isEmpty);
   });
 
   testWidgets('home screen shows month summary, calendar, and records', (
@@ -96,8 +145,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('May'), findsOneWidget);
-    expect(find.text('\$300.00'), findsWidgets);
-    expect(find.text('\$10.00'), findsWidgets);
+    expect(find.text('+\$300.00'), findsOneWidget);
+    expect(find.text('-\$10.00'), findsOneWidget);
     expect(find.text('\$200.00'), findsOneWidget);
     expect(find.text('\$190.00'), findsOneWidget);
     expect(find.byIcon(Icons.edit_outlined), findsOneWidget);
@@ -169,20 +218,70 @@ void main() {
 
     expect(find.text('Monthly'), findsOneWidget);
     expect(find.text('Spending by category'), findsOneWidget);
-    expect(find.text('¥2,400'), findsWidgets);
+    expect(find.text('-¥2,400'), findsWidgets);
 
-    await tester.tap(find.text(AppFormatters.formatMonthLabel(mayDate, const Locale('en'))));
+    await tester.tap(
+      find.text(AppFormatters.formatMonthLabel(mayDate, const Locale('en'))),
+    );
     await tester.pumpAndSettle();
     await tester.tap(find.text(aprilLabel).last);
     await tester.pumpAndSettle();
 
-    expect(find.text('¥3,000'), findsWidgets);
-    expect(find.text('¥2,400'), findsNothing);
+    expect(find.text('-¥3,000'), findsWidgets);
+    expect(find.text('-¥2,400'), findsNothing);
     expect(find.textContaining('¥47,000'), findsOneWidget);
   });
 
-  testWidgets('review screen shows budget, chart, and insights as standard features', (tester) async {
+  testWidgets(
+    'review screen shows budget, chart, and insights as standard features',
+    (tester) async {
+      AppClock.testNow = DateTime(2026, 5, 3, 10);
+
+      final expensesRepository = InMemoryExpensesRepository();
+      final monthlyBudgetsRepository = InMemoryMonthlyBudgetsRepository();
+      final settingsRepository = InMemorySettingsRepository();
+
+      await expensesRepository.saveExpenses([
+        Expense(
+          id: 'expense_may',
+          type: TransactionType.expense,
+          amount: 2400,
+          category: ExpenseCategory.cafe,
+          memo: 'May coffee',
+          date: DateTime(2026, 5, 2),
+          currency: AppCurrency.jpy,
+          createdAt: DateTime(2026, 5, 2),
+          updatedAt: DateTime(2026, 5, 2),
+        ),
+      ]);
+
+      await tester.pumpWidget(
+        _buildTestApp(
+          expensesRepository: expensesRepository,
+          monthlyBudgetsRepository: monthlyBudgetsRepository,
+          settingsRepository: settingsRepository,
+          child: const MonthlyReviewScreen(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Spending by category'), findsOneWidget);
+      await tester.drag(find.byType(ListView), const Offset(0, -500));
+      await tester.pumpAndSettle();
+      expect(find.text('Top category'), findsOneWidget);
+      expect(find.text('Monthly records'), findsOneWidget);
+      expect(find.text('May coffee'), findsOneWidget);
+    },
+  );
+
+  testWidgets('review records reveal swipe actions', (tester) async {
     AppClock.testNow = DateTime(2026, 5, 3, 10);
+    tester.view.physicalSize = const Size(800, 1400);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
 
     final expensesRepository = InMemoryExpensesRepository();
     final monthlyBudgetsRepository = InMemoryMonthlyBudgetsRepository();
@@ -212,11 +311,68 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Spending by category'), findsOneWidget);
     await tester.drag(find.byType(ListView), const Offset(0, -500));
     await tester.pumpAndSettle();
-    expect(find.text('Top category'), findsOneWidget);
+    final swipeCard = find.byKey(const ValueKey('expense_may-swipe-card'));
+    await tester.ensureVisible(swipeCard);
+    await tester.pumpAndSettle();
+
+    await tester.drag(swipeCard, const Offset(-240, 0));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Edit'), findsOneWidget);
+    expect(find.text('Delete'), findsOneWidget);
   });
+
+  testWidgets(
+    'add transaction limits amount and memo input with minimal fields',
+    (tester) async {
+      final expensesRepository = InMemoryExpensesRepository();
+      final monthlyBudgetsRepository = InMemoryMonthlyBudgetsRepository();
+      final settingsRepository = InMemorySettingsRepository();
+
+      await settingsRepository.saveSettings(
+        const AppSettings(currency: AppCurrency.jpy),
+      );
+
+      await tester.pumpWidget(
+        _buildTestApp(
+          expensesRepository: expensesRepository,
+          monthlyBudgetsRepository: monthlyBudgetsRepository,
+          settingsRepository: settingsRepository,
+          child: const AddTransactionScreen(),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final fields =
+          tester.widgetList<TextField>(find.byType(TextField)).toList();
+      final amountField = fields.first;
+      final memoField = fields.last;
+
+      expect(amountField.decoration?.hintText, isNull);
+      expect(memoField.maxLength, 20);
+      expect(memoField.decoration?.filled, isFalse);
+      expect(memoField.decoration?.fillColor, Colors.transparent);
+
+      await tester.enterText(find.byType(TextFormField).first, '12345678');
+      await tester.pump();
+
+      final updatedAmountField =
+          tester.widgetList<TextField>(find.byType(TextField)).first;
+      expect(updatedAmountField.controller?.text, '1234567');
+
+      await tester.enterText(
+        find.byType(TextFormField).last,
+        '123456789012345678901',
+      );
+      await tester.pump();
+
+      final updatedMemoField =
+          tester.widgetList<TextField>(find.byType(TextField)).last;
+      expect(updatedMemoField.controller?.text, '12345678901234567890');
+    },
+  );
 
   testWidgets('settings stays localized for Japanese and Korean', (
     tester,

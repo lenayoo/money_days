@@ -114,10 +114,11 @@ class _MonthlySummaryShareSheetState extends State<_MonthlySummaryShareSheet> {
       }
 
       final monthLabel = AppFormatters.formatMonthLabel(widget.month, locale);
-      final totalAmount = AppFormatters.formatCurrency(
+      final totalAmount = AppFormatters.formatSignedCurrency(
         widget.currency.fromBaseAmount(widget.totalInBase),
         widget.currency,
         locale,
+        isIncome: widget.type == TransactionType.income,
       );
       final sharePositionOrigin =
           boundary.localToGlobal(Offset.zero) & boundary.size;
@@ -233,10 +234,11 @@ class _MonthlySummaryShareCard extends StatelessWidget {
     final locale = Localizations.localeOf(context);
     final theme = Theme.of(context);
     final monthLabel = AppFormatters.formatMonthLabel(month, locale);
-    final totalAmount = AppFormatters.formatCurrency(
+    final totalAmount = AppFormatters.formatSignedCurrency(
       currency.fromBaseAmount(totalInBase),
       currency,
       locale,
+      isIncome: type == TransactionType.income,
     );
     final topCategories = breakdown.take(3).toList(growable: false);
 
@@ -310,10 +312,11 @@ class _MonthlySummaryShareCard extends StatelessWidget {
               for (final item in topCategories) ...[
                 _ShareInfoRow(
                   label: item.category.label(l10n),
-                  value: AppFormatters.formatCurrency(
+                  value: AppFormatters.formatSignedCurrency(
                     item.totalForCurrency(currency),
                     currency,
                     locale,
+                    isIncome: type == TransactionType.income,
                   ),
                 ),
                 if (item != topCategories.last) const SizedBox(height: 8),

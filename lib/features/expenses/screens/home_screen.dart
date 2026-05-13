@@ -194,17 +194,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 Expanded(
                   child: _MetricColumn(
                     topLabel: l10n.monthlyIncome,
-                    topValue: AppFormatters.formatCurrency(
+                    topValue: AppFormatters.formatSignedCurrency(
                       settings.currency.fromBaseAmount(incomeInBase),
                       settings.currency,
                       locale,
+                      isIncome: true,
                     ),
                     topColor: AppColors.income,
                     bottomLabel: l10n.monthlyExpense,
-                    bottomValue: AppFormatters.formatCurrency(
+                    bottomValue: AppFormatters.formatSignedCurrency(
                       settings.currency.fromBaseAmount(expenseInBase),
                       settings.currency,
                       locale,
+                      isIncome: false,
                     ),
                     bottomColor: AppColors.expense,
                   ),
