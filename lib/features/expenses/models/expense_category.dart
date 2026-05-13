@@ -49,6 +49,21 @@ extension ExpenseCategoryX on ExpenseCategory {
     ExpenseCategory.other => const Color(0xFF88888C),
   };
 
+  Color get chartColor => switch (this) {
+    ExpenseCategory.food => const Color(0xFFF3B7A2),
+    ExpenseCategory.cafe => const Color(0xFFE8C6AE),
+    ExpenseCategory.transport => const Color(0xFFBFD9F6),
+    ExpenseCategory.shopping => const Color(0xFFD6C5F4),
+    ExpenseCategory.health => const Color(0xFFF1B7C9),
+    ExpenseCategory.home => const Color(0xFFCDE3C4),
+    ExpenseCategory.subscription => const Color(0xFFBDE5D8),
+    ExpenseCategory.salary => const Color(0xFFBFE5C2),
+    ExpenseCategory.bonus => const Color(0xFFF1DF9F),
+    ExpenseCategory.gift => const Color(0xFFC7E7EC),
+    ExpenseCategory.refund => const Color(0xFFBEE4D7),
+    ExpenseCategory.other => const Color(0xFFD8DFEB),
+  };
+
   Color get surfaceColor => switch (this) {
     ExpenseCategory.food => const Color(0xFFF3F0ED),
     ExpenseCategory.cafe => const Color(0xFFF3F0EF),

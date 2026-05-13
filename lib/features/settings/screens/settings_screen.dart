@@ -7,7 +7,6 @@ import '../../../core/widgets/app_page.dart';
 import '../../../core/widgets/round_icon_button.dart';
 import '../../../core/widgets/soft_section_card.dart';
 import '../../expenses/models/app_currency.dart';
-import '../../premium/widgets/premium_prompt_sheet.dart';
 import '../controllers/settings_controller.dart';
 import '../models/app_language.dart';
 
@@ -87,8 +86,6 @@ class SettingsScreen extends ConsumerWidget {
                 },
               ),
             ),
-            const SizedBox(height: 14),
-            const PremiumSettingsCard(),
             const SizedBox(height: 14),
             SoftSectionCard(
               padding: const EdgeInsets.all(20),

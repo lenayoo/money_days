@@ -46,6 +46,12 @@ class AppFormatters {
     return '${currency.symbol}$compactNumber';
   }
 
+  static String formatCompactAmount(double amount, Locale locale) {
+    return NumberFormat.compact(
+      locale: locale.toLanguageTag(),
+    ).format(amount.abs());
+  }
+
   static String formatSignedCurrency(
     double amount,
     AppCurrency currency,

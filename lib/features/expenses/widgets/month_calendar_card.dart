@@ -168,25 +168,39 @@ class _CalendarDayCell extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               if (isSelected && hasExpense)
-                Text(
-                  '-${AppFormatters.formatCompactCurrency(summary!.expenseForCurrency(currency), currency, locale)}',
-                  maxLines: 1,
-                  overflow: TextOverflow.fade,
-                  softWrap: false,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: AppColors.expense,
-                    fontWeight: FontWeight.w600,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      AppFormatters.formatCompactAmount(
+                        summary!.expenseForCurrency(currency),
+                        locale,
+                      ),
+                      maxLines: 1,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: AppColors.expense,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 )
               else if (isSelected && hasIncome)
-                Text(
-                  '+${AppFormatters.formatCompactCurrency(summary!.incomeForCurrency(currency), currency, locale)}',
-                  maxLines: 1,
-                  overflow: TextOverflow.fade,
-                  softWrap: false,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: AppColors.income,
-                    fontWeight: FontWeight.w600,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      AppFormatters.formatCompactAmount(
+                        summary!.incomeForCurrency(currency),
+                        locale,
+                      ),
+                      maxLines: 1,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: AppColors.income,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 )
               else if ((hasIncome || hasExpense) && isCurrentMonth)

@@ -106,7 +106,7 @@ class AppTheme {
         scrolledUnderElevation: 0,
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.background,
         indicatorColor: AppColors.surfaceMuted,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         height: 68,
@@ -222,7 +222,7 @@ class AppTheme {
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: AppColors.textPrimary,
+          foregroundColor: AppColors.accentStrong,
           padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
           textStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,

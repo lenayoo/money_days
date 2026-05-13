@@ -65,13 +65,37 @@ class _MonthlySummaryShareSheetState extends State<_MonthlySummaryShareSheet> {
   final GlobalKey _shareCardKey = GlobalKey();
   bool _isSharing = false;
 
-  Future<void> _shareCard() async {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      _shareCard(closeAfterShare: true);
+    });
+  }
+
+  Future<void> _shareCard({
+    bool closeAfterShare = false,
+    bool retryIfBoundaryMissing = true,
+  }) async {
     final l10n = AppLocalizations.of(context)!;
     final locale = Localizations.localeOf(context);
     final boundary =
         _shareCardKey.currentContext?.findRenderObject()
             as RenderRepaintBoundary?;
     if (boundary == null) {
+      if (retryIfBoundaryMissing && mounted) {
+        await Future<void>.delayed(const Duration(milliseconds: 60));
+        if (!mounted) {
+          return;
+        }
+        return _shareCard(
+          closeAfterShare: closeAfterShare,
+          retryIfBoundaryMissing: false,
+        );
+      }
       return;
     }
 
@@ -95,6 +119,8 @@ class _MonthlySummaryShareSheetState extends State<_MonthlySummaryShareSheet> {
         widget.currency,
         locale,
       );
+      final sharePositionOrigin =
+          boundary.localToGlobal(Offset.zero) & boundary.size;
 
       await Share.shareXFiles(
         [
@@ -107,7 +133,12 @@ class _MonthlySummaryShareSheetState extends State<_MonthlySummaryShareSheet> {
         ],
         subject: 'Money Days',
         text: l10n.shareSummaryMessage(monthLabel, totalAmount),
+        sharePositionOrigin: sharePositionOrigin,
       );
+
+      if (mounted && closeAfterShare) {
+        Navigator.of(context).maybePop();
+      }
     } catch (_) {
       if (!mounted) {
         return;

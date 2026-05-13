@@ -5,5 +5,4 @@ class StorageKeys {
   static const String expenses = 'expenses';
   static const String monthlyBudgets = 'monthly_budgets';
   static const String settings = 'settings';
-  static const String premiumEntitlement = 'premium_entitlement';
 }

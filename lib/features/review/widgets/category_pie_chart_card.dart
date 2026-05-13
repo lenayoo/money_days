@@ -59,7 +59,11 @@ class CategoryPieChartCard extends StatelessWidget {
               runSpacing: 8,
               children: [
                 for (final item in breakdown)
-                  _LegendPill(category: item.category, label: item.category.label(l10n)),
+                  _LegendPill(
+                    category: item.category,
+                    label: item.category.label(l10n),
+                    share: item.share,
+                  ),
               ],
             ),
             const SizedBox(height: 18),
@@ -79,10 +83,15 @@ class CategoryPieChartCard extends StatelessWidget {
 }
 
 class _LegendPill extends StatelessWidget {
-  const _LegendPill({required this.category, required this.label});
+  const _LegendPill({
+    required this.category,
+    required this.label,
+    required this.share,
+  });
 
   final ExpenseCategory category;
   final String label;
+  final double share;
 
   @override
   Widget build(BuildContext context) {
@@ -95,12 +104,15 @@ class _LegendPill extends StatelessWidget {
           width: 8,
           height: 8,
           decoration: BoxDecoration(
-            color: category.color,
+            color: category.chartColor,
             shape: BoxShape.circle,
           ),
         ),
         const SizedBox(width: 6),
-        Text(label, style: theme.textTheme.bodySmall),
+        Text(
+          '$label ${_formatShare(share)}',
+          style: theme.textTheme.bodySmall,
+        ),
       ],
     );
   }
@@ -127,7 +139,7 @@ class _CategorySummaryTile extends StatelessWidget {
     return SoftSectionCard(
       padding: const EdgeInsets.all(14),
       color: AppColors.surfaceRaised,
-      accentColor: category.color,
+      accentColor: category.chartColor,
       child: Row(
         children: [
           Container(
@@ -144,10 +156,37 @@ class _CategorySummaryTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(category.label(l10n), style: theme.textTheme.titleMedium),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        category.label(l10n),
+                        style: theme.textTheme.titleMedium,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: category.chartColor.withValues(alpha: 0.28),
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        _formatShare(spending.share),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 4),
                 Text(
-                  '${(spending.share * 100).toStringAsFixed(1)}% · ${l10n.recordCount(spending.count)}',
+                  l10n.recordCount(spending.count),
                   style: theme.textTheme.bodySmall,
                 ),
               ],
@@ -193,7 +232,7 @@ class _CategoryPieChartPainter extends CustomPainter {
         startAngle,
         sweepAngle,
         true,
-        Paint()..color = item.category.color.withValues(alpha: 0.88),
+        Paint()..color = item.category.chartColor.withValues(alpha: 0.96),
       );
       startAngle += sweepAngle;
     }
@@ -209,4 +248,8 @@ class _CategoryPieChartPainter extends CustomPainter {
   bool shouldRepaint(covariant _CategoryPieChartPainter oldDelegate) {
     return oldDelegate.breakdown != breakdown;
   }
+}
+
+String _formatShare(double share) {
+  return '${(share * 100).toStringAsFixed(1)}%';
 }
