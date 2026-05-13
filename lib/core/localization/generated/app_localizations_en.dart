@@ -106,6 +106,127 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get premiumTitle => 'Money Days Premium';
+
+  @override
+  String get premiumSubtitle => 'A quiet upgrade for budget, insights, and sharing.';
+
+  @override
+  String get premiumActiveSubtitle => 'Premium is already ready on this device.';
+
+  @override
+  String get premiumReadyOnDevice => 'Premium is ready on this device.';
+
+  @override
+  String get premiumActiveLabel => 'Premium active';
+
+  @override
+  String get premiumBadge => 'Premium';
+
+  @override
+  String get premiumOneTimePurchase => 'One-time purchase';
+
+  @override
+  String get premiumUnlockButton => 'Unlock Premium';
+
+  @override
+  String get premiumOpeningStore => 'Opening store...';
+
+  @override
+  String get premiumRestoreButton => 'Restore purchase';
+
+  @override
+  String get premiumRestoring => 'Checking purchases...';
+
+  @override
+  String get premiumRestoreStartedMessage => 'Checking past purchases.';
+
+  @override
+  String get premiumAlreadyActiveMessage => 'Premium is already active.';
+
+  @override
+  String get premiumStoreUnavailableMessage => 'The store is not ready yet.';
+
+  @override
+  String get premiumProductUnavailableMessage => 'Premium is being prepared in the store.';
+
+  @override
+  String get premiumActionFailedMessage => 'Premium could not be opened right now.';
+
+  @override
+  String get premiumFeatureBudgetTitle => 'Monthly budget';
+
+  @override
+  String get premiumFeatureBudgetDescription => 'Set a monthly budget and keep the remaining amount in view.';
+
+  @override
+  String get premiumFeaturePieChartTitle => 'Pie chart analysis';
+
+  @override
+  String get premiumFeaturePieChartDescription => 'See the month by category with a simple pie chart.';
+
+  @override
+  String get premiumFeatureInsightsTitle => 'Spending insights';
+
+  @override
+  String get premiumFeatureInsightsDescription => 'Notice small patterns in your spending days.';
+
+  @override
+  String get premiumFeatureShareTitle => 'Share cards';
+
+  @override
+  String get premiumFeatureShareDescription => 'Create a soft summary card when you want to share.';
+
+  @override
+  String get seePremium => 'See Premium';
+
+  @override
+  String get doneButton => 'Done';
+
+  @override
+  String get spendingInsightsTitle => 'Spending insights';
+
+  @override
+  String get spendingInsightsEmpty => 'Add a few records to see a gentle pattern.';
+
+  @override
+  String get spendingInsightTopCategory => 'Top category';
+
+  @override
+  String get spendingInsightDays => 'Spending days';
+
+  @override
+  String get spendingInsightDailyAverage => 'Daily pace';
+
+  @override
+  String dayCount(int count) {
+    return '$count days';
+  }
+
+  @override
+  String get shareSummaryTitle => 'Share summary card';
+
+  @override
+  String get shareSummarySubtitle => 'A small card for this month.';
+
+  @override
+  String get preparingShareCard => 'Preparing card...';
+
+  @override
+  String get shareSummaryButton => 'Share card';
+
+  @override
+  String get shareFailedMessage => 'The share card could not be prepared.';
+
+  @override
+  String shareSummaryMessage(String month, String total) {
+    return 'Money Days · $month · $total';
+  }
+
+  @override
+  String get shareCardCaption => 'A quiet record of this month.';
+
+  @override
   String get settingsTitle => 'Settings';
 
   @override

@@ -10,11 +10,18 @@ import '../../../core/widgets/app_page.dart';
 import '../../../core/widgets/month_picker_sheet.dart';
 import '../../../core/widgets/round_icon_button.dart';
 import '../../budgets/controllers/monthly_budgets_controller.dart';
+import '../../budgets/models/monthly_budget.dart';
 import '../../expenses/controllers/expenses_controller.dart';
 import '../../expenses/models/app_currency.dart';
 import '../../expenses/models/expense_insights.dart';
 import '../../expenses/models/transaction_type.dart';
+import '../../premium/controllers/premium_controller.dart';
+import '../../premium/models/premium_feature.dart';
+import '../../premium/widgets/premium_feature_lock_card.dart';
+import '../../premium/widgets/premium_prompt_sheet.dart';
 import '../../settings/controllers/settings_controller.dart';
+import '../widgets/monthly_insights_card.dart';
+import '../widgets/monthly_summary_share_sheet.dart';
 import '../widgets/category_pie_chart_card.dart';
 
 class MonthlyReviewScreen extends ConsumerStatefulWidget {
@@ -62,6 +69,32 @@ class _MonthlyReviewScreenState extends ConsumerState<MonthlyReviewScreen> {
     });
   }
 
+  Future<void> _openShareSheet(
+    BuildContext context, {
+    required bool isPremium,
+    required double totalInBase,
+    required AppCurrency currency,
+    required ExpenseInsightsData data,
+  }) async {
+    if (!isPremium) {
+      await showPremiumPromptSheet(
+        context: context,
+        highlightedFeature: PremiumFeature.shareCards,
+      );
+      return;
+    }
+
+    await showMonthlySummaryShareSheet(
+      context: context,
+      month: _selectedMonth,
+      type: _selectedType,
+      currency: currency,
+      totalInBase: totalInBase,
+      budget: data.selectedBudget,
+      breakdown: data.breakdown,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -70,6 +103,8 @@ class _MonthlyReviewScreenState extends ConsumerState<MonthlyReviewScreen> {
     final settings = ref.watch(settingsControllerProvider);
     final expenses = ref.watch(expensesControllerProvider);
     final budgets = ref.watch(monthlyBudgetsControllerProvider);
+    final premiumState = ref.watch(premiumControllerProvider);
+    final isPremium = premiumState.isPremium;
     final selectedBudget = budgets[AppDateUtils.monthKey(_selectedMonth)];
     final availableMonths = ExpenseInsights.availableMonths(
       expenses,
@@ -86,12 +121,31 @@ class _MonthlyReviewScreenState extends ConsumerState<MonthlyReviewScreen> {
       _selectedMonth,
       _selectedType,
     );
+    final topCategory = ExpenseInsights.topCategoryForMonthByType(
+      expenses,
+      _selectedMonth,
+      TransactionType.expense,
+    );
+    final activeDays = ExpenseInsights.activeDaysForMonthByType(
+      expenses,
+      _selectedMonth,
+      TransactionType.expense,
+    );
+    final averageInBase = ExpenseInsights.averageAmountInBaseForActiveDaysByType(
+      expenses,
+      _selectedMonth,
+      TransactionType.expense,
+    );
     final totalAmount = AppFormatters.formatCurrency(
       settings.currency.fromBaseAmount(totalInBase),
       settings.currency,
       locale,
     );
     final monthLabel = AppFormatters.formatMonthLabel(_selectedMonth, locale);
+    final shareData = ExpenseInsightsData(
+      selectedBudget: selectedBudget,
+      breakdown: breakdown,
+    );
 
     return Scaffold(
       body: AppPage(
@@ -120,6 +174,18 @@ class _MonthlyReviewScreenState extends ConsumerState<MonthlyReviewScreen> {
                     l10n.monthlyPeriodLabel,
                     style: theme.textTheme.labelLarge,
                   ),
+                ),
+                const SizedBox(width: 12),
+                RoundIconButton(
+                  icon: Icons.ios_share_rounded,
+                  onPressed:
+                      () => _openShareSheet(
+                        context,
+                        isPremium: isPremium,
+                        totalInBase: totalInBase,
+                        currency: settings.currency,
+                        data: shareData,
+                      ),
                 ),
               ],
             ),
@@ -199,7 +265,7 @@ class _MonthlyReviewScreenState extends ConsumerState<MonthlyReviewScreen> {
                         : AppColors.income,
               ),
             ),
-            if (_selectedType == TransactionType.expense && selectedBudget != null)
+            if (_selectedType == TransactionType.expense && isPremium && selectedBudget != null)
               Padding(
                 padding: const EdgeInsets.only(top: 10),
                 child: Text(
@@ -215,24 +281,74 @@ class _MonthlyReviewScreenState extends ConsumerState<MonthlyReviewScreen> {
                 ),
               ),
             const SizedBox(height: 22),
-            CategoryPieChartCard(
-              title:
-                  _selectedType == TransactionType.expense
-                      ? l10n.spendingByCategory
-                      : l10n.incomeByCategory,
-              emptyLabel: l10n.noCategoryData,
-              breakdown: breakdown,
-              currency: settings.currency,
-              amountColor:
-                  _selectedType == TransactionType.expense
-                      ? AppColors.expense
-                      : AppColors.income,
-            ),
+            if (_selectedType == TransactionType.expense && !isPremium) ...[
+              PremiumFeatureLockCard(
+                feature: PremiumFeature.monthlyBudget,
+                onOpenPremium:
+                    () => showPremiumPromptSheet(
+                      context: context,
+                      highlightedFeature: PremiumFeature.monthlyBudget,
+                    ),
+              ),
+              const SizedBox(height: 14),
+            ],
+            if (isPremium)
+              CategoryPieChartCard(
+                title:
+                    _selectedType == TransactionType.expense
+                        ? l10n.spendingByCategory
+                        : l10n.incomeByCategory,
+                emptyLabel: l10n.noCategoryData,
+                breakdown: breakdown,
+                currency: settings.currency,
+                amountColor:
+                    _selectedType == TransactionType.expense
+                        ? AppColors.expense
+                        : AppColors.income,
+              )
+            else
+              PremiumFeatureLockCard(
+                feature: PremiumFeature.pieChartAnalysis,
+                onOpenPremium:
+                    () => showPremiumPromptSheet(
+                      context: context,
+                      highlightedFeature: PremiumFeature.pieChartAnalysis,
+                    ),
+              ),
+            if (_selectedType == TransactionType.expense) ...[
+              const SizedBox(height: 14),
+              if (isPremium)
+                MonthlyInsightsCard(
+                  topCategory: topCategory,
+                  activeDays: activeDays,
+                  averageInBase: averageInBase,
+                  currency: settings.currency,
+                )
+              else
+                PremiumFeatureLockCard(
+                  feature: PremiumFeature.spendingInsights,
+                  onOpenPremium:
+                      () => showPremiumPromptSheet(
+                        context: context,
+                        highlightedFeature: PremiumFeature.spendingInsights,
+                      ),
+                ),
+            ],
           ],
         ),
       ),
     );
   }
+}
+
+class ExpenseInsightsData {
+  const ExpenseInsightsData({
+    required this.selectedBudget,
+    required this.breakdown,
+  });
+
+  final MonthlyBudget? selectedBudget;
+  final List<CategorySpending> breakdown;
 }
 
 int _selectedMonthIndex(List<DateTime> months, DateTime selectedMonth) {

@@ -64,6 +64,62 @@
       }
     }
   },
+  "premiumTitle": "Money Days Premium",
+  "premiumSubtitle": "예산과 분석을 조용히 더해 주는 작은 업그레이드예요.",
+  "premiumActiveSubtitle": "이 기기에서 Premium을 사용할 수 있어요.",
+  "premiumReadyOnDevice": "이 기기에서 Premium을 사용할 수 있어요.",
+  "premiumActiveLabel": "Premium 사용 중",
+  "premiumBadge": "Premium",
+  "premiumOneTimePurchase": "1회 구매",
+  "premiumUnlockButton": "Premium 열기",
+  "premiumOpeningStore": "스토어를 여는 중...",
+  "premiumRestoreButton": "구매 복원",
+  "premiumRestoring": "구매를 확인하는 중...",
+  "premiumRestoreStartedMessage": "이전 구매를 확인하고 있어요.",
+  "premiumAlreadyActiveMessage": "Premium이 이미 활성화되어 있어요.",
+  "premiumStoreUnavailableMessage": "스토어가 아직 준비되지 않았어요.",
+  "premiumProductUnavailableMessage": "Premium 상품을 스토어에서 준비 중이에요.",
+  "premiumActionFailedMessage": "지금은 Premium을 열 수 없었어요.",
+  "premiumFeatureBudgetTitle": "월 예산",
+  "premiumFeatureBudgetDescription": "월 예산을 두고 남은 금액을 차분하게 볼 수 있어요.",
+  "premiumFeaturePieChartTitle": "원형 차트 분석",
+  "premiumFeaturePieChartDescription": "카테고리 흐름을 부드러운 원형 차트로 볼 수 있어요.",
+  "premiumFeatureInsightsTitle": "지출 인사이트",
+  "premiumFeatureInsightsDescription": "지출한 날의 작은 패턴을 살펴볼 수 있어요.",
+  "premiumFeatureShareTitle": "공유 카드",
+  "premiumFeatureShareDescription": "원할 때만 차분한 월간 카드를 공유할 수 있어요.",
+  "seePremium": "Premium 보기",
+  "doneButton": "닫기",
+  "spendingInsightsTitle": "지출 인사이트",
+  "spendingInsightsEmpty": "기록이 조금 쌓이면 작은 흐름을 볼 수 있어요.",
+  "spendingInsightTopCategory": "가장 큰 카테고리",
+  "spendingInsightDays": "지출한 날",
+  "spendingInsightDailyAverage": "하루 평균",
+  "dayCount": "{count}일",
+  "@dayCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shareSummaryTitle": "요약 카드 공유",
+  "shareSummarySubtitle": "이번 달을 작은 카드로 나눠 보세요.",
+  "preparingShareCard": "카드를 준비하는 중...",
+  "shareSummaryButton": "카드 공유",
+  "shareFailedMessage": "공유 카드를 준비하지 못했어요.",
+  "shareSummaryMessage": "Money Days · {month} · {total}",
+  "@shareSummaryMessage": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "shareCardCaption": "이번 달의 조용한 기록.",
   "settingsTitle": "설정",
   "settingsSubtitle": "단순하게, 이 기기 안에서만.",
   "languageSetting": "언어",

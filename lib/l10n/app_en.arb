@@ -64,6 +64,62 @@
       }
     }
   },
+  "premiumTitle": "Money Days Premium",
+  "premiumSubtitle": "A quiet upgrade for budget, insights, and sharing.",
+  "premiumActiveSubtitle": "Premium is already ready on this device.",
+  "premiumReadyOnDevice": "Premium is ready on this device.",
+  "premiumActiveLabel": "Premium active",
+  "premiumBadge": "Premium",
+  "premiumOneTimePurchase": "One-time purchase",
+  "premiumUnlockButton": "Unlock Premium",
+  "premiumOpeningStore": "Opening store...",
+  "premiumRestoreButton": "Restore purchase",
+  "premiumRestoring": "Checking purchases...",
+  "premiumRestoreStartedMessage": "Checking past purchases.",
+  "premiumAlreadyActiveMessage": "Premium is already active.",
+  "premiumStoreUnavailableMessage": "The store is not ready yet.",
+  "premiumProductUnavailableMessage": "Premium is being prepared in the store.",
+  "premiumActionFailedMessage": "Premium could not be opened right now.",
+  "premiumFeatureBudgetTitle": "Monthly budget",
+  "premiumFeatureBudgetDescription": "Set a monthly budget and keep the remaining amount in view.",
+  "premiumFeaturePieChartTitle": "Pie chart analysis",
+  "premiumFeaturePieChartDescription": "See the month by category with a simple pie chart.",
+  "premiumFeatureInsightsTitle": "Spending insights",
+  "premiumFeatureInsightsDescription": "Notice small patterns in your spending days.",
+  "premiumFeatureShareTitle": "Share cards",
+  "premiumFeatureShareDescription": "Create a soft summary card when you want to share.",
+  "seePremium": "See Premium",
+  "doneButton": "Done",
+  "spendingInsightsTitle": "Spending insights",
+  "spendingInsightsEmpty": "Add a few records to see a gentle pattern.",
+  "spendingInsightTopCategory": "Top category",
+  "spendingInsightDays": "Spending days",
+  "spendingInsightDailyAverage": "Daily pace",
+  "dayCount": "{count} days",
+  "@dayCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shareSummaryTitle": "Share summary card",
+  "shareSummarySubtitle": "A small card for this month.",
+  "preparingShareCard": "Preparing card...",
+  "shareSummaryButton": "Share card",
+  "shareFailedMessage": "The share card could not be prepared.",
+  "shareSummaryMessage": "Money Days · {month} · {total}",
+  "@shareSummaryMessage": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "shareCardCaption": "A quiet record of this month.",
   "settingsTitle": "Settings",
   "settingsSubtitle": "Keep the app quiet and local.",
   "languageSetting": "Language",

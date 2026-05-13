@@ -271,6 +271,240 @@ abstract class AppLocalizations {
   /// **'You spent most on {category} this month.'**
   String topCategoryMessage(String category);
 
+  /// No description provided for @premiumTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Money Days Premium'**
+  String get premiumTitle;
+
+  /// No description provided for @premiumSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A quiet upgrade for budget, insights, and sharing.'**
+  String get premiumSubtitle;
+
+  /// No description provided for @premiumActiveSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium is already ready on this device.'**
+  String get premiumActiveSubtitle;
+
+  /// No description provided for @premiumReadyOnDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium is ready on this device.'**
+  String get premiumReadyOnDevice;
+
+  /// No description provided for @premiumActiveLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium active'**
+  String get premiumActiveLabel;
+
+  /// No description provided for @premiumBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium'**
+  String get premiumBadge;
+
+  /// No description provided for @premiumOneTimePurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'One-time purchase'**
+  String get premiumOneTimePurchase;
+
+  /// No description provided for @premiumUnlockButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock Premium'**
+  String get premiumUnlockButton;
+
+  /// No description provided for @premiumOpeningStore.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening store...'**
+  String get premiumOpeningStore;
+
+  /// No description provided for @premiumRestoreButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore purchase'**
+  String get premiumRestoreButton;
+
+  /// No description provided for @premiumRestoring.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking purchases...'**
+  String get premiumRestoring;
+
+  /// No description provided for @premiumRestoreStartedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking past purchases.'**
+  String get premiumRestoreStartedMessage;
+
+  /// No description provided for @premiumAlreadyActiveMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium is already active.'**
+  String get premiumAlreadyActiveMessage;
+
+  /// No description provided for @premiumStoreUnavailableMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The store is not ready yet.'**
+  String get premiumStoreUnavailableMessage;
+
+  /// No description provided for @premiumProductUnavailableMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium is being prepared in the store.'**
+  String get premiumProductUnavailableMessage;
+
+  /// No description provided for @premiumActionFailedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium could not be opened right now.'**
+  String get premiumActionFailedMessage;
+
+  /// No description provided for @premiumFeatureBudgetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly budget'**
+  String get premiumFeatureBudgetTitle;
+
+  /// No description provided for @premiumFeatureBudgetDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a monthly budget and keep the remaining amount in view.'**
+  String get premiumFeatureBudgetDescription;
+
+  /// No description provided for @premiumFeaturePieChartTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pie chart analysis'**
+  String get premiumFeaturePieChartTitle;
+
+  /// No description provided for @premiumFeaturePieChartDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'See the month by category with a simple pie chart.'**
+  String get premiumFeaturePieChartDescription;
+
+  /// No description provided for @premiumFeatureInsightsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending insights'**
+  String get premiumFeatureInsightsTitle;
+
+  /// No description provided for @premiumFeatureInsightsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Notice small patterns in your spending days.'**
+  String get premiumFeatureInsightsDescription;
+
+  /// No description provided for @premiumFeatureShareTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share cards'**
+  String get premiumFeatureShareTitle;
+
+  /// No description provided for @premiumFeatureShareDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a soft summary card when you want to share.'**
+  String get premiumFeatureShareDescription;
+
+  /// No description provided for @seePremium.
+  ///
+  /// In en, this message translates to:
+  /// **'See Premium'**
+  String get seePremium;
+
+  /// No description provided for @doneButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get doneButton;
+
+  /// No description provided for @spendingInsightsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending insights'**
+  String get spendingInsightsTitle;
+
+  /// No description provided for @spendingInsightsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a few records to see a gentle pattern.'**
+  String get spendingInsightsEmpty;
+
+  /// No description provided for @spendingInsightTopCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Top category'**
+  String get spendingInsightTopCategory;
+
+  /// No description provided for @spendingInsightDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending days'**
+  String get spendingInsightDays;
+
+  /// No description provided for @spendingInsightDailyAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily pace'**
+  String get spendingInsightDailyAverage;
+
+  /// No description provided for @dayCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} days'**
+  String dayCount(int count);
+
+  /// No description provided for @shareSummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share summary card'**
+  String get shareSummaryTitle;
+
+  /// No description provided for @shareSummarySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A small card for this month.'**
+  String get shareSummarySubtitle;
+
+  /// No description provided for @preparingShareCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing card...'**
+  String get preparingShareCard;
+
+  /// No description provided for @shareSummaryButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Share card'**
+  String get shareSummaryButton;
+
+  /// No description provided for @shareFailedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The share card could not be prepared.'**
+  String get shareFailedMessage;
+
+  /// No description provided for @shareSummaryMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Money Days · {month} · {total}'**
+  String shareSummaryMessage(String month, String total);
+
+  /// No description provided for @shareCardCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'A quiet record of this month.'**
+  String get shareCardCaption;
+
   /// No description provided for @settingsTitle.
   ///
   /// In en, this message translates to:

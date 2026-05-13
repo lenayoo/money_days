@@ -106,6 +106,127 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get premiumTitle => 'Money Days Premium';
+
+  @override
+  String get premiumSubtitle => '예산과 분석을 조용히 더해 주는 작은 업그레이드예요.';
+
+  @override
+  String get premiumActiveSubtitle => '이 기기에서 Premium을 사용할 수 있어요.';
+
+  @override
+  String get premiumReadyOnDevice => '이 기기에서 Premium을 사용할 수 있어요.';
+
+  @override
+  String get premiumActiveLabel => 'Premium 사용 중';
+
+  @override
+  String get premiumBadge => 'Premium';
+
+  @override
+  String get premiumOneTimePurchase => '1회 구매';
+
+  @override
+  String get premiumUnlockButton => 'Premium 열기';
+
+  @override
+  String get premiumOpeningStore => '스토어를 여는 중...';
+
+  @override
+  String get premiumRestoreButton => '구매 복원';
+
+  @override
+  String get premiumRestoring => '구매를 확인하는 중...';
+
+  @override
+  String get premiumRestoreStartedMessage => '이전 구매를 확인하고 있어요.';
+
+  @override
+  String get premiumAlreadyActiveMessage => 'Premium이 이미 활성화되어 있어요.';
+
+  @override
+  String get premiumStoreUnavailableMessage => '스토어가 아직 준비되지 않았어요.';
+
+  @override
+  String get premiumProductUnavailableMessage => 'Premium 상품을 스토어에서 준비 중이에요.';
+
+  @override
+  String get premiumActionFailedMessage => '지금은 Premium을 열 수 없었어요.';
+
+  @override
+  String get premiumFeatureBudgetTitle => '월 예산';
+
+  @override
+  String get premiumFeatureBudgetDescription => '월 예산을 두고 남은 금액을 차분하게 볼 수 있어요.';
+
+  @override
+  String get premiumFeaturePieChartTitle => '원형 차트 분석';
+
+  @override
+  String get premiumFeaturePieChartDescription => '카테고리 흐름을 부드러운 원형 차트로 볼 수 있어요.';
+
+  @override
+  String get premiumFeatureInsightsTitle => '지출 인사이트';
+
+  @override
+  String get premiumFeatureInsightsDescription => '지출한 날의 작은 패턴을 살펴볼 수 있어요.';
+
+  @override
+  String get premiumFeatureShareTitle => '공유 카드';
+
+  @override
+  String get premiumFeatureShareDescription => '원할 때만 차분한 월간 카드를 공유할 수 있어요.';
+
+  @override
+  String get seePremium => 'Premium 보기';
+
+  @override
+  String get doneButton => '닫기';
+
+  @override
+  String get spendingInsightsTitle => '지출 인사이트';
+
+  @override
+  String get spendingInsightsEmpty => '기록이 조금 쌓이면 작은 흐름을 볼 수 있어요.';
+
+  @override
+  String get spendingInsightTopCategory => '가장 큰 카테고리';
+
+  @override
+  String get spendingInsightDays => '지출한 날';
+
+  @override
+  String get spendingInsightDailyAverage => '하루 평균';
+
+  @override
+  String dayCount(int count) {
+    return '$count일';
+  }
+
+  @override
+  String get shareSummaryTitle => '요약 카드 공유';
+
+  @override
+  String get shareSummarySubtitle => '이번 달을 작은 카드로 나눠 보세요.';
+
+  @override
+  String get preparingShareCard => '카드를 준비하는 중...';
+
+  @override
+  String get shareSummaryButton => '카드 공유';
+
+  @override
+  String get shareFailedMessage => '공유 카드를 준비하지 못했어요.';
+
+  @override
+  String shareSummaryMessage(String month, String total) {
+    return 'Money Days · $month · $total';
+  }
+
+  @override
+  String get shareCardCaption => '이번 달의 조용한 기록.';
+
+  @override
   String get settingsTitle => '설정';
 
   @override

@@ -609,3 +609,108 @@ The app should feel:
 - human-made
 - polished
 - App Store ready
+
+## Monetization Structure
+
+Money Days uses a calm freemium model.
+
+The app should remain useful for free users while offering deeper insights through Premium.
+
+The goal of Premium is NOT aggressive monetization.
+Premium should feel like a gentle upgrade for users who want more reflection and analysis.
+
+---
+
+### Free Features
+
+Free users can access:
+
+- Daily expense and income recording
+- Monthly calendar view
+- Basic categories
+- Basic monthly total
+- Simple transaction history
+
+The free experience should feel complete and useful.
+
+---
+
+### Premium Features
+
+Money Days Premium is a one-time purchase.
+
+Suggested price:
+- ¥300 JPY
+
+Premium unlocks:
+
+- Monthly budget tracking
+- Budget progress bar
+- Pie chart category analysis
+- Spending statistics and insights
+- Shareable summary cards
+- Future premium features
+
+Premium should focus on:
+- reflection
+- clarity
+- understanding spending habits
+
+NOT:
+- pressure
+- guilt
+- aggressive financial management
+
+---
+
+### Premium UX Rules
+
+Do NOT aggressively push payment.
+
+Requirements:
+- Users should be able to use the app comfortably for free.
+- Premium prompts should appear naturally.
+- Locked features may show a soft preview.
+- Use calm and minimal language.
+
+Example Premium messages:
+- “Understand your spending more deeply.”
+- “Unlock monthly insights.”
+- “See your spending patterns.”
+
+Avoid:
+- flashing paywalls
+- aggressive upgrade banners
+- dark patterns
+- excessive popups
+
+---
+
+### Purchase Flow
+
+The app itself should remain free to download.
+
+Premium is unlocked through in-app purchase.
+
+Do NOT make the entire app paid upfront.
+
+Recommended flow:
+1. User records spending
+2. User opens analysis or budget feature
+3. Soft Premium paywall appears
+4. User can unlock Premium with one-time purchase
+
+---
+
+### Future Premium Expansion
+
+Future Premium features may include:
+- More themes
+- Cloud backup
+- CSV export
+- Advanced insights
+- Multi-device sync
+
+Important:
+Do not overcomplicate the first Premium release.
+Keep the initial implementation simple and stable.

@@ -16,6 +16,9 @@ import 'package:money_days/features/expenses/models/payment_method.dart';
 import 'package:money_days/features/expenses/models/transaction_type.dart';
 import 'package:money_days/features/expenses/repositories/expenses_repository.dart';
 import 'package:money_days/features/expenses/screens/home_screen.dart';
+import 'package:money_days/features/premium/models/premium_entitlement.dart';
+import 'package:money_days/features/premium/repositories/premium_repository.dart';
+import 'package:money_days/features/premium/services/premium_store_service.dart';
 import 'package:money_days/features/review/screens/monthly_review_screen.dart';
 import 'package:money_days/features/settings/models/app_language.dart';
 import 'package:money_days/features/settings/models/app_settings.dart';
@@ -41,6 +44,7 @@ void main() {
     final mayDate = DateTime(2026, 5, 3);
     final expensesRepository = InMemoryExpensesRepository();
     final monthlyBudgetsRepository = InMemoryMonthlyBudgetsRepository();
+    final premiumRepository = InMemoryPremiumRepository();
     final settingsRepository = InMemorySettingsRepository();
 
     await expensesRepository.saveExpenses([
@@ -79,11 +83,18 @@ void main() {
     await settingsRepository.saveSettings(
       const AppSettings(currency: AppCurrency.usd),
     );
+    await premiumRepository.saveEntitlement(
+      const PremiumEntitlement(
+        isActive: true,
+        source: PremiumPurchaseSource.purchase,
+      ),
+    );
 
     await tester.pumpWidget(
       _buildTestApp(
         expensesRepository: expensesRepository,
         monthlyBudgetsRepository: monthlyBudgetsRepository,
+        premiumRepository: premiumRepository,
         settingsRepository: settingsRepository,
         child: HomeScreen(
           onAddTransaction: _noop,
@@ -112,6 +123,7 @@ void main() {
     final mayDate = DateTime(2026, 5, 2);
     final expensesRepository = InMemoryExpensesRepository();
     final monthlyBudgetsRepository = InMemoryMonthlyBudgetsRepository();
+    final premiumRepository = InMemoryPremiumRepository();
     final settingsRepository = InMemorySettingsRepository();
 
     await expensesRepository.saveExpenses([
@@ -151,6 +163,12 @@ void main() {
     await settingsRepository.saveSettings(
       const AppSettings(currency: AppCurrency.jpy),
     );
+    await premiumRepository.saveEntitlement(
+      const PremiumEntitlement(
+        isActive: true,
+        source: PremiumPurchaseSource.purchase,
+      ),
+    );
 
     final aprilLabel = AppFormatters.formatMonthLabel(
       aprilDate,
@@ -161,6 +179,7 @@ void main() {
       _buildTestApp(
         expensesRepository: expensesRepository,
         monthlyBudgetsRepository: monthlyBudgetsRepository,
+        premiumRepository: premiumRepository,
         settingsRepository: settingsRepository,
         child: const MonthlyReviewScreen(),
       ),
@@ -169,16 +188,53 @@ void main() {
 
     expect(find.text('Monthly'), findsOneWidget);
     expect(find.text('Spending by category'), findsOneWidget);
-    expect(find.text('¥2,400'), findsOneWidget);
+    expect(find.text('¥2,400'), findsWidgets);
 
     await tester.tap(find.text(AppFormatters.formatMonthLabel(mayDate, const Locale('en'))));
     await tester.pumpAndSettle();
     await tester.tap(find.text(aprilLabel).last);
     await tester.pumpAndSettle();
 
-    expect(find.text('¥3,000'), findsOneWidget);
+    expect(find.text('¥3,000'), findsWidgets);
     expect(find.text('¥2,400'), findsNothing);
     expect(find.textContaining('¥47,000'), findsOneWidget);
+  });
+
+  testWidgets('free review screen shows calm Premium locks', (tester) async {
+    AppClock.testNow = DateTime(2026, 5, 3, 10);
+
+    final expensesRepository = InMemoryExpensesRepository();
+    final monthlyBudgetsRepository = InMemoryMonthlyBudgetsRepository();
+    final premiumRepository = InMemoryPremiumRepository();
+    final settingsRepository = InMemorySettingsRepository();
+
+    await expensesRepository.saveExpenses([
+      Expense(
+        id: 'expense_may',
+        type: TransactionType.expense,
+        amount: 2400,
+        category: ExpenseCategory.cafe,
+        memo: 'May coffee',
+        date: DateTime(2026, 5, 2),
+        currency: AppCurrency.jpy,
+        createdAt: DateTime(2026, 5, 2),
+        updatedAt: DateTime(2026, 5, 2),
+      ),
+    ]);
+
+    await tester.pumpWidget(
+      _buildTestApp(
+        expensesRepository: expensesRepository,
+        monthlyBudgetsRepository: monthlyBudgetsRepository,
+        premiumRepository: premiumRepository,
+        settingsRepository: settingsRepository,
+        child: const MonthlyReviewScreen(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Premium'), findsWidgets);
+    expect(find.text('See Premium'), findsWidgets);
   });
 
   testWidgets('settings stays localized for Japanese and Korean', (
@@ -186,6 +242,7 @@ void main() {
   ) async {
     final expensesRepository = InMemoryExpensesRepository();
     final monthlyBudgetsRepository = InMemoryMonthlyBudgetsRepository();
+    final premiumRepository = InMemoryPremiumRepository();
     final settingsRepository = InMemorySettingsRepository();
 
     await settingsRepository.saveSettings(
@@ -200,6 +257,7 @@ void main() {
         locale: const Locale('ja'),
         expensesRepository: expensesRepository,
         monthlyBudgetsRepository: monthlyBudgetsRepository,
+        premiumRepository: premiumRepository,
         settingsRepository: settingsRepository,
         child: const SettingsScreen(),
       ),
@@ -222,6 +280,7 @@ void main() {
         locale: const Locale('ko'),
         expensesRepository: expensesRepository,
         monthlyBudgetsRepository: monthlyBudgetsRepository,
+        premiumRepository: premiumRepository,
         settingsRepository: settingsRepository,
         child: const SettingsScreen(),
       ),
@@ -238,6 +297,7 @@ Widget _buildTestApp({
   Locale locale = const Locale('en'),
   required ExpensesRepository expensesRepository,
   required MonthlyBudgetsRepository monthlyBudgetsRepository,
+  required PremiumRepository premiumRepository,
   required SettingsRepository settingsRepository,
   required Widget child,
 }) {
@@ -246,6 +306,10 @@ Widget _buildTestApp({
       expensesRepositoryProvider.overrideWithValue(expensesRepository),
       monthlyBudgetsRepositoryProvider.overrideWithValue(
         monthlyBudgetsRepository,
+      ),
+      premiumRepositoryProvider.overrideWithValue(premiumRepository),
+      premiumStoreServiceProvider.overrideWithValue(
+        UnsupportedPremiumStoreService(),
       ),
       settingsRepositoryProvider.overrideWithValue(settingsRepository),
     ],

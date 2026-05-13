@@ -308,6 +308,53 @@ class ExpenseInsights {
     return breakdown;
   }
 
+  static CategorySpending? topCategoryForMonthByType(
+    List<Expense> expenses,
+    DateTime date,
+    TransactionType type,
+  ) {
+    final breakdown = categoryTotalsForMonthByType(expenses, date, type);
+    if (breakdown.isEmpty) {
+      return null;
+    }
+
+    return breakdown.first;
+  }
+
+  static int activeDaysForMonthByType(
+    List<Expense> expenses,
+    DateTime date,
+    TransactionType type,
+  ) {
+    final activeDays = expenses
+        .where(
+          (expense) =>
+              expense.type == type && AppDateUtils.isSameMonth(expense.date, date),
+        )
+        .map((expense) => AppDateUtils.dateOnly(expense.date))
+        .toSet();
+
+    return activeDays.length;
+  }
+
+  static double averageAmountInBaseForActiveDaysByType(
+    List<Expense> expenses,
+    DateTime date,
+    TransactionType type,
+  ) {
+    final activeDays = activeDaysForMonthByType(expenses, date, type);
+    if (activeDays == 0) {
+      return 0;
+    }
+
+    final totalInBase =
+        type == TransactionType.expense
+            ? totalExpenseInBaseForMonth(expenses, date)
+            : totalIncomeInBaseForMonth(expenses, date);
+
+    return totalInBase / activeDays;
+  }
+
   static List<CategoryTrendPoint> categoryTrendForMonth(
     List<Expense> expenses,
     DateTime date,

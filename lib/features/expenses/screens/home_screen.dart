@@ -12,6 +12,10 @@ import '../../../core/widgets/round_icon_button.dart';
 import '../../budgets/controllers/monthly_budgets_controller.dart';
 import '../../budgets/models/monthly_budget.dart';
 import '../../budgets/widgets/monthly_budget_sheet.dart';
+import '../../premium/controllers/premium_controller.dart';
+import '../../premium/models/premium_feature.dart';
+import '../../premium/widgets/premium_feature_lock_card.dart';
+import '../../premium/widgets/premium_prompt_sheet.dart';
 import '../../settings/controllers/settings_controller.dart';
 import '../controllers/expenses_controller.dart';
 import '../models/app_currency.dart';
@@ -79,6 +83,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Future<void> _openBudgetSheet(BuildContext context) async {
+    final premiumState = ref.read(premiumControllerProvider);
+    if (!premiumState.isPremium) {
+      await showPremiumPromptSheet(
+        context: context,
+        highlightedFeature: PremiumFeature.monthlyBudget,
+      );
+      return;
+    }
+
     final settings = ref.read(settingsControllerProvider);
     final budgets = ref.read(monthlyBudgetsControllerProvider);
     final selectedBudget = budgets[AppDateUtils.monthKey(_selectedMonth)];
@@ -117,7 +130,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final settings = ref.watch(settingsControllerProvider);
     final expenses = ref.watch(expensesControllerProvider);
     final budgets = ref.watch(monthlyBudgetsControllerProvider);
+    final premiumState = ref.watch(premiumControllerProvider);
     final today = AppClock.now();
+    final isPremium = premiumState.isPremium;
 
     final availableMonths = ExpenseInsights.availableMonths(
       expenses,
@@ -188,67 +203,99 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ],
             ),
             const SizedBox(height: 24),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: _MetricColumn(
-                    topLabel: l10n.monthlyIncome,
-                    topValue: AppFormatters.formatCurrency(
-                      settings.currency.fromBaseAmount(incomeInBase),
-                      settings.currency,
-                      locale,
+            if (isPremium) ...[
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: _MetricColumn(
+                      topLabel: l10n.monthlyIncome,
+                      topValue: AppFormatters.formatCurrency(
+                        settings.currency.fromBaseAmount(incomeInBase),
+                        settings.currency,
+                        locale,
+                      ),
+                      topColor: AppColors.income,
+                      bottomLabel: l10n.monthlyExpense,
+                      bottomValue: AppFormatters.formatCurrency(
+                        settings.currency.fromBaseAmount(expenseInBase),
+                        settings.currency,
+                        locale,
+                      ),
+                      bottomColor: AppColors.expense,
                     ),
-                    topColor: AppColors.income,
-                    bottomLabel: l10n.monthlyExpense,
-                    bottomValue: AppFormatters.formatCurrency(
-                      settings.currency.fromBaseAmount(expenseInBase),
-                      settings.currency,
-                      locale,
-                    ),
-                    bottomColor: AppColors.expense,
                   ),
-                ),
-                const SizedBox(width: 24),
-                Expanded(
-                  child: _MetricColumn(
-                    topLabel: l10n.monthlyBudget,
-                    topValue:
-                        selectedBudget == null
-                            ? l10n.budgetNotSet
-                            : AppFormatters.formatCurrency(
-                              selectedBudget.amountForCurrency(settings.currency),
-                              settings.currency,
-                              locale,
-                            ),
-                    bottomLabel: l10n.remainingBudget,
-                    bottomValue: _formatBudgetDifference(
-                      currency: settings.currency,
-                      locale: locale,
-                      budget: selectedBudget,
-                      differenceInBase: budgetStatus,
-                      emptyText: l10n.budgetNotSet,
+                  const SizedBox(width: 24),
+                  Expanded(
+                    child: _MetricColumn(
+                      topLabel: l10n.monthlyBudget,
+                      topValue:
+                          selectedBudget == null
+                              ? l10n.budgetNotSet
+                              : AppFormatters.formatCurrency(
+                                selectedBudget.amountForCurrency(
+                                  settings.currency,
+                                ),
+                                settings.currency,
+                                locale,
+                              ),
+                      bottomLabel: l10n.remainingBudget,
+                      bottomValue: _formatBudgetDifference(
+                        currency: settings.currency,
+                        locale: locale,
+                        budget: selectedBudget,
+                        differenceInBase: budgetStatus,
+                        emptyText: l10n.budgetNotSet,
+                      ),
+                      bottomColor:
+                          budgetStatus == null
+                              ? AppColors.textPrimary
+                              : budgetStatus < 0
+                              ? AppColors.expense
+                              : AppColors.textPrimary,
                     ),
-                    bottomColor:
-                        budgetStatus == null
-                            ? AppColors.textPrimary
-                            : budgetStatus < 0
-                            ? AppColors.expense
-                            : AppColors.textPrimary,
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: () => _openBudgetSheet(context),
-                child: Text(
-                  selectedBudget == null ? l10n.setThisMonthBudget : l10n.editBudget,
+                ],
+              ),
+              const SizedBox(height: 8),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () => _openBudgetSheet(context),
+                  child: Text(
+                    selectedBudget == null
+                        ? l10n.setThisMonthBudget
+                        : l10n.editBudget,
+                  ),
                 ),
               ),
-            ),
+            ] else ...[
+              _MetricColumn(
+                topLabel: l10n.monthlyIncome,
+                topValue: AppFormatters.formatCurrency(
+                  settings.currency.fromBaseAmount(incomeInBase),
+                  settings.currency,
+                  locale,
+                ),
+                topColor: AppColors.income,
+                bottomLabel: l10n.monthlyExpense,
+                bottomValue: AppFormatters.formatCurrency(
+                  settings.currency.fromBaseAmount(expenseInBase),
+                  settings.currency,
+                  locale,
+                ),
+                bottomColor: AppColors.expense,
+              ),
+              const SizedBox(height: 18),
+              PremiumFeatureLockCard(
+                feature: PremiumFeature.monthlyBudget,
+                onOpenPremium:
+                    () => showPremiumPromptSheet(
+                      context: context,
+                      highlightedFeature: PremiumFeature.monthlyBudget,
+                    ),
+              ),
+            ],
             const SizedBox(height: 8),
             MonthCalendarCard(
               month: _selectedMonth,

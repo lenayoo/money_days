@@ -6,6 +6,8 @@ import 'app/app.dart';
 import 'core/constants/storage_keys.dart';
 import 'features/budgets/repositories/monthly_budgets_repository.dart';
 import 'features/expenses/repositories/expenses_repository.dart';
+import 'features/premium/repositories/premium_repository.dart';
+import 'features/premium/services/premium_store_service.dart';
 import 'features/settings/repositories/settings_repository.dart';
 
 Future<void> main() async {
@@ -22,6 +24,12 @@ Future<void> main() async {
         ),
         monthlyBudgetsRepositoryProvider.overrideWithValue(
           LocalMonthlyBudgetsRepository(appBox),
+        ),
+        premiumRepositoryProvider.overrideWithValue(
+          LocalPremiumRepository(appBox),
+        ),
+        premiumStoreServiceProvider.overrideWithValue(
+          InAppPremiumStoreService(),
         ),
         settingsRepositoryProvider.overrideWithValue(
           LocalSettingsRepository(appBox),
