@@ -27,4 +27,10 @@ class SettingsController extends Notifier<AppSettings> {
     state = updatedSettings;
     await _repository.saveSettings(updatedSettings);
   }
+
+  Future<void> updatePremiumStatus(bool isPremium) async {
+    final updatedSettings = state.copyWith(isPremium: isPremium);
+    state = updatedSettings;
+    await _repository.saveSettings(updatedSettings);
+  }
 }

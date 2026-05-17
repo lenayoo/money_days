@@ -9,6 +9,7 @@ import '../../../core/utils/app_formatters.dart';
 import '../../../core/widgets/app_page.dart';
 import '../../../core/widgets/month_picker_sheet.dart';
 import '../../../core/widgets/round_icon_button.dart';
+import '../../ads/widgets/bottom_banner_ad.dart';
 import '../../budgets/controllers/monthly_budgets_controller.dart';
 import '../../budgets/models/monthly_budget.dart';
 import '../../budgets/widgets/monthly_budget_sheet.dart';
@@ -145,14 +146,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
+      bottomNavigationBar: const BottomBannerAd(),
       floatingActionButton: FloatingActionButton(
         onPressed: widget.onAddTransaction,
         backgroundColor: AppColors.surface,
         foregroundColor: AppColors.textPrimary,
         elevation: 2,
-        shape: const CircleBorder(
-          side: BorderSide(color: AppColors.border),
-        ),
+        shape: const CircleBorder(side: BorderSide(color: AppColors.border)),
         child: const Icon(Icons.edit_outlined),
       ),
       body: AppPage(
@@ -175,7 +175,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                     canGoPrevious: monthIndex < availableMonths.length - 1,
                     canGoNext: monthIndex > 0,
-                    onPrevious: () => _moveMonth(availableMonths, monthIndex, 1),
+                    onPrevious:
+                        () => _moveMonth(availableMonths, monthIndex, 1),
                     onNext: () => _moveMonth(availableMonths, monthIndex, -1),
                     onSelectMonth: () => _selectMonth(context, availableMonths),
                   ),

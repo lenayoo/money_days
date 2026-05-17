@@ -5,6 +5,7 @@ class AppSettings {
   const AppSettings({
     this.currency = AppCurrency.jpy,
     this.language = AppLanguage.system,
+    this.isPremium = false,
   });
 
   factory AppSettings.fromMap(
@@ -14,6 +15,7 @@ class AppSettings {
   }) {
     final rawCurrency = map['currency'] as String?;
     final rawLanguage = map['language'] as String?;
+    final rawIsPremium = map['isPremium'] as bool?;
 
     return AppSettings(
       currency:
@@ -24,20 +26,31 @@ class AppSettings {
           rawLanguage == null
               ? defaultLanguage
               : appLanguageFromStorage(rawLanguage),
+      isPremium: rawIsPremium ?? false,
     );
   }
 
   final AppCurrency currency;
   final AppLanguage language;
+  final bool isPremium;
 
-  AppSettings copyWith({AppCurrency? currency, AppLanguage? language}) {
+  AppSettings copyWith({
+    AppCurrency? currency,
+    AppLanguage? language,
+    bool? isPremium,
+  }) {
     return AppSettings(
       currency: currency ?? this.currency,
       language: language ?? this.language,
+      isPremium: isPremium ?? this.isPremium,
     );
   }
 
   Map<String, dynamic> toMap() {
-    return {'currency': currency.name, 'language': language.name};
+    return {
+      'currency': currency.name,
+      'language': language.name,
+      'isPremium': isPremium,
+    };
   }
 }

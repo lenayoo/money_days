@@ -714,3 +714,18 @@ Future Premium features may include:
 Important:
 Do not overcomplicate the first Premium release.
 Keep the initial implementation simple and stable.
+
+
+## AdMob Preparation
+
+Money Days should prepare the app structure for future AdMob integration.
+
+Requirements:
+- Create reusable banner ad area.
+- Use test ads during development.
+- Separate iOS and Android ad IDs.
+- Hide ads for Premium users.
+- Keep ads visually minimal and non-intrusive.
+
+Important:
+Production ad IDs may be added later after AdMob setup is completed.
