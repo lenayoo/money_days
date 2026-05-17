@@ -74,8 +74,8 @@ class MonthCalendarCard extends StatelessWidget {
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 7,
               crossAxisSpacing: 10,
-              mainAxisSpacing: 18,
-              childAspectRatio: 0.76,
+              mainAxisSpacing: 16,
+              childAspectRatio: 0.8,
             ),
             itemBuilder: (context, index) {
               final date = dates[index];
@@ -91,8 +91,7 @@ class MonthCalendarCard extends StatelessWidget {
                     AppDateUtils.isSameDay(date, selectedDate),
                 currency: currency,
                 summary: summary,
-                onTap:
-                    !isCurrentMonth ? null : () => onDateSelected(date),
+                onTap: !isCurrentMonth ? null : () => onDateSelected(date),
               );
             },
           ),
@@ -134,7 +133,7 @@ class _CalendarDayCell extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(14),
         child: SizedBox(
-          height: 56,
+          height: 52,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -165,7 +164,7 @@ class _CalendarDayCell extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 4),
               if (isSelected && hasExpense)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 2),

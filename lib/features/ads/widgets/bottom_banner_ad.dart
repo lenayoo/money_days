@@ -84,18 +84,22 @@ class _BottomBannerAdSlotState extends State<_BottomBannerAdSlot> {
       top: false,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 6, 16, 12),
-        child: Center(
-          child: Container(
-            width: bannerAd.size.width.toDouble(),
-            height: bannerAd.size.height.toDouble(),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: AppColors.border),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Container(
+              width: bannerAd.size.width.toDouble(),
+              height: bannerAd.size.height.toDouble(),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: AppColors.border),
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: AdWidget(ad: bannerAd),
             ),
-            clipBehavior: Clip.antiAlias,
-            child: AdWidget(ad: bannerAd),
-          ),
+          ],
         ),
       ),
     );
