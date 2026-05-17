@@ -221,6 +221,11 @@ class AppLocalizationsJa extends AppLocalizations {
   String get validationAmountInvalid => '正しい金額を入力してください。';
 
   @override
+  String amountDigitLimitMessage(int count) {
+    return '$count桁まで入力できます。';
+  }
+
+  @override
   String get navigationHome => 'ホーム';
 
   @override

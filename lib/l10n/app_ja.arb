@@ -118,6 +118,14 @@
   "cancelButton": "キャンセル",
   "validationAmountRequired": "金額を入力してください。",
   "validationAmountInvalid": "正しい金額を入力してください。",
+  "amountDigitLimitMessage": "{count}桁まで入力できます。",
+  "@amountDigitLimitMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "navigationHome": "ホーム",
   "navigationReview": "ふり返り",
   "navigationSettings": "設定",

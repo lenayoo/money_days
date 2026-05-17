@@ -221,6 +221,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get validationAmountInvalid => 'Enter a valid amount.';
 
   @override
+  String amountDigitLimitMessage(int count) {
+    return 'You can enter up to $count digits.';
+  }
+
+  @override
   String get navigationHome => 'Home';
 
   @override

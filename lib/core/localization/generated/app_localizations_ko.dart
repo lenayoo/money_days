@@ -221,6 +221,11 @@ class AppLocalizationsKo extends AppLocalizations {
   String get validationAmountInvalid => '올바른 금액을 입력해 주세요.';
 
   @override
+  String amountDigitLimitMessage(int count) {
+    return '$count자리까지만 입력할 수 있어요.';
+  }
+
+  @override
   String get navigationHome => '홈';
 
   @override

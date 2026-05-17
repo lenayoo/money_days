@@ -66,6 +66,28 @@ class AppFormatters {
     return '$prefix$formatted';
   }
 
+  static String formatCompactSignedAmountWithoutSymbol(
+    double amount,
+    AppCurrency currency,
+    Locale locale, {
+    required bool isIncome,
+  }) {
+    if (amount.abs() < 100000) {
+      return formatSignedAmountWithoutSymbol(
+        amount,
+        currency,
+        locale,
+        isIncome: isIncome,
+      );
+    }
+
+    final prefix = isIncome ? '+' : '-';
+    final formatted = NumberFormat.compact(
+      locale: locale.toLanguageTag(),
+    ).format(amount.abs());
+    return '$prefix$formatted';
+  }
+
   static String formatSignedCurrency(
     double amount,
     AppCurrency currency,

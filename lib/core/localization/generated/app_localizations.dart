@@ -493,6 +493,12 @@ abstract class AppLocalizations {
   /// **'Enter a valid amount.'**
   String get validationAmountInvalid;
 
+  /// No description provided for @amountDigitLimitMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You can enter up to {count} digits.'**
+  String amountDigitLimitMessage(int count);
+
   /// No description provided for @navigationHome.
   ///
   /// In en, this message translates to:

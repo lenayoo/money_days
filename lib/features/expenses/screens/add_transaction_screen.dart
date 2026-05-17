@@ -28,7 +28,7 @@ class AddTransactionScreen extends ConsumerStatefulWidget {
 }
 
 class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
-  static const _maxAmountDigits = 7;
+  static const _maxAmountDigits = 10;
   static const _maxMemoLength = 20;
 
   final _formKey = GlobalKey<FormState>();
@@ -40,6 +40,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
   PaymentMethod _selectedPaymentMethod = PaymentMethod.card;
   DateTime _selectedDate = AppClock.now();
   bool _isSaving = false;
+  bool _showAmountDigitLimitMessage = false;
 
   @override
   void initState() {
@@ -95,6 +96,29 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
   double? _parseAmount(String input) {
     final normalized = input.replaceAll(',', '.').trim();
     return double.tryParse(normalized);
+  }
+
+  int _amountDigitCount(String input) {
+    return RegExp(r'\d').allMatches(input).length;
+  }
+
+  void _handleAmountChanged(String value) {
+    if (_showAmountDigitLimitMessage &&
+        _amountDigitCount(value) < _maxAmountDigits) {
+      setState(() {
+        _showAmountDigitLimitMessage = false;
+      });
+    }
+  }
+
+  void _handleAmountDigitLimitReached() {
+    if (_showAmountDigitLimitMessage) {
+      return;
+    }
+
+    setState(() {
+      _showAmountDigitLimitMessage = true;
+    });
   }
 
   void _changeType(TransactionType type) {
@@ -170,6 +194,11 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
     final settings = ref.watch(settingsControllerProvider);
     final currency = widget.expense?.currency ?? settings.currency;
     final categories = expenseCategoriesForType(_selectedType);
+    final activeColor =
+        _selectedType.isIncome ? AppColors.income : AppColors.expense;
+    final activeSoftColor =
+        _selectedType.isIncome ? AppColors.incomeSoft : AppColors.expenseSoft;
+    final activeBorderColor = activeColor.withValues(alpha: 0.34);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -199,6 +228,34 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
               const SizedBox(height: 26),
               Center(
                 child: SegmentedButton<TransactionType>(
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.resolveWith((states) {
+                      if (states.contains(WidgetState.selected)) {
+                        return activeColor;
+                      }
+                      return AppColors.surfaceMuted;
+                    }),
+                    foregroundColor: WidgetStateProperty.resolveWith((states) {
+                      if (states.contains(WidgetState.selected)) {
+                        return Colors.white;
+                      }
+                      return AppColors.textPrimary;
+                    }),
+                    side: const WidgetStatePropertyAll(
+                      BorderSide(color: AppColors.border),
+                    ),
+                    padding: const WidgetStatePropertyAll(
+                      EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    ),
+                    shape: WidgetStatePropertyAll(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    textStyle: const WidgetStatePropertyAll(
+                      TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                    ),
+                  ),
                   segments: [
                     ButtonSegment(
                       value: TransactionType.expense,
@@ -249,50 +306,95 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              Center(
-                child: SizedBox(
-                  width: 220,
-                  child: TextFormField(
-                    controller: _amountController,
-                    autofocus: true,
-                    textAlign: TextAlign.center,
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
+              TextFormField(
+                controller: _amountController,
+                autofocus: true,
+                onChanged: _handleAmountChanged,
+                cursorColor: activeColor,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
+                  _DigitCountLimitingTextInputFormatter(
+                    _maxAmountDigits,
+                    onLimitReached: _handleAmountDigitLimitReached,
+                  ),
+                ],
+                style: theme.textTheme.displaySmall?.copyWith(
+                  fontSize: 42,
+                  color: AppColors.textPrimary,
+                ),
+                decoration: InputDecoration(
+                  labelText: l10n.amountLabel,
+                  labelStyle: theme.textTheme.bodyMedium?.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                  floatingLabelStyle: theme.textTheme.bodyMedium?.copyWith(
+                    color: activeColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  alignLabelWithHint: true,
+                  prefixText: '${currency.symbol} ',
+                  prefixStyle: theme.textTheme.displaySmall?.copyWith(
+                    fontSize: 42,
+                    color: AppColors.textPrimary,
+                  ),
+                  isDense: true,
+                  contentPadding: const EdgeInsets.fromLTRB(12, 16, 12, 18),
+                  enabledBorder: const UnderlineInputBorder(
+                    borderSide: BorderSide(color: AppColors.borderStrong),
+                  ),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: activeColor, width: 1.6),
+                  ),
+                  errorBorder: const UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: AppColors.expense,
+                      width: 1.2,
                     ),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
-                      _DigitCountLimitingTextInputFormatter(_maxAmountDigits),
-                    ],
-                    style: theme.textTheme.displaySmall?.copyWith(
-                      fontSize: 42,
-                      color: AppColors.textPrimary,
+                  ),
+                  focusedErrorBorder: const UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: AppColors.expense,
+                      width: 1.6,
                     ),
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      errorBorder: InputBorder.none,
-                      focusedErrorBorder: InputBorder.none,
-                      prefixText: currency.symbol,
-                      prefixStyle: theme.textTheme.displaySmall?.copyWith(
-                        fontSize: 42,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return l10n.validationAmountRequired;
-                      }
-
-                      final parsedAmount = _parseAmount(value);
-                      if (parsedAmount == null || parsedAmount <= 0) {
-                        return l10n.validationAmountInvalid;
-                      }
-
-                      return null;
-                    },
                   ),
                 ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return l10n.validationAmountRequired;
+                  }
+
+                  if (_amountDigitCount(value) > _maxAmountDigits) {
+                    return l10n.amountDigitLimitMessage(_maxAmountDigits);
+                  }
+
+                  final parsedAmount = _parseAmount(value);
+                  if (parsedAmount == null || parsedAmount <= 0) {
+                    return l10n.validationAmountInvalid;
+                  }
+
+                  return null;
+                },
+              ),
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 160),
+                child:
+                    _showAmountDigitLimitMessage
+                        ? Padding(
+                          key: const ValueKey('amount-digit-limit-message'),
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Text(
+                            l10n.amountDigitLimitMessage(_maxAmountDigits),
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: activeColor,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        )
+                        : const SizedBox.shrink(),
               ),
               const SizedBox(height: 22),
               Text(
@@ -310,6 +412,8 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                       _PaymentMethodChip(
                         label: method.label(l10n),
                         selected: method == _selectedPaymentMethod,
+                        activeColor: activeColor,
+                        activeSoftColor: activeSoftColor,
                         onTap: () {
                           setState(() {
                             _selectedPaymentMethod = method;
@@ -328,7 +432,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                 decoration: BoxDecoration(
                   color: AppColors.surface,
                   borderRadius: BorderRadius.circular(28),
-                  border: Border.all(color: AppColors.border),
+                  border: Border.all(color: activeBorderColor),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -358,7 +462,8 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                           category: category,
                           label: category.label(l10n),
                           selected: category == _selectedCategory,
-                          isIncome: _selectedType.isIncome,
+                          activeColor: activeColor,
+                          activeSoftColor: activeSoftColor,
                           onTap: () {
                             setState(() {
                               _selectedCategory = category;
@@ -426,9 +531,13 @@ String _formatEditableAmount(double amount, AppCurrency currency) {
 }
 
 class _DigitCountLimitingTextInputFormatter extends TextInputFormatter {
-  const _DigitCountLimitingTextInputFormatter(this.maxDigits);
+  _DigitCountLimitingTextInputFormatter(
+    this.maxDigits, {
+    required this.onLimitReached,
+  });
 
   final int maxDigits;
+  final VoidCallback onLimitReached;
 
   @override
   TextEditingValue formatEditUpdate(
@@ -436,12 +545,14 @@ class _DigitCountLimitingTextInputFormatter extends TextInputFormatter {
     TextEditingValue newValue,
   ) {
     var digitCount = 0;
+    var limitReached = false;
     final buffer = StringBuffer();
 
     for (final character in newValue.text.split('')) {
       final isDigit = RegExp(r'\d').hasMatch(character);
       if (isDigit) {
         if (digitCount >= maxDigits) {
+          limitReached = true;
           continue;
         }
         digitCount += 1;
@@ -452,6 +563,12 @@ class _DigitCountLimitingTextInputFormatter extends TextInputFormatter {
     final limitedText = buffer.toString();
     if (limitedText == newValue.text) {
       return newValue;
+    }
+
+    if (limitReached) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        onLimitReached();
+      });
     }
 
     final selectionOffset =
@@ -470,11 +587,15 @@ class _PaymentMethodChip extends StatelessWidget {
   const _PaymentMethodChip({
     required this.label,
     required this.selected,
+    required this.activeColor,
+    required this.activeSoftColor,
     required this.onTap,
   });
 
   final String label;
   final bool selected;
+  final Color activeColor;
+  final Color activeSoftColor;
   final VoidCallback onTap;
 
   @override
@@ -489,17 +610,19 @@ class _PaymentMethodChip extends StatelessWidget {
         child: Ink(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           decoration: BoxDecoration(
-            color: selected ? AppColors.accentMuted : AppColors.surface,
+            color: selected ? activeSoftColor : AppColors.surface,
             borderRadius: BorderRadius.circular(999),
             border: Border.all(
-              color: selected ? AppColors.accent : AppColors.border,
+              color:
+                  selected
+                      ? activeColor.withValues(alpha: 0.45)
+                      : AppColors.border,
             ),
           ),
           child: Text(
             label,
             style: theme.textTheme.labelLarge?.copyWith(
-              color:
-                  selected ? AppColors.accentStrong : AppColors.textSecondary,
+              color: selected ? activeColor : AppColors.textSecondary,
             ),
           ),
         ),
@@ -513,20 +636,22 @@ class _CategoryGridItem extends StatelessWidget {
     required this.category,
     required this.label,
     required this.selected,
-    required this.isIncome,
+    required this.activeColor,
+    required this.activeSoftColor,
     required this.onTap,
   });
 
   final ExpenseCategory category;
   final String label;
   final bool selected;
-  final bool isIncome;
+  final Color activeColor;
+  final Color activeSoftColor;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final accent = isIncome ? AppColors.income : category.color;
+    final accent = selected ? activeColor : category.color;
 
     return Material(
       color: Colors.transparent,
@@ -536,10 +661,7 @@ class _CategoryGridItem extends StatelessWidget {
         child: Ink(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
           decoration: BoxDecoration(
-            color:
-                selected
-                    ? (isIncome ? AppColors.incomeSoft : category.surfaceColor)
-                    : AppColors.surfaceRaised,
+            color: selected ? activeSoftColor : AppColors.surfaceRaised,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color:
@@ -568,7 +690,8 @@ class _CategoryGridItem extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: AppColors.textSecondary,
+                  color: selected ? accent : AppColors.textSecondary,
+                  fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
                 ),
               ),
             ],

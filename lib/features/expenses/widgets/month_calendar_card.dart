@@ -75,7 +75,7 @@ class MonthCalendarCard extends StatelessWidget {
               crossAxisCount: 7,
               crossAxisSpacing: 10,
               mainAxisSpacing: 16,
-              childAspectRatio: 0.8,
+              childAspectRatio: 0.68,
             ),
             itemBuilder: (context, index) {
               final date = dates[index];
@@ -126,16 +126,39 @@ class _CalendarDayCell extends StatelessWidget {
     final theme = Theme.of(context);
     final hasIncome = summary != null && summary!.incomeInBaseCurrency > 0;
     final hasExpense = summary != null && summary!.expenseInBaseCurrency > 0;
+    final amountWidgets = <Widget>[
+      if (hasIncome)
+        _CalendarAmountText(
+          text: AppFormatters.formatCompactSignedAmountWithoutSymbol(
+            summary!.incomeForCurrency(currency),
+            currency,
+            locale,
+            isIncome: true,
+          ),
+          color: AppColors.income,
+          emphasized: isSelected,
+        ),
+      if (hasExpense)
+        _CalendarAmountText(
+          text: AppFormatters.formatCompactSignedAmountWithoutSymbol(
+            summary!.expenseForCurrency(currency),
+            currency,
+            locale,
+            isIncome: false,
+          ),
+          color: AppColors.expense,
+          emphasized: isSelected,
+        ),
+    ];
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(14),
-        child: SizedBox(
-          height: 52,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 2),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             children: [
               Container(
                 constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
@@ -164,63 +187,60 @@ class _CalendarDayCell extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 4),
-              if (isSelected && hasExpense)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        AppFormatters.formatSignedAmountWithoutSymbol(
-                          summary!.expenseForCurrency(currency),
-                          currency,
-                          locale,
-                          isIncome: false,
-                        ),
-                        maxLines: 1,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: AppColors.expense,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+              const SizedBox(height: 6),
+              if (isCurrentMonth && amountWidgets.isNotEmpty)
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 1),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        for (
+                          var index = 0;
+                          index < amountWidgets.length;
+                          index++
+                        ) ...[
+                          amountWidgets[index],
+                          if (index != amountWidgets.length - 1)
+                            const SizedBox(height: 2),
+                        ],
+                      ],
                     ),
-                  ),
-                )
-              else if (isSelected && hasIncome)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        AppFormatters.formatSignedAmountWithoutSymbol(
-                          summary!.incomeForCurrency(currency),
-                          currency,
-                          locale,
-                          isIncome: true,
-                        ),
-                        maxLines: 1,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: AppColors.income,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                )
-              else if ((hasIncome || hasExpense) && isCurrentMonth)
-                Container(
-                  width: 5,
-                  height: 5,
-                  decoration: BoxDecoration(
-                    color: hasExpense ? AppColors.expense : AppColors.income,
-                    shape: BoxShape.circle,
                   ),
                 ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CalendarAmountText extends StatelessWidget {
+  const _CalendarAmountText({
+    required this.text,
+    required this.color,
+    required this.emphasized,
+  });
+
+  final String text;
+  final Color color;
+  final bool emphasized;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return SizedBox(
+      width: double.infinity,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(
+          text,
+          maxLines: 1,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: color,
+            fontWeight: emphasized ? FontWeight.w700 : FontWeight.w600,
           ),
         ),
       ),

@@ -17,9 +17,9 @@ class AppColors {
   static const accent = Color(0xFF7B857C);
   static const accentStrong = Color(0xFF465146);
   static const accentMuted = Color(0xFFEEF2EE);
-  static const income = Color(0xFF6E8872);
-  static const expense = Color(0xFFC97B71);
-  static const incomeSoft = Color(0xFFEEF5F0);
-  static const expenseSoft = Color(0xFFFBF1EF);
+  static const income = Color(0xFF75A9D4);
+  static const expense = Color(0xFFD98EA6);
+  static const incomeSoft = Color(0xFFEFF7FD);
+  static const expenseSoft = Color(0xFFFCF1F5);
   static const shadow = Color(0x06141612);
 }

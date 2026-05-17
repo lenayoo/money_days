@@ -118,6 +118,14 @@
   "cancelButton": "Cancel",
   "validationAmountRequired": "Enter an amount.",
   "validationAmountInvalid": "Enter a valid amount.",
+  "amountDigitLimitMessage": "You can enter up to {count} digits.",
+  "@amountDigitLimitMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "navigationHome": "Home",
   "navigationReview": "Review",
   "navigationSettings": "Settings",
