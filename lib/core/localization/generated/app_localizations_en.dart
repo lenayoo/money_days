@@ -109,26 +109,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get doneButton => 'Done';
 
   @override
-  String get spendingInsightsTitle => 'Spending insights';
-
-  @override
-  String get spendingInsightsEmpty => 'Add a few records to see a gentle pattern.';
-
-  @override
-  String get spendingInsightTopCategory => 'Top category';
-
-  @override
-  String get spendingInsightDays => 'Spending days';
-
-  @override
-  String get spendingInsightDailyAverage => 'Daily pace';
-
-  @override
-  String dayCount(int count) {
-    return '$count days';
-  }
-
-  @override
   String get shareSummaryTitle => 'Share summary card';
 
   @override
@@ -155,28 +135,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsTitle => 'Settings';
 
   @override
-  String get settingsSubtitle => 'Keep the app quiet and local.';
+  String get languageSetting => 'Language';
 
   @override
-  String get languageSetting => 'Language';
+  String get languageSystem => 'System default';
+
+  @override
+  String languageSystemCurrent(String language) {
+    return 'System ($language)';
+  }
 
   @override
   String get currencySetting => 'Currency';
 
   @override
-  String get currencyConversionNote => 'Uses fixed USD-based rates: 1 USD = 150 JPY, 1500 KRW, 1.35 SGD.';
-
-  @override
-  String get appInfo => 'App information';
-
-  @override
-  String get privacyNote => 'Privacy';
-
-  @override
-  String get privacyMessage => 'Your records are stored on this device.';
-
-  @override
-  String get appInfoMessage => 'Money Days is a calm calendar for everyday money records.';
+  String get currencyBaseNote => 'Base currency: USD';
 
   @override
   String get addTransactionTitle => 'Add record';

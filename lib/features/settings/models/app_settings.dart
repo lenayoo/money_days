@@ -4,13 +4,13 @@ import 'app_language.dart';
 class AppSettings {
   const AppSettings({
     this.currency = AppCurrency.jpy,
-    this.language = AppLanguage.english,
+    this.language = AppLanguage.system,
   });
 
   factory AppSettings.fromMap(
     Map<String, dynamic> map, {
     AppCurrency defaultCurrency = AppCurrency.jpy,
-    AppLanguage defaultLanguage = AppLanguage.english,
+    AppLanguage defaultLanguage = AppLanguage.system,
   }) {
     final rawCurrency = map['currency'] as String?;
     final rawLanguage = map['language'] as String?;

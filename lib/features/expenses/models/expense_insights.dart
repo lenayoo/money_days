@@ -24,20 +24,6 @@ class CategorySpending {
   }
 }
 
-class CategoryTrendPoint {
-  const CategoryTrendPoint({
-    required this.date,
-    required this.totalInBaseCurrency,
-  });
-
-  final DateTime date;
-  final double totalInBaseCurrency;
-
-  double totalForCurrency(AppCurrency currency) {
-    return currency.fromBaseAmount(totalInBaseCurrency);
-  }
-}
-
 class CalendarDaySummary {
   const CalendarDaySummary({
     required this.date,
@@ -74,10 +60,6 @@ class ExpenseInsights {
     return sortedExpenses;
   }
 
-  static double totalInBaseForDay(List<Expense> expenses, DateTime date) {
-    return totalExpenseInBaseForDay(expenses, date);
-  }
-
   static double totalExpenseInBaseForDay(
     List<Expense> expenses,
     DateTime date,
@@ -97,10 +79,6 @@ class ExpenseInsights {
             expense.isIncome && AppDateUtils.isSameDay(expense.date, date),
       ),
     );
-  }
-
-  static double totalInBaseForMonth(List<Expense> expenses, DateTime date) {
-    return totalExpenseInBaseForMonth(expenses, date);
   }
 
   static double totalExpenseInBaseForMonth(
@@ -125,17 +103,6 @@ class ExpenseInsights {
             expense.isIncome && AppDateUtils.isSameMonth(expense.date, date),
       ),
     );
-  }
-
-  static List<Expense> expensesForMonth(List<Expense> expenses, DateTime date) {
-    final monthlyExpenses = expenses
-        .where(
-          (expense) =>
-              expense.isExpense && AppDateUtils.isSameMonth(expense.date, date),
-        )
-        .toList(growable: false);
-
-    return sorted(monthlyExpenses);
   }
 
   static List<Expense> transactionsForMonth(
@@ -275,17 +242,6 @@ class ExpenseInsights {
     return summaries;
   }
 
-  static List<CategorySpending> categoryTotalsForMonth(
-    List<Expense> expenses,
-    DateTime date,
-  ) {
-    return categoryTotalsForMonthByType(
-      expenses,
-      date,
-      TransactionType.expense,
-    );
-  }
-
   static List<CategorySpending> categoryTotalsForMonthByType(
     List<Expense> expenses,
     DateTime date,
@@ -329,95 +285,5 @@ class ExpenseInsights {
           );
 
     return breakdown;
-  }
-
-  static CategorySpending? topCategoryForMonthByType(
-    List<Expense> expenses,
-    DateTime date,
-    TransactionType type,
-  ) {
-    final breakdown = categoryTotalsForMonthByType(expenses, date, type);
-    if (breakdown.isEmpty) {
-      return null;
-    }
-
-    return breakdown.first;
-  }
-
-  static int activeDaysForMonthByType(
-    List<Expense> expenses,
-    DateTime date,
-    TransactionType type,
-  ) {
-    final activeDays =
-        expenses
-            .where(
-              (expense) =>
-                  expense.type == type &&
-                  AppDateUtils.isSameMonth(expense.date, date),
-            )
-            .map((expense) => AppDateUtils.dateOnly(expense.date))
-            .toSet();
-
-    return activeDays.length;
-  }
-
-  static double averageAmountInBaseForActiveDaysByType(
-    List<Expense> expenses,
-    DateTime date,
-    TransactionType type,
-  ) {
-    final activeDays = activeDaysForMonthByType(expenses, date, type);
-    if (activeDays == 0) {
-      return 0;
-    }
-
-    final totalInBase =
-        type == TransactionType.expense
-            ? totalExpenseInBaseForMonth(expenses, date)
-            : totalIncomeInBaseForMonth(expenses, date);
-
-    return totalInBase / activeDays;
-  }
-
-  static List<CategoryTrendPoint> categoryTrendForMonth(
-    List<Expense> expenses,
-    DateTime date,
-    ExpenseCategory category,
-  ) {
-    final month = AppDateUtils.startOfMonth(date);
-    final totalsByDay = <DateTime, double>{};
-
-    for (final expense in expenses) {
-      if (!AppDateUtils.isSameMonth(expense.date, month) ||
-          !expense.isExpense ||
-          expense.category != category) {
-        continue;
-      }
-
-      final day = AppDateUtils.dateOnly(expense.date);
-      totalsByDay.update(
-        day,
-        (value) => value + expense.amountInBaseCurrency,
-        ifAbsent: () => expense.amountInBaseCurrency,
-      );
-    }
-
-    final nextMonth = DateTime(month.year, month.month + 1);
-    final points = <CategoryTrendPoint>[];
-    var cursor = month;
-
-    while (cursor.isBefore(nextMonth)) {
-      final day = AppDateUtils.dateOnly(cursor);
-      points.add(
-        CategoryTrendPoint(
-          date: day,
-          totalInBaseCurrency: totalsByDay[day] ?? 0,
-        ),
-      );
-      cursor = DateTime(cursor.year, cursor.month, cursor.day + 1);
-    }
-
-    return points;
   }
 }

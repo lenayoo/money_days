@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:money_days/core/localization/generated/app_localizations.dart';
@@ -18,6 +20,7 @@ class SettingsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final settings = ref.watch(settingsControllerProvider);
+    final systemLocale = PlatformDispatcher.instance.locale;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -37,18 +40,17 @@ class SettingsScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 24),
             Text(l10n.settingsTitle, style: theme.textTheme.headlineMedium),
-            const SizedBox(height: 6),
-            Text(l10n.settingsSubtitle, style: theme.textTheme.bodyLarge),
             const SizedBox(height: 20),
             _SettingsPanel(
               title: l10n.languageSetting,
               child: DropdownButtonFormField<AppLanguage>(
+                isExpanded: true,
                 value: settings.language,
                 items: [
                   for (final language in AppLanguage.values)
                     DropdownMenuItem(
                       value: language,
-                      child: Text(language.label(l10n)),
+                      child: Text(language.label(l10n, systemLocale)),
                     ),
                 ],
                 onChanged: (value) async {
@@ -65,14 +67,15 @@ class SettingsScreen extends ConsumerWidget {
             const SizedBox(height: 14),
             _SettingsPanel(
               title: l10n.currencySetting,
-              supportingText: l10n.currencyConversionNote,
+              supportingText: l10n.currencyBaseNote,
               child: DropdownButtonFormField<AppCurrency>(
+                isExpanded: true,
                 value: settings.currency,
                 items: [
                   for (final currency in AppCurrency.values)
                     DropdownMenuItem(
                       value: currency,
-                      child: Text(currency.label(l10n)),
+                      child: Text(currency.label),
                     ),
                 ],
                 onChanged: (value) async {
@@ -84,25 +87,6 @@ class SettingsScreen extends ConsumerWidget {
                       .read(settingsControllerProvider.notifier)
                       .updateCurrency(value);
                 },
-              ),
-            ),
-            const SizedBox(height: 14),
-            SoftSectionCard(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(l10n.privacyNote, style: theme.textTheme.titleLarge),
-                  const SizedBox(height: 8),
-                  Text(l10n.privacyMessage, style: theme.textTheme.bodyLarge),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 18),
-                    child: Divider(height: 1, color: AppColors.border),
-                  ),
-                  Text(l10n.appInfo, style: theme.textTheme.titleLarge),
-                  const SizedBox(height: 8),
-                  Text(l10n.appInfoMessage, style: theme.textTheme.bodyLarge),
-                ],
               ),
             ),
           ],

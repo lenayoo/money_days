@@ -277,42 +277,6 @@ abstract class AppLocalizations {
   /// **'Done'**
   String get doneButton;
 
-  /// No description provided for @spendingInsightsTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Spending insights'**
-  String get spendingInsightsTitle;
-
-  /// No description provided for @spendingInsightsEmpty.
-  ///
-  /// In en, this message translates to:
-  /// **'Add a few records to see a gentle pattern.'**
-  String get spendingInsightsEmpty;
-
-  /// No description provided for @spendingInsightTopCategory.
-  ///
-  /// In en, this message translates to:
-  /// **'Top category'**
-  String get spendingInsightTopCategory;
-
-  /// No description provided for @spendingInsightDays.
-  ///
-  /// In en, this message translates to:
-  /// **'Spending days'**
-  String get spendingInsightDays;
-
-  /// No description provided for @spendingInsightDailyAverage.
-  ///
-  /// In en, this message translates to:
-  /// **'Daily pace'**
-  String get spendingInsightDailyAverage;
-
-  /// No description provided for @dayCount.
-  ///
-  /// In en, this message translates to:
-  /// **'{count} days'**
-  String dayCount(int count);
-
   /// No description provided for @shareSummaryTitle.
   ///
   /// In en, this message translates to:
@@ -361,17 +325,23 @@ abstract class AppLocalizations {
   /// **'Settings'**
   String get settingsTitle;
 
-  /// No description provided for @settingsSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Keep the app quiet and local.'**
-  String get settingsSubtitle;
-
   /// No description provided for @languageSetting.
   ///
   /// In en, this message translates to:
   /// **'Language'**
   String get languageSetting;
+
+  /// No description provided for @languageSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System default'**
+  String get languageSystem;
+
+  /// No description provided for @languageSystemCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'System ({language})'**
+  String languageSystemCurrent(String language);
 
   /// No description provided for @currencySetting.
   ///
@@ -379,35 +349,11 @@ abstract class AppLocalizations {
   /// **'Currency'**
   String get currencySetting;
 
-  /// No description provided for @currencyConversionNote.
+  /// No description provided for @currencyBaseNote.
   ///
   /// In en, this message translates to:
-  /// **'Uses fixed USD-based rates: 1 USD = 150 JPY, 1500 KRW, 1.35 SGD.'**
-  String get currencyConversionNote;
-
-  /// No description provided for @appInfo.
-  ///
-  /// In en, this message translates to:
-  /// **'App information'**
-  String get appInfo;
-
-  /// No description provided for @privacyNote.
-  ///
-  /// In en, this message translates to:
-  /// **'Privacy'**
-  String get privacyNote;
-
-  /// No description provided for @privacyMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Your records are stored on this device.'**
-  String get privacyMessage;
-
-  /// No description provided for @appInfoMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Money Days is a calm calendar for everyday money records.'**
-  String get appInfoMessage;
+  /// **'Base currency: USD'**
+  String get currencyBaseNote;
 
   /// No description provided for @addTransactionTitle.
   ///

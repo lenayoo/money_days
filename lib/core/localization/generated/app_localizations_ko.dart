@@ -109,26 +109,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String get doneButton => '닫기';
 
   @override
-  String get spendingInsightsTitle => '지출 인사이트';
-
-  @override
-  String get spendingInsightsEmpty => '기록이 조금 쌓이면 작은 흐름을 볼 수 있어요.';
-
-  @override
-  String get spendingInsightTopCategory => '가장 큰 카테고리';
-
-  @override
-  String get spendingInsightDays => '지출한 날';
-
-  @override
-  String get spendingInsightDailyAverage => '하루 평균';
-
-  @override
-  String dayCount(int count) {
-    return '$count일';
-  }
-
-  @override
   String get shareSummaryTitle => '요약 카드 공유';
 
   @override
@@ -155,28 +135,21 @@ class AppLocalizationsKo extends AppLocalizations {
   String get settingsTitle => '설정';
 
   @override
-  String get settingsSubtitle => '단순하게, 이 기기 안에서만.';
+  String get languageSetting => '언어';
 
   @override
-  String get languageSetting => '언어';
+  String get languageSystem => '시스템 기본값';
+
+  @override
+  String languageSystemCurrent(String language) {
+    return '시스템 ($language)';
+  }
 
   @override
   String get currencySetting => '통화';
 
   @override
-  String get currencyConversionNote => '표시 환산은 USD 기준 고정 환율을 사용합니다: 1 USD = 150 JPY, 1500 KRW, 1.35 SGD.';
-
-  @override
-  String get appInfo => '앱 정보';
-
-  @override
-  String get privacyNote => '개인정보';
-
-  @override
-  String get privacyMessage => '기록은 이 기기에 저장됩니다.';
-
-  @override
-  String get appInfoMessage => 'Money Days는 일상의 돈 흐름을 조용히 남기는 캘린더예요.';
+  String get currencyBaseNote => '기준 통화: USD';
 
   @override
   String get addTransactionTitle => '기록 추가';

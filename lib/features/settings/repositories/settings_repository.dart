@@ -21,7 +21,7 @@ final settingsRepositoryProvider = Provider<SettingsRepository>(
 class InMemorySettingsRepository implements SettingsRepository {
   AppSettings _settings = AppSettings(
     currency: appCurrencyFromLocale(PlatformDispatcher.instance.locale),
-    language: appLanguageFromLocale(PlatformDispatcher.instance.locale),
+    language: AppLanguage.system,
   );
 
   @override
@@ -43,10 +43,12 @@ class LocalSettingsRepository implements SettingsRepository {
     final rawSettings = _box.get(StorageKeys.settings);
     final systemLocale = PlatformDispatcher.instance.locale;
     final systemCurrency = appCurrencyFromLocale(systemLocale);
-    final systemLanguage = appLanguageFromLocale(systemLocale);
 
     if (rawSettings is! Map) {
-      return AppSettings(currency: systemCurrency, language: systemLanguage);
+      return AppSettings(
+        currency: systemCurrency,
+        language: AppLanguage.system,
+      );
     }
 
     final settingsMap = rawSettings.map(
@@ -56,7 +58,7 @@ class LocalSettingsRepository implements SettingsRepository {
     return AppSettings.fromMap(
       settingsMap,
       defaultCurrency: systemCurrency,
-      defaultLanguage: systemLanguage,
+      defaultLanguage: AppLanguage.system,
     );
   }
 

@@ -93,9 +93,10 @@ void main() {
       ),
     ];
 
-    final breakdown = ExpenseInsights.categoryTotalsForMonth(
+    final breakdown = ExpenseInsights.categoryTotalsForMonthByType(
       records,
       DateTime(2026, 4, 1),
+      TransactionType.expense,
     );
 
     expect(breakdown, hasLength(2));

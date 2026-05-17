@@ -21,7 +21,6 @@ import '../../expenses/screens/add_transaction_screen.dart';
 import '../../expenses/widgets/transaction_list_item.dart';
 import '../../settings/controllers/settings_controller.dart';
 import '../widgets/category_pie_chart_card.dart';
-import '../widgets/monthly_insights_card.dart';
 import '../widgets/monthly_summary_share_sheet.dart';
 import '../widgets/swipe_action_transaction_card.dart';
 
@@ -170,22 +169,6 @@ class _MonthlyReviewScreenState extends ConsumerState<MonthlyReviewScreen> {
       _selectedMonth,
       _selectedType,
     );
-    final topCategory = ExpenseInsights.topCategoryForMonthByType(
-      expenses,
-      _selectedMonth,
-      _selectedType,
-    );
-    final activeDays = ExpenseInsights.activeDaysForMonthByType(
-      expenses,
-      _selectedMonth,
-      TransactionType.expense,
-    );
-    final averageInBase =
-        ExpenseInsights.averageAmountInBaseForActiveDaysByType(
-          expenses,
-          _selectedMonth,
-          TransactionType.expense,
-        );
     final totalAmount = AppFormatters.formatSignedCurrency(
       settings.currency.fromBaseAmount(totalInBase),
       settings.currency,
@@ -346,15 +329,6 @@ class _MonthlyReviewScreenState extends ConsumerState<MonthlyReviewScreen> {
                       ? AppColors.expense
                       : AppColors.income,
             ),
-            if (_selectedType == TransactionType.expense) ...[
-              const SizedBox(height: 14),
-              MonthlyInsightsCard(
-                topCategory: topCategory,
-                activeDays: activeDays,
-                averageInBase: averageInBase,
-                currency: settings.currency,
-              ),
-            ],
             const SizedBox(height: 14),
             Text(l10n.monthTransactions, style: theme.textTheme.titleLarge),
             const SizedBox(height: 12),

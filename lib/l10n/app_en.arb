@@ -65,19 +65,6 @@
     }
   },
   "doneButton": "Done",
-  "spendingInsightsTitle": "Spending insights",
-  "spendingInsightsEmpty": "Add a few records to see a gentle pattern.",
-  "spendingInsightTopCategory": "Top category",
-  "spendingInsightDays": "Spending days",
-  "spendingInsightDailyAverage": "Daily pace",
-  "dayCount": "{count} days",
-  "@dayCount": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "shareSummaryTitle": "Share summary card",
   "shareSummarySubtitle": "A small card for this month.",
   "preparingShareCard": "Preparing card...",
@@ -96,14 +83,18 @@
   },
   "shareCardCaption": "A quiet record of this month.",
   "settingsTitle": "Settings",
-  "settingsSubtitle": "Keep the app quiet and local.",
   "languageSetting": "Language",
+  "languageSystem": "System default",
+  "languageSystemCurrent": "System ({language})",
+  "@languageSystemCurrent": {
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
   "currencySetting": "Currency",
-  "currencyConversionNote": "Uses fixed USD-based rates: 1 USD = 150 JPY, 1500 KRW, 1.35 SGD.",
-  "appInfo": "App information",
-  "privacyNote": "Privacy",
-  "privacyMessage": "Your records are stored on this device.",
-  "appInfoMessage": "Money Days is a calm calendar for everyday money records.",
+  "currencyBaseNote": "Base currency: USD",
   "addTransactionTitle": "Add record",
   "addTransactionSubtitle": "Keep it light. Add income or spending.",
   "addTransactionButton": "Add record",

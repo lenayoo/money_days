@@ -15,12 +15,15 @@ void main() {
     expect(AppCurrency.sgd.fromBaseAmount(1), closeTo(1.35, 0.0001));
   });
 
-  test('converts between currencies without double conversion', () {
-    final sgdFromJpy = AppCurrency.jpy.convertAmount(150, AppCurrency.sgd);
-    final krwFromSgd = AppCurrency.sgd.convertAmount(1.35, AppCurrency.krw);
-    final jpyRoundTrip = AppCurrency.sgd.convertAmount(
-      sgdFromJpy,
-      AppCurrency.jpy,
+  test('converts between currencies through USD base amounts', () {
+    final sgdFromJpy = AppCurrency.sgd.fromBaseAmount(
+      AppCurrency.jpy.toBaseAmount(150),
+    );
+    final krwFromSgd = AppCurrency.krw.fromBaseAmount(
+      AppCurrency.sgd.toBaseAmount(1.35),
+    );
+    final jpyRoundTrip = AppCurrency.jpy.fromBaseAmount(
+      AppCurrency.sgd.toBaseAmount(sgdFromJpy),
     );
 
     expect(sgdFromJpy, closeTo(1.35, 0.0001));

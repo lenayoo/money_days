@@ -109,26 +109,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get doneButton => '閉じる';
 
   @override
-  String get spendingInsightsTitle => '支出インサイト';
-
-  @override
-  String get spendingInsightsEmpty => 'いくつか記録すると、やさしい気づきが見えてきます。';
-
-  @override
-  String get spendingInsightTopCategory => 'いちばん多いカテゴリ';
-
-  @override
-  String get spendingInsightDays => '支出した日';
-
-  @override
-  String get spendingInsightDailyAverage => '1日あたり';
-
-  @override
-  String dayCount(int count) {
-    return '$count日';
-  }
-
-  @override
   String get shareSummaryTitle => '共有カード';
 
   @override
@@ -155,28 +135,21 @@ class AppLocalizationsJa extends AppLocalizations {
   String get settingsTitle => '設定';
 
   @override
-  String get settingsSubtitle => 'シンプルに、この端末だけで。';
+  String get languageSetting => '言語';
 
   @override
-  String get languageSetting => '言語';
+  String get languageSystem => 'システム設定';
+
+  @override
+  String languageSystemCurrent(String language) {
+    return 'システム ($language)';
+  }
 
   @override
   String get currencySetting => '通貨';
 
   @override
-  String get currencyConversionNote => '表示の換算には USD 基準の固定レートを使います: 1 USD = 150 JPY、1500 KRW、1.35 SGD。';
-
-  @override
-  String get appInfo => 'アプリについて';
-
-  @override
-  String get privacyNote => 'プライバシー';
-
-  @override
-  String get privacyMessage => '記録はこの端末に保存されます。';
-
-  @override
-  String get appInfoMessage => 'Money Days は、日々のお金を静かに記録するカレンダーです。';
+  String get currencyBaseNote => '基準通貨: USD';
 
   @override
   String get addTransactionTitle => '記録を追加';

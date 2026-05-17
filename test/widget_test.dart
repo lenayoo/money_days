@@ -232,47 +232,45 @@ void main() {
     expect(find.textContaining('¥47,000'), findsOneWidget);
   });
 
-  testWidgets(
-    'review screen shows budget, chart, and insights as standard features',
-    (tester) async {
-      AppClock.testNow = DateTime(2026, 5, 3, 10);
+  testWidgets('review screen shows budget, chart, and monthly records', (
+    tester,
+  ) async {
+    AppClock.testNow = DateTime(2026, 5, 3, 10);
 
-      final expensesRepository = InMemoryExpensesRepository();
-      final monthlyBudgetsRepository = InMemoryMonthlyBudgetsRepository();
-      final settingsRepository = InMemorySettingsRepository();
+    final expensesRepository = InMemoryExpensesRepository();
+    final monthlyBudgetsRepository = InMemoryMonthlyBudgetsRepository();
+    final settingsRepository = InMemorySettingsRepository();
 
-      await expensesRepository.saveExpenses([
-        Expense(
-          id: 'expense_may',
-          type: TransactionType.expense,
-          amount: 2400,
-          category: ExpenseCategory.cafe,
-          memo: 'May coffee',
-          date: DateTime(2026, 5, 2),
-          currency: AppCurrency.jpy,
-          createdAt: DateTime(2026, 5, 2),
-          updatedAt: DateTime(2026, 5, 2),
-        ),
-      ]);
+    await expensesRepository.saveExpenses([
+      Expense(
+        id: 'expense_may',
+        type: TransactionType.expense,
+        amount: 2400,
+        category: ExpenseCategory.cafe,
+        memo: 'May coffee',
+        date: DateTime(2026, 5, 2),
+        currency: AppCurrency.jpy,
+        createdAt: DateTime(2026, 5, 2),
+        updatedAt: DateTime(2026, 5, 2),
+      ),
+    ]);
 
-      await tester.pumpWidget(
-        _buildTestApp(
-          expensesRepository: expensesRepository,
-          monthlyBudgetsRepository: monthlyBudgetsRepository,
-          settingsRepository: settingsRepository,
-          child: const MonthlyReviewScreen(),
-        ),
-      );
-      await tester.pumpAndSettle();
+    await tester.pumpWidget(
+      _buildTestApp(
+        expensesRepository: expensesRepository,
+        monthlyBudgetsRepository: monthlyBudgetsRepository,
+        settingsRepository: settingsRepository,
+        child: const MonthlyReviewScreen(),
+      ),
+    );
+    await tester.pumpAndSettle();
 
-      expect(find.text('Spending by category'), findsOneWidget);
-      await tester.drag(find.byType(ListView), const Offset(0, -500));
-      await tester.pumpAndSettle();
-      expect(find.text('Top category'), findsOneWidget);
-      expect(find.text('Monthly records'), findsOneWidget);
-      expect(find.text('May coffee'), findsOneWidget);
-    },
-  );
+    expect(find.text('Spending by category'), findsOneWidget);
+    await tester.drag(find.byType(ListView), const Offset(0, -500));
+    await tester.pumpAndSettle();
+    expect(find.text('Monthly records'), findsOneWidget);
+    expect(find.text('May coffee'), findsOneWidget);
+  });
 
   testWidgets('review records reveal swipe actions', (tester) async {
     AppClock.testNow = DateTime(2026, 5, 3, 10);
