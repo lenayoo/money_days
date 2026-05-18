@@ -193,14 +193,13 @@ class _CalendarDayCell extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 1),
                     child: Column(
-                      mainAxisSize: MainAxisSize.min,
                       children: [
                         for (
                           var index = 0;
                           index < amountWidgets.length;
                           index++
                         ) ...[
-                          amountWidgets[index],
+                          Expanded(child: amountWidgets[index]),
                           if (index != amountWidgets.length - 1)
                             const SizedBox(height: 2),
                         ],
