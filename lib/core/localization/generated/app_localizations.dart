@@ -391,6 +391,12 @@ abstract class AppLocalizations {
   /// **'Optional note'**
   String get memoHint;
 
+  /// No description provided for @paymentMethodLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment method'**
+  String get paymentMethodLabel;
+
   /// No description provided for @dateLabel.
   ///
   /// In en, this message translates to:
@@ -408,18 +414,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Type'**
   String get typeLabel;
-
-  /// No description provided for @paymentMethodLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Payment method'**
-  String get paymentMethodLabel;
-
-  /// No description provided for @paymentMethodOptional.
-  ///
-  /// In en, this message translates to:
-  /// **'Optional'**
-  String get paymentMethodOptional;
 
   /// No description provided for @saveButton.
   ///
@@ -607,23 +601,17 @@ abstract class AppLocalizations {
   /// **'Salary'**
   String get categorySalary;
 
+  /// No description provided for @categorySideIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Side income'**
+  String get categorySideIncome;
+
   /// No description provided for @categoryBonus.
   ///
   /// In en, this message translates to:
   /// **'Bonus'**
   String get categoryBonus;
-
-  /// No description provided for @categoryGift.
-  ///
-  /// In en, this message translates to:
-  /// **'Gift'**
-  String get categoryGift;
-
-  /// No description provided for @categoryRefund.
-  ///
-  /// In en, this message translates to:
-  /// **'Refund'**
-  String get categoryRefund;
 
   /// No description provided for @categoryOther.
   ///

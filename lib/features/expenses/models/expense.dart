@@ -1,7 +1,7 @@
 import '../../../core/utils/app_clock.dart';
-import 'payment_method.dart';
 import 'app_currency.dart';
 import 'expense_category.dart';
+import 'payment_method.dart';
 import 'transaction_type.dart';
 
 class Expense {
@@ -39,14 +39,16 @@ class Expense {
       currency: currency,
       createdAt: now,
       updatedAt: now,
-      paymentMethod: paymentMethod,
+      paymentMethod: _normalizePaymentMethod(type, paymentMethod),
     );
   }
 
   factory Expense.fromMap(Map<String, dynamic> map) {
+    final type = transactionTypeFromStorage(map['type'] as String?);
+
     return Expense(
       id: map['id'] as String? ?? '',
-      type: transactionTypeFromStorage(map['type'] as String?),
+      type: type,
       amount: (map['amount'] as num?)?.toDouble() ?? 0,
       category: expenseCategoryFromStorage(map['category'] as String?),
       memo: _normalizeMemo(map['memo'] as String?),
@@ -58,7 +60,10 @@ class Expense {
       updatedAt:
           DateTime.tryParse(map['updatedAt'] as String? ?? '') ??
           AppClock.now(),
-      paymentMethod: paymentMethodFromStorage(map['paymentMethod'] as String?),
+      paymentMethod: _normalizePaymentMethod(
+        type,
+        paymentMethodFromStorage(map['paymentMethod'] as String?),
+      ),
     );
   }
 
@@ -92,11 +97,17 @@ class Expense {
     AppCurrency? currency,
     DateTime? createdAt,
     DateTime? updatedAt,
-    PaymentMethod? paymentMethod,
+    Object? paymentMethod = _noChange,
   }) {
+    final nextType = type ?? this.type;
+    final nextPaymentMethod =
+        identical(paymentMethod, _noChange)
+            ? this.paymentMethod
+            : paymentMethod as PaymentMethod?;
+
     return Expense(
       id: id ?? this.id,
-      type: type ?? this.type,
+      type: nextType,
       amount: amount ?? this.amount,
       category: category ?? this.category,
       memo: memo ?? this.memo,
@@ -104,7 +115,7 @@ class Expense {
       currency: currency ?? this.currency,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
-      paymentMethod: paymentMethod ?? this.paymentMethod,
+      paymentMethod: _normalizePaymentMethod(nextType, nextPaymentMethod),
     );
   }
 
@@ -123,11 +134,23 @@ class Expense {
     };
   }
 
+  static const Object _noChange = Object();
+
   static String? _normalizeMemo(String? value) {
     final trimmed = value?.trim();
     if (trimmed == null || trimmed.isEmpty) {
       return null;
     }
     return trimmed;
+  }
+
+  static PaymentMethod? _normalizePaymentMethod(
+    TransactionType type,
+    PaymentMethod? paymentMethod,
+  ) {
+    if (!type.isExpense) {
+      return null;
+    }
+    return paymentMethod;
   }
 }

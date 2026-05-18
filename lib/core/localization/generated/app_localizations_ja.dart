@@ -170,6 +170,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get memoHint => 'メモは任意です';
 
   @override
+  String get paymentMethodLabel => '支払い方法';
+
+  @override
   String get dateLabel => '日付';
 
   @override
@@ -177,12 +180,6 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get typeLabel => '種類';
-
-  @override
-  String get paymentMethodLabel => '支払い方法';
-
-  @override
-  String get paymentMethodOptional => '任意';
 
   @override
   String get saveButton => '保存';
@@ -280,13 +277,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get categorySalary => '給与';
 
   @override
+  String get categorySideIncome => '副収入';
+
+  @override
   String get categoryBonus => 'ボーナス';
-
-  @override
-  String get categoryGift => '贈り物';
-
-  @override
-  String get categoryRefund => '返金';
 
   @override
   String get categoryOther => 'その他';

@@ -12,9 +12,8 @@ enum ExpenseCategory {
   home,
   subscription,
   salary,
+  sideIncome,
   bonus,
-  gift,
-  refund,
   other,
 }
 
@@ -28,9 +27,8 @@ extension ExpenseCategoryX on ExpenseCategory {
     ExpenseCategory.home => Icons.home_rounded,
     ExpenseCategory.subscription => Icons.repeat_rounded,
     ExpenseCategory.salary => Icons.account_balance_wallet_rounded,
+    ExpenseCategory.sideIncome => Icons.smart_display_rounded,
     ExpenseCategory.bonus => Icons.auto_awesome_rounded,
-    ExpenseCategory.gift => Icons.card_giftcard_rounded,
-    ExpenseCategory.refund => Icons.undo_rounded,
     ExpenseCategory.other => Icons.more_horiz_rounded,
   };
 
@@ -43,9 +41,8 @@ extension ExpenseCategoryX on ExpenseCategory {
     ExpenseCategory.home => const Color(0xFF7A7871),
     ExpenseCategory.subscription => const Color(0xFF707C76),
     ExpenseCategory.salary => const Color(0xFF6E8572),
+    ExpenseCategory.sideIncome => const Color(0xFF80746D),
     ExpenseCategory.bonus => const Color(0xFF7C8668),
-    ExpenseCategory.gift => const Color(0xFF73858C),
-    ExpenseCategory.refund => const Color(0xFF6D877D),
     ExpenseCategory.other => const Color(0xFF88888C),
   };
 
@@ -58,9 +55,8 @@ extension ExpenseCategoryX on ExpenseCategory {
     ExpenseCategory.home => const Color(0xFFCDE3C4),
     ExpenseCategory.subscription => const Color(0xFFBDE5D8),
     ExpenseCategory.salary => const Color(0xFFBFE5C2),
+    ExpenseCategory.sideIncome => const Color(0xFFF0C6B0),
     ExpenseCategory.bonus => const Color(0xFFF1DF9F),
-    ExpenseCategory.gift => const Color(0xFFC7E7EC),
-    ExpenseCategory.refund => const Color(0xFFBEE4D7),
     ExpenseCategory.other => const Color(0xFFD8DFEB),
   };
 
@@ -73,9 +69,8 @@ extension ExpenseCategoryX on ExpenseCategory {
     ExpenseCategory.home => const Color(0xFFF3F2EF),
     ExpenseCategory.subscription => const Color(0xFFEEF3F0),
     ExpenseCategory.salary => const Color(0xFFF2F6F1),
+    ExpenseCategory.sideIncome => const Color(0xFFF7F1ED),
     ExpenseCategory.bonus => const Color(0xFFF5F6EE),
-    ExpenseCategory.gift => const Color(0xFFF0F5F6),
-    ExpenseCategory.refund => const Color(0xFFF0F6F4),
     ExpenseCategory.other => const Color(0xFFF4F4F5),
   };
 
@@ -88,9 +83,8 @@ extension ExpenseCategoryX on ExpenseCategory {
     ExpenseCategory.home => l10n.categoryHome,
     ExpenseCategory.subscription => l10n.categorySubscription,
     ExpenseCategory.salary => l10n.categorySalary,
+    ExpenseCategory.sideIncome => l10n.categorySideIncome,
     ExpenseCategory.bonus => l10n.categoryBonus,
-    ExpenseCategory.gift => l10n.categoryGift,
-    ExpenseCategory.refund => l10n.categoryRefund,
     ExpenseCategory.other => l10n.categoryOther,
   };
 
@@ -105,15 +99,13 @@ extension ExpenseCategoryX on ExpenseCategory {
       ExpenseCategory.subscription ||
       ExpenseCategory.other => true,
       ExpenseCategory.salary ||
-      ExpenseCategory.bonus ||
-      ExpenseCategory.gift ||
-      ExpenseCategory.refund => false,
+      ExpenseCategory.sideIncome ||
+      ExpenseCategory.bonus => false,
     },
     TransactionType.income => switch (this) {
       ExpenseCategory.salary ||
+      ExpenseCategory.sideIncome ||
       ExpenseCategory.bonus ||
-      ExpenseCategory.gift ||
-      ExpenseCategory.refund ||
       ExpenseCategory.other => true,
       ExpenseCategory.food ||
       ExpenseCategory.cafe ||

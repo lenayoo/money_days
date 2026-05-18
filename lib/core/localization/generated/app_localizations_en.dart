@@ -170,6 +170,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get memoHint => 'Optional note';
 
   @override
+  String get paymentMethodLabel => 'Payment method';
+
+  @override
   String get dateLabel => 'Date';
 
   @override
@@ -177,12 +180,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get typeLabel => 'Type';
-
-  @override
-  String get paymentMethodLabel => 'Payment method';
-
-  @override
-  String get paymentMethodOptional => 'Optional';
 
   @override
   String get saveButton => 'Save';
@@ -280,13 +277,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get categorySalary => 'Salary';
 
   @override
+  String get categorySideIncome => 'Side income';
+
+  @override
   String get categoryBonus => 'Bonus';
-
-  @override
-  String get categoryGift => 'Gift';
-
-  @override
-  String get categoryRefund => 'Refund';
 
   @override
   String get categoryOther => 'Other';

@@ -155,7 +155,8 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
         category: _selectedCategory,
         date: _selectedDate,
         currency: activeCurrency,
-        paymentMethod: _selectedPaymentMethod,
+        paymentMethod:
+            _selectedType.isExpense ? _selectedPaymentMethod : null,
         memo: _memoController.text,
       );
     } else {
@@ -165,7 +166,8 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
         category: _selectedCategory,
         date: _selectedDate,
         currency: activeCurrency,
-        paymentMethod: _selectedPaymentMethod,
+        paymentMethod:
+            _selectedType.isExpense ? _selectedPaymentMethod : null,
         memo: _memoController.text,
       );
     }
@@ -396,36 +398,38 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                         )
                         : const SizedBox.shrink(),
               ),
-              const SizedBox(height: 22),
-              Text(
-                l10n.paymentMethodLabel,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: AppColors.textSecondary,
+              if (_selectedType.isExpense) ...[
+                const SizedBox(height: 22),
+                Text(
+                  l10n.paymentMethodLabel,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    for (final method in PaymentMethod.values) ...[
-                      _PaymentMethodChip(
-                        label: method.label(l10n),
-                        selected: method == _selectedPaymentMethod,
-                        activeColor: activeColor,
-                        activeSoftColor: activeSoftColor,
-                        onTap: () {
-                          setState(() {
-                            _selectedPaymentMethod = method;
-                          });
-                        },
-                      ),
-                      if (method != PaymentMethod.values.last)
-                        const SizedBox(width: 8),
+                const SizedBox(height: 10),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      for (final method in PaymentMethod.values) ...[
+                        _PaymentMethodChip(
+                          label: method.label(l10n),
+                          selected: method == _selectedPaymentMethod,
+                          activeColor: activeColor,
+                          activeSoftColor: activeSoftColor,
+                          onTap: () {
+                            setState(() {
+                              _selectedPaymentMethod = method;
+                            });
+                          },
+                        ),
+                        if (method != PaymentMethod.values.last)
+                          const SizedBox(width: 8),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
-              ),
+              ],
               const SizedBox(height: 26),
               Container(
                 padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),

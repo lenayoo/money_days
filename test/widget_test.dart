@@ -322,6 +322,35 @@ void main() {
     expect(find.text('Delete'), findsOneWidget);
   });
 
+  testWidgets('payment method is shown only for expense records', (
+    tester,
+  ) async {
+    final expensesRepository = InMemoryExpensesRepository();
+    final monthlyBudgetsRepository = InMemoryMonthlyBudgetsRepository();
+    final settingsRepository = InMemorySettingsRepository();
+
+    await settingsRepository.saveSettings(
+      const AppSettings(currency: AppCurrency.jpy),
+    );
+
+    await tester.pumpWidget(
+      _buildTestApp(
+        expensesRepository: expensesRepository,
+        monthlyBudgetsRepository: monthlyBudgetsRepository,
+        settingsRepository: settingsRepository,
+        child: const AddTransactionScreen(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Payment method'), findsOneWidget);
+
+    await tester.tap(find.text('Income'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Payment method'), findsNothing);
+  });
+
   testWidgets(
     'add transaction limits amount and memo input with minimal fields',
     (tester) async {
@@ -353,12 +382,12 @@ void main() {
       expect(memoField.decoration?.filled, isFalse);
       expect(memoField.decoration?.fillColor, Colors.transparent);
 
-      await tester.enterText(find.byType(TextFormField).first, '12345678');
+      await tester.enterText(find.byType(TextFormField).first, '12345678901');
       await tester.pump();
 
       final updatedAmountField =
           tester.widgetList<TextField>(find.byType(TextField)).first;
-      expect(updatedAmountField.controller?.text, '1234567');
+      expect(updatedAmountField.controller?.text, '1234567890');
 
       await tester.enterText(
         find.byType(TextFormField).last,

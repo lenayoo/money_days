@@ -170,6 +170,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get memoHint => '선택 메모';
 
   @override
+  String get paymentMethodLabel => '결제 수단';
+
+  @override
   String get dateLabel => '날짜';
 
   @override
@@ -177,12 +180,6 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get typeLabel => '구분';
-
-  @override
-  String get paymentMethodLabel => '결제 수단';
-
-  @override
-  String get paymentMethodOptional => '선택';
 
   @override
   String get saveButton => '저장';
@@ -280,13 +277,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get categorySalary => '급여';
 
   @override
+  String get categorySideIncome => '부수입';
+
+  @override
   String get categoryBonus => '보너스';
-
-  @override
-  String get categoryGift => '선물';
-
-  @override
-  String get categoryRefund => '환급';
 
   @override
   String get categoryOther => '기타';

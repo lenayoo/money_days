@@ -87,7 +87,7 @@ class ExpensesController extends Notifier<List<Expense>> {
       currency: currency,
       createdAt: existing.createdAt,
       updatedAt: AppClock.now(),
-      paymentMethod: paymentMethod,
+      paymentMethod: type.isExpense ? paymentMethod : null,
     );
 
     final updatedExpenses = [...state];
