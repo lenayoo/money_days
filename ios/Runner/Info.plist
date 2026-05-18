@@ -52,7 +52,6 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>GADApplicationIdentifier</key>
-	<!-- Test App ID only. Replace with the iOS production App ID before release. -->
-	<string>ca-app-pub-3940256099942544~1458002511</string>
+	<string>ca-app-pub-7195864152055881~1402843474</string>
 </dict>
 </plist>

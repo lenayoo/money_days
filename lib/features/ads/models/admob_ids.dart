@@ -3,15 +3,17 @@ import 'dart:io';
 class AdMobIds {
   const AdMobIds._();
 
-  // Google sample App IDs for SDK setup during development only.
+  // Android still uses Google's sample App ID for development.
   static const String androidAppId = 'ca-app-pub-3940256099942544~3347511713';
-  static const String iosAppId = 'ca-app-pub-3940256099942544~1458002511';
+  // iOS uses the configured production App ID.
+  static const String iosAppId = 'ca-app-pub-7195864152055881~1402843474';
 
-  // Google sample Banner Ad Unit IDs for development only.
+  // Android still uses Google's sample banner ad unit for development.
   static const String androidBannerAdUnitId =
       'ca-app-pub-3940256099942544/6300978111';
+  // iOS uses the configured production banner ad unit.
   static const String iosBannerAdUnitId =
-      'ca-app-pub-3940256099942544/2934735716';
+      'ca-app-pub-7195864152055881/9309253650';
 
   static bool get supportsMobileAds => Platform.isAndroid || Platform.isIOS;
 
