@@ -29,6 +29,8 @@ class _SwipeActionTransactionCardState
     extends State<SwipeActionTransactionCard> {
   static const _actionWidth = 82.0;
   static const _maxOffset = _actionWidth * 2;
+  static const _openThreshold = _maxOffset * 0.28;
+  static const _openVelocity = -80.0;
 
   double _offset = 0;
   bool _isDragging = false;
@@ -48,10 +50,9 @@ class _SwipeActionTransactionCardState
   }
 
   void _handleHorizontalDragEnd(DragEndDetails details) {
+    final velocity = details.primaryVelocity ?? 0;
     final shouldOpen =
-        details.primaryVelocity != null
-            ? details.primaryVelocity! < -120
-            : _offset.abs() > _maxOffset * 0.42;
+        velocity <= _openVelocity || _offset.abs() >= _openThreshold;
 
     setState(() {
       _isDragging = false;
