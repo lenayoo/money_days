@@ -65,8 +65,8 @@
     }
   },
   "doneButton": "닫기",
-  "shareSummaryTitle": "요약 카드 공유",
-  "shareSummarySubtitle": "이번 달을 작은 카드로 나눠 보세요.",
+  "shareExpenseTitle": "이번달 지출 공유",
+  "shareIncomeTitle": "이번달 수입 공유",
   "preparingShareCard": "카드를 준비하는 중...",
   "shareSummaryButton": "카드 공유",
   "shareFailedMessage": "공유 카드를 준비하지 못했어요.",
@@ -81,7 +81,6 @@
       }
     }
   },
-  "shareCardCaption": "이번 달의 조용한 기록.",
   "settingsTitle": "설정",
   "languageSetting": "언어",
   "languageSystem": "시스템 기본값",

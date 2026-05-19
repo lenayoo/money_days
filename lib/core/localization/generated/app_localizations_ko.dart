@@ -109,10 +109,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get doneButton => '닫기';
 
   @override
-  String get shareSummaryTitle => '요약 카드 공유';
+  String get shareExpenseTitle => '이번달 지출 공유';
 
   @override
-  String get shareSummarySubtitle => '이번 달을 작은 카드로 나눠 보세요.';
+  String get shareIncomeTitle => '이번달 수입 공유';
 
   @override
   String get preparingShareCard => '카드를 준비하는 중...';
@@ -127,9 +127,6 @@ class AppLocalizationsKo extends AppLocalizations {
   String shareSummaryMessage(String month, String total) {
     return 'Money Days · $month · $total';
   }
-
-  @override
-  String get shareCardCaption => '이번 달의 조용한 기록.';
 
   @override
   String get settingsTitle => '설정';

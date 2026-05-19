@@ -176,11 +176,11 @@ class _MonthlySummaryShareSheetState extends State<_MonthlySummaryShareSheet> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(l10n.shareSummaryTitle, style: theme.textTheme.headlineSmall),
-              const SizedBox(height: 6),
               Text(
-                l10n.shareSummarySubtitle,
-                style: theme.textTheme.bodyLarge,
+                widget.type == TransactionType.expense
+                    ? l10n.shareExpenseTitle
+                    : l10n.shareIncomeTitle,
+                style: theme.textTheme.headlineSmall,
               ),
               const SizedBox(height: 18),
               RepaintBoundary(
@@ -323,12 +323,6 @@ class _MonthlySummaryShareCard extends StatelessWidget {
               ],
             ],
             const Spacer(),
-            Text(
-              l10n.shareCardCaption,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: AppColors.textSecondary,
-              ),
-            ),
           ],
         ),
       ),

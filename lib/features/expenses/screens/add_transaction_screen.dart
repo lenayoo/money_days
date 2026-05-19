@@ -155,8 +155,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
         category: _selectedCategory,
         date: _selectedDate,
         currency: activeCurrency,
-        paymentMethod:
-            _selectedType.isExpense ? _selectedPaymentMethod : null,
+        paymentMethod: _selectedType.isExpense ? _selectedPaymentMethod : null,
         memo: _memoController.text,
       );
     } else {
@@ -166,8 +165,7 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
         category: _selectedCategory,
         date: _selectedDate,
         currency: activeCurrency,
-        paymentMethod:
-            _selectedType.isExpense ? _selectedPaymentMethod : null,
+        paymentMethod: _selectedType.isExpense ? _selectedPaymentMethod : null,
         memo: _memoController.text,
       );
     }
@@ -193,6 +191,8 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final locale = Localizations.localeOf(context);
+    final viewInsets = MediaQuery.viewInsetsOf(context);
+    final textScale = MediaQuery.textScalerOf(context).scale(1);
     final settings = ref.watch(settingsControllerProvider);
     final currency = widget.expense?.currency ?? settings.currency;
     final categories = expenseCategoriesForType(_selectedType);
@@ -201,6 +201,10 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
     final activeSoftColor =
         _selectedType.isIncome ? AppColors.incomeSoft : AppColors.expenseSoft;
     final activeBorderColor = activeColor.withValues(alpha: 0.34);
+    final categoryChildAspectRatio =
+        categories.length > 4
+            ? (textScale > 1.05 ? 0.68 : 0.74)
+            : (textScale > 1.05 ? 0.78 : 0.86);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -209,7 +213,8 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
         child: Form(
           key: _formKey,
           child: ListView(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            padding: EdgeInsets.fromLTRB(20, 20, 20, viewInsets.bottom + 32),
             children: [
               Row(
                 children: [
@@ -452,13 +457,12 @@ class _AddTransactionScreenState extends ConsumerState<AddTransactionScreen> {
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: categories.length,
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 4,
-                            crossAxisSpacing: 12,
-                            mainAxisSpacing: 14,
-                            childAspectRatio: 0.82,
-                          ),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 4,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 14,
+                        childAspectRatio: categoryChildAspectRatio,
+                      ),
                       itemBuilder: (context, index) {
                         final category = categories[index];
 
@@ -656,52 +660,78 @@ class _CategoryGridItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final accent = selected ? activeColor : category.color;
+    final textScale = MediaQuery.textScalerOf(context).scale(1);
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
-        child: Ink(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-          decoration: BoxDecoration(
-            color: selected ? activeSoftColor : AppColors.surfaceRaised,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final compact = constraints.maxHeight < 92 || textScale > 1.05;
+        final iconSize = compact ? 34.0 : 40.0;
+        final iconRadius = compact ? 12.0 : 14.0;
+        final iconGlyphSize = compact ? 18.0 : 20.0;
+        final verticalPadding = compact ? 8.0 : 10.0;
+        final labelGap = compact ? 8.0 : 10.0;
+        final labelStyle = theme.textTheme.bodySmall?.copyWith(
+          fontSize: compact ? 11 : null,
+          color: selected ? accent : AppColors.textSecondary,
+          fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+        );
+
+        return Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color:
-                  selected ? accent.withValues(alpha: 0.5) : AppColors.border,
-            ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
+            child: Ink(
+              padding: EdgeInsets.symmetric(
+                horizontal: 8,
+                vertical: verticalPadding,
+              ),
+              decoration: BoxDecoration(
+                color: selected ? activeSoftColor : AppColors.surfaceRaised,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
                   color:
                       selected
-                          ? Colors.white.withValues(alpha: 0.85)
-                          : AppColors.surface,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Icon(category.icon, color: accent, size: 20),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                label,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: selected ? accent : AppColors.textSecondary,
-                  fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+                          ? accent.withValues(alpha: 0.5)
+                          : AppColors.border,
                 ),
               ),
-            ],
+              child: Column(
+                children: [
+                  Container(
+                    width: iconSize,
+                    height: iconSize,
+                    decoration: BoxDecoration(
+                      color:
+                          selected
+                              ? Colors.white.withValues(alpha: 0.85)
+                              : AppColors.surface,
+                      borderRadius: BorderRadius.circular(iconRadius),
+                    ),
+                    child: Icon(
+                      category.icon,
+                      color: accent,
+                      size: iconGlyphSize,
+                    ),
+                  ),
+                  SizedBox(height: labelGap),
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        label,
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: labelStyle,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

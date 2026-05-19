@@ -277,17 +277,17 @@ abstract class AppLocalizations {
   /// **'Done'**
   String get doneButton;
 
-  /// No description provided for @shareSummaryTitle.
+  /// No description provided for @shareExpenseTitle.
   ///
   /// In en, this message translates to:
-  /// **'Share summary card'**
-  String get shareSummaryTitle;
+  /// **'Share this month\'s spending'**
+  String get shareExpenseTitle;
 
-  /// No description provided for @shareSummarySubtitle.
+  /// No description provided for @shareIncomeTitle.
   ///
   /// In en, this message translates to:
-  /// **'A small card for this month.'**
-  String get shareSummarySubtitle;
+  /// **'Share this month\'s income'**
+  String get shareIncomeTitle;
 
   /// No description provided for @preparingShareCard.
   ///
@@ -312,12 +312,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Money Days · {month} · {total}'**
   String shareSummaryMessage(String month, String total);
-
-  /// No description provided for @shareCardCaption.
-  ///
-  /// In en, this message translates to:
-  /// **'A quiet record of this month.'**
-  String get shareCardCaption;
 
   /// No description provided for @settingsTitle.
   ///

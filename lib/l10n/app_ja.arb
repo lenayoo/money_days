@@ -65,8 +65,8 @@
     }
   },
   "doneButton": "閉じる",
-  "shareSummaryTitle": "共有カード",
-  "shareSummarySubtitle": "今月を小さなカードにまとめます。",
+  "shareExpenseTitle": "今月の支出を共有",
+  "shareIncomeTitle": "今月の収入を共有",
   "preparingShareCard": "カードを準備しています...",
   "shareSummaryButton": "カードを共有",
   "shareFailedMessage": "共有カードを準備できませんでした。",
@@ -81,7 +81,6 @@
       }
     }
   },
-  "shareCardCaption": "今月の静かな記録。",
   "settingsTitle": "設定",
   "languageSetting": "言語",
   "languageSystem": "システム設定",

@@ -103,14 +103,23 @@ class _MonthlyReviewScreenState extends ConsumerState<MonthlyReviewScreen> {
               (dialogContext) => AlertDialog(
                 title: Text(l10n.deleteRecordTitle),
                 content: Text(l10n.deleteRecordMessage),
+                buttonPadding: EdgeInsets.zero,
+                actionsPadding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
                 actions: [
-                  TextButton(
-                    onPressed: () => Navigator.of(dialogContext).pop(false),
-                    child: Text(l10n.cancelButton),
-                  ),
-                  FilledButton(
-                    onPressed: () => Navigator.of(dialogContext).pop(true),
-                    child: Text(l10n.deleteRecord),
+                  Row(
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(false),
+                        child: Text(l10n.cancelButton),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: FilledButton(
+                          onPressed: () => Navigator.of(dialogContext).pop(true),
+                          child: Text(l10n.deleteRecord),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

@@ -109,10 +109,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get doneButton => 'Done';
 
   @override
-  String get shareSummaryTitle => 'Share summary card';
+  String get shareExpenseTitle => 'Share this month\'s spending';
 
   @override
-  String get shareSummarySubtitle => 'A small card for this month.';
+  String get shareIncomeTitle => 'Share this month\'s income';
 
   @override
   String get preparingShareCard => 'Preparing card...';
@@ -127,9 +127,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String shareSummaryMessage(String month, String total) {
     return 'Money Days · $month · $total';
   }
-
-  @override
-  String get shareCardCaption => 'A quiet record of this month.';
 
   @override
   String get settingsTitle => 'Settings';

@@ -65,8 +65,8 @@
     }
   },
   "doneButton": "Done",
-  "shareSummaryTitle": "Share summary card",
-  "shareSummarySubtitle": "A small card for this month.",
+  "shareExpenseTitle": "Share this month's spending",
+  "shareIncomeTitle": "Share this month's income",
   "preparingShareCard": "Preparing card...",
   "shareSummaryButton": "Share card",
   "shareFailedMessage": "The share card could not be prepared.",
@@ -81,7 +81,6 @@
       }
     }
   },
-  "shareCardCaption": "A quiet record of this month.",
   "settingsTitle": "Settings",
   "languageSetting": "Language",
   "languageSystem": "System default",

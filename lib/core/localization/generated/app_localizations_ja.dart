@@ -109,10 +109,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get doneButton => '閉じる';
 
   @override
-  String get shareSummaryTitle => '共有カード';
+  String get shareExpenseTitle => '今月の支出を共有';
 
   @override
-  String get shareSummarySubtitle => '今月を小さなカードにまとめます。';
+  String get shareIncomeTitle => '今月の収入を共有';
 
   @override
   String get preparingShareCard => 'カードを準備しています...';
@@ -127,9 +127,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String shareSummaryMessage(String month, String total) {
     return 'Money Days · $month · $total';
   }
-
-  @override
-  String get shareCardCaption => '今月の静かな記録。';
 
   @override
   String get settingsTitle => '設定';
