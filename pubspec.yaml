@@ -24,11 +24,12 @@ environment:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/imgs/appIcon.png"
-  min_sdk_android: 21
+  remove_alpha_ios: true
+  image_path: "assets/imgs/appIcon_launcher.png"
+  min_sdk_android: 23
   adaptive_icon_background: "#fdf7f3"
-  adaptive_icon_foreground: "assets/imgs/appIcon.png"
-  adaptive_icon_foreground_inset: 0
+  adaptive_icon_foreground: "assets/imgs/appIcon_foreground.png"
+  adaptive_icon_foreground_inset: 12
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -54,6 +55,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.4
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
