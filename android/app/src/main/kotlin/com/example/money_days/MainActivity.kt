@@ -1,4 +1,4 @@
-package com.example.money_days
+package com.verydays.money_days
 
 import io.flutter.embedding.android.FlutterActivity
 
